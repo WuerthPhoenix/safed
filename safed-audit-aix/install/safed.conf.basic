@@ -1,0 +1,3 @@
+[AObjectives]
+	criticality=4	event=(USER_SU,USER_Login,USER_Logout,PASSWORD_Change)	return=(*)	user=(*)	match=(*)
+	criticality=2	event=(FS_Mount,FS_Umount)	return=(*)	user=(*)	match=(*)

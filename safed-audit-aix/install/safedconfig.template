@@ -1,0 +1,13 @@
+start:
+	streammode = on
+	binmode = off
+
+stream:
+	cmds = /etc/security/audit/safedstream
+
+classes:
+	general = SAFED_EVENTS_TEMPLATE
+
+users:
+	default = general
+

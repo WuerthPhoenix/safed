@@ -1,0 +1,21 @@
+# WARNING: DO NOT MANUALLY EDIT, UNLESS YOU KNOW WHAT YOU ARE DOING
+[Output]
+	network=10.62.8.149:514:udp
+	syslog=36
+[Input]
+	log=GenericLog:/var/log/auth.log
+[Remote]
+	allow=1
+	listen_port=6161
+	accesskey=admin
+[Watch]
+[AObjectives]
+[Objectives]
+	match=.*authentication failure.*user=root.*
+	match=.*session closed for user root.*
+	match=.*session opened for user root.*
+	match!=.*crond.*pam_unix.*
+[Log]
+	logFileToKeep=4
+	logLevel=3
+[End]

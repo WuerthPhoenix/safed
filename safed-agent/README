@@ -1,0 +1,11 @@
+WuerthPhoenix Safed for Linux/Unix
+Version 1.6.4
+
+HOW TO COMPILE
+---------------
+./configure
+make
+
+HOW TO INSTALL
+---------------
+./install.sh

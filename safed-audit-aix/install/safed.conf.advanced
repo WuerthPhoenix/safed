@@ -1,0 +1,11 @@
+[AObjectives]
+	criticality=3	event=(USER_SU,USER_Login,USER_Logout,PASSWORD_Change)	return=(*)	user=(*)	match=(*)
+	criticality=2   event=(FS_Mount,FS_Umount)        return=(*)       user=(*) match=(*)
+	criticality=2	event=(PROC_Execute,PROC_LPExecute)	return=(*)	user=(*)		match=(*)
+	criticality=4	event=(AUD_It)	return=(*)	user=(*)	match=(*)
+	criticality=4   event=(FILE_Open([2367]),FS_Mkdir,FS_Mknod,FILE_Link,FILE_Unlink,FILE_Symlink)       return=Success  user!=root	match=^/etc/(passwd|shadow)$
+    criticality=4   event=(FILE_Open(^0$))	return=Success  user!=root      match=^/etc/shadow$
+    criticality=3   event=(FILE_Open([2367]),FS_Mkdir,FS_Mknod,FILE_Link,FILE_Unlink,FILE_Symlink)       return=Failure  user!=root	match=^/etc/(passwd|shadow)$
+    criticality=3   event=(FILE_Open(^0$))	return=Failure	user!=root	match=^/etc/shadow$
+    criticality=3   event=(FILE_Open([2367]),FS_Mkdir,FS_Mknod,FILE_Link,FILE_Unlink,FILE_Symlink)	return=Success 	user=(*)	match=^(/var/log/snare.log|/etc/security)/.*
+    criticality=2   event=(FILE_Open([2367]),FS_Mkdir,FS_Mknod,FILE_Link,FILE_Unlink,FILE_Symlin)	return=Failure	user=(*)	match=^(/var/log/snare.log|/etc/security)/.*

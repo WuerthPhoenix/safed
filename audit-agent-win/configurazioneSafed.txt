@@ -1,0 +1,257 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////CONFIGURAZIONE DI WINDOWS//////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+[Config]
+	 dAudit=1      
+	valori: 0 o 1; default 1
+	descrizione: determines whether Safed is to automatically set the system audit configuration
+===================================
+	 dFileAudit=1
+	valori: 0 o 1; default 1
+	descrizione: determines whether Safed is to automatically set the file system audit configuration
+===================================
+	 dCritAudit=0
+	valori: 0 o 1; default 0
+	descrizione: determines whether Safed will only send an event for the highest criticality match
+===================================
+	 dLeaveRetention=0
+	valori: 0 o 1; default 0
+	descrizione: Set event logs to overwrite the logs as required.
+===================================
+	 dFileExport=1
+	valori: 0 o 1; default 0
+	descrizione: Safed will write a log file to the system32 path.
+===================================
+	 dNumberFiles=2
+	valori: integer; default 2
+	descrizione: Number of Safed log files.	
+===================================
+	 sClientname=
+	valori: max 100 chars default vuota
+	descrizione:alias.
+===================================
+	 sDelimiter=	
+	valori: character default TAB
+	descrizione: field delimiting character.
+===================================
+	 dClearTabs=0
+	valori: 0 o 1; default 0
+	descrizione:TABS in output.
+===================================
+[Network]
+	 sDestination=10.62.8.149
+	valori: maximum of 100 characters
+	descrizione: the log server.
+===================================
+	 dDestPort=514
+	valori: integer between 1 and 65535; default 514
+	descrizione: the log server port number.
+===================================
+	 dSocketType=1
+	valori: 0 o 1; default 1
+	descrizione: determines the protocol used (0 for UDP, 1 for TCP)
+===================================
+	 dMaxMessageSize=2048
+	valori: integer; default 2048
+	descrizione: the message max size.
+===================================
+	 dSyslog=1
+	valori: 0 o 1; default 1
+	descrizione:determines whether a SYSLOG header will be added to the event record
+===================================
+	 dSyslogDest=38
+	valori: integer default : this value will default to 13 if not set, or out of bounds
+	description: determines the SYSLOG Class and Criticality. 
+===================================
+	 dSyslogDynamicCritic=0
+	valori: 0 o 1; default 0
+	descrizione: If 'Dynamic' is selected as the SYSLOG priority value, the priority sent to the remote SYSLOG server, will mirror the Snare 'criticality' value of the matched objective
+===================================
+[Remote]
+	 dAccessKey=0
+	valori: 0 o 1; default 0
+	descrizione: determine whether a password is required to access the remote control functions
+===================================
+	 sAccessKeySet=536515b971214c61217ae42faf565ed2
+	valori: max 256 characters
+	descrizione: stores the actual password to be used, in encrypted format
+===================================
+	 dAllow=1
+	valori: 0 o 1; default 1
+	descrizione: allows remote control
+===================================
+	 dRestrict=0
+	valori: 0 o 1; default 1
+	descrizione: determine whether the remote users should be restricted via IP address or not
+===================================
+	 sRestrictIP=127.0.0.1
+	valori: max 2048 characters
+	descrizione: IP address set from above
+===================================
+	 dWebPort=6161
+	valori: integer;  default 6161
+	descrizione: the web server port
+===================================
+	 dWebPortChange=0
+	valori: 0 o 1; default 0
+	descrizione:signal whether the web port should be changed or not
+===================================
+[Objective]
+	 sObjective#=1	31	32	528,529,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,546,547,551,552,672,673,674,675,676,677,678,680,681,682,683	*Administrator*	0	*	0
+
+	valori: max 1056 characters
+	descrizione: where # is a serial number
+	It is composed of the following string (the figures in the brackets represent the maximum size of the strings that can be entered):
+	Criticality(DWORD);
+ 	Event Type (DWORD);
+	Event Log Type(DWORD);
+	EventID	Match  [256];
+	General	Match[512];
+	UserMatchType(DWORD);
+	UserMatch[256];
+	EventIDMatchType(DWORD)
+
+	Criticality - an integer between 0 and 4 that indicates the severity of the event. 0 is	"clear", 4 is "critical. Critical = 4, Priority = 3,	Warning = 2, Information = 1, Clear = 0
+
+	User Match Type: =0 (Include users that	match user search term type; =1 for Exclude)
+
+	EventID Match Type: =0 (Include events that match the entire objective; =1 for Exclude)
+
+	Event Type: Success = 16, Failure = 8, Error = 4, Information = 2, Warning = 1. (These numbers cannot be zero, since the "atoi"	function returns 0 if the argument is not an integer. Also, these values are checkboxes, hence any or all ot these may be selected).
+
+	Event Log Type: Security = 32, System = 16, Application = 8, Directory Service = 4, DNS	Server = 2, File Replication = 1. (These cannot be zero, since the "atoi" function returns 0 if the argument is not an integer.	Also, these values are checkboxes, hence any or all ot these may be selected).
+
+	The match terms (EventID Match, General	Match and User Match) are the filter expressions, and is again defined to be any value which includes DOS wildcard characters. Note that these are NOT regular expressions.
+	NOTE: Semicolons are actually "TAB" characters.
+
+
+===================================
+
+[Log]
+	sLog#=GenericLog|c:\pippo||0
+	sLogMulti#=44   (->Optional<-)
+
+	sLog#
+	valori: max 512 characters
+	descrizione: where # is a serial number
+
+	It is composed of the following string:
+	Logtype|LogPath|LogFormat|SendComment
+
+	LogType is optional and is used to inform the Snare server how to process the data stream. 
+
+	The LogPath is the fully qualified path to the log file that needs to be monitored OR the fully qualified path to the directory containing date stamped log files of the form  *YYMMDD* (in this case a trailing backslash ('\') is required). Spaces are vaild, except at the start of the term.
+
+	LogFormat
+	A percent sign (%) is used the represent the date format YYMMDD. Wildcards are acceptable.
+	e.g. log names like ISALOG_20060913_WEB_000.w3c would be represented as ISALOG_20%_WEB_*.w3c).
+	If this field is not defined, the first matching entry will be used (this is fine in most cases).
+
+	SendComment By default, lines starting with '#' will be ignored; values 0 or 1; default 0
+	
+	sLogMulti#
+	valori: max 32 characters
+	descrizione: where # is a serial number
+	This is the Multi-Line Format (Optional fild for sLog#. By default \n is considered)
+	
+
+
+===================================
+[EObjective]
+	sEObjective#=**check**	0
+	valori: max 1056 characters
+	descrizione: where # is a serial number
+
+	It is composed of the following string	(the figures in the brackets represent the maximum size of the strings that can be entered):
+
+	General
+	Match[512];GeneralMatchType(DWORD)
+
+		General Match Type: =0 (Include	entries that match general search term	type; =1 for Exclude)
+
+		The General match term is the filter expression.  Regular expressions are accepted
+
+	NOTE: Semicolons are actually "TAB" characters.
+===================================
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////CONFIGURAZIONE DI LINUX///////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+[Output]
+	network=10.62.8.149:514:rtcp
+	valori: IP max 256 characters; port integer between 1 and 65535 ; protocol max 10 characters (udp,tcp,rtcp)
+	descrizione: destination address : destination port : protocol
+
+===================================
+
+	syslog=36
+	valori: integer default : this value will default to 13 if not set, or out of bounds
+	description: determines the SYSLOG Class and Criticality. 
+===================================
+
+	cachefile=/var/run/neauditor.cache
+	valori: max 2048 characters 
+	description: name of the cache file
+===================================
+
+	maxmsgsize=256
+	valori: integer; default 256
+	descrizione: the message max size.
+===================================
+
+
+[Input]
+	log=GenericLog:/var/log/messages
+	log=GenericLog:/var/log/messages.txt
+	valori: max 8192 characters for record
+	descrizione: LogType:FileName. The audit daemon will continuously monitor the identified file FileName. The LogType is optional and is used to inform the SNARE server
+===================================
+
+[Remote]
+	allow=1
+	valori: 0 o 1; default 0
+	descrizione: allow remote control.
+===================================
+
+	listen_port=6161
+	valori: integer; default 6161
+	descrizione:the web server port.
+===================================
+
+	accesskey=admin
+	valori: integer; default 6161
+	descrizione: host that is allowed to connect to the web server
+===================================
+
+[Objectives]
+	match=.*authentication failure.*user=root.*
+	match=.*session opened for user root.*
+	match=.*session closed for user root.*
+
+	valori: max 8192 characters for record
+	descrizione:
+	Objectives are composed of a filter expression, and is defined	in extended regular expression format.
+	Note that whitespace will be trimmed from the start and end of items,	but will be assumed to be valid when bracketed by other characters
+
+===================================
+
+
+
+
+
+
+
+

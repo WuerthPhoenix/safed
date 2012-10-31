@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<?ifdef win64?>
+<?define ProgramFilesFolder="ProgramFiles64Folder"?>
+<?define Win64YesNo="yes"?>
+<?define Platform="x64"?>
+<?else?>
+<?define ProgramFilesFolder="ProgramFilesFolder"?>
+<?define Win64YesNo="no"?>
+<?define Platform="Intel"?>
+<?endif?>
+
+
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+  <Product Name='Safed version $(var.version)' Id='????????-????-????-????-????????????'
+    Language='1033' Codepage='1252' Version='$(var.version)' Manufacturer='Wuerth Phoenix' UpgradeCode="1ACA458C-7988-426A-BC10-4DABEC8CAD3C">
+
+
+    <Package Id='????????-????-????-????-????????????' Keywords='Installer'
+      Description="Safed for Windows $(var.version) Installer"
+      Comments='GNU General Public License version 2 ' Manufacturer='Wuerth Phoenix'
+      InstallerVersion='200' Languages='1033' Compressed='yes' SummaryCodepage='1252' Platforms='$(var.Platform)' />
+
+    <Condition Message="You need to be an administrator to install this product.">Privileged</Condition>
+
+    <Upgrade Id="1ACA458C-7988-426A-BC10-4DABEC8CAD3C">
+      <UpgradeVersion OnlyDetect="no" />
+    </Upgrade>
+
+    <Media Id='1' Cabinet='Safed.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" CompressionLevel="mszip" />
+    <Property Id='DiskPrompt' Value="Safed [1]" />
+    <Property Id="ALLUSERS"><![CDATA[2]]></Property>
+    <Property Id="OLDPATH">
+      <RegistrySearch Id='OldPath' Type='raw' Root='HKLM' Key='SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Safed_is1' Name='InstallLocation' Win64="$(var.Win64YesNo)"/>
+    </Property>
+    <Property Id="W32">(NOT VersionNT64 AND NOT VersionNT >= 600)</Property>
+    <Property Id="W64">(VersionNT64 AND NOT VersionNT >= 600)</Property>
+    <Property Id="WV32">(NOT VersionNT64 AND VersionNT >= 600)</Property>
+    <Property Id="WV64">(VersionNT64 AND VersionNT >= 600)</Property>
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='$(var.ProgramFilesFolder)' Name='PFiles'>
+	  <Directory Id='INSTALLDIR' Name='Safed'>
+          <Component Id='Safed32' Guid='B6514913-726C-4937-9BB4-7A8F0180199C' DiskId="1" Win64="no">
+            <File Id='SafedEXE32' Name='Safed.exe' LongName='Safed.exe' Source='Safed32.exe' Vital='yes' KeyPath="yes" />
+	      <File Id='ADQ32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+		<File Id='RegImport32' Name='Safed.reg' Source='Safed.reg'/>
+            <File Id='regex2x32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
+            <File Id='gcryptx32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
+            <File Id='gnutlsx32' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dll\gnutls26.dll' Vital='yes' />
+            <File Id='errorx32' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dll\libgpgEr.dll' Vital='yes' />
+            <File Id='libtasn1x32' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dll\libtasn1.dll' Vital='yes' />
+	    	<ServiceInstall Id="SafedService32"
+		    Description="Safed is a program that facilitates the central collection and processing of Windows NT/2000/XP/2003 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
+		    ErrorControl="normal"
+		    Name="Safed32"
+		    DisplayName="Safed"
+		    Start="auto"
+		    Type="ownProcess"
+		    Vital="yes">
+	      	<ServiceConfig FirstFailureActionType="none" SecondFailureActionType="none" ThirdFailureActionType="none" />
+    	    	</ServiceInstall>
+	   	<ServiceControl Id="SafedServiceControl32" Name="Safed32" Remove="uninstall" Stop="uninstall" Start="install" />
+          </Component>
+          <Component Id='Safed64' Guid='70869FC1-D0EC-49d3-B53E-FBFE22D0BD75' DiskId="1" Win64="yes">
+            <File Id='SafedEXE64' Name='Safed.exe' LongName='Safed.exe' Source='Safed64.exe' Vital='yes' KeyPath="yes" />
+	      <File Id='ADQ64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+		<File Id='RegImport64' Name='Safed.reg' Source='Safed.reg'/>
+            <File Id='regex2x64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
+            <File Id='gcryptx64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />
+            <File Id='gnutlsx64' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dllx64\gnutls26.dll' Vital='yes' />
+            <File Id='errorx64' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dllx64\libgpgEr.dll' Vital='yes' />
+            <File Id='libtasn1x64' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dllx64\libtasn1.dll' Vital='yes' />
+	    	<ServiceInstall Id="SafedService64"
+		    Description="Safed is a program that facilitates the central collection and processing of Windows NT/2000/XP/2003 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
+		    ErrorControl="normal"
+		    Name="Safed64"
+		    DisplayName="Safed"
+		    Start="auto"
+		    Type="ownProcess"
+		    Vital="yes">
+	      	<ServiceConfig FirstFailureActionType="none" SecondFailureActionType="none" ThirdFailureActionType="none" />
+    	    	</ServiceInstall>
+	   	<ServiceControl Id="SafedServiceControl64" Name="Safed64" Remove="uninstall" Stop="uninstall" Start="install" />
+          </Component>
+          <Component Id='SafedV32' Guid='81649438-895B-447f-ACF5-56505EAE3621' DiskId="1" Win64="no">
+            <File Id='SafedEXEV32' Name='Safed.exe' LongName='Safed.exe' Source='SafedV32.exe' Vital='yes' KeyPath="yes" />
+	      <File Id='ADQV32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+		<File Id='RegImportV32' Name='Safed.reg' Source='SafedV.reg'/>
+            <File Id='regex2xV32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
+            <File Id='gcryptxV32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
+            <File Id='gnutlsxV32' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dll\gnutls26.dll' Vital='yes' />
+            <File Id='errorxV32' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dll\libgpgEr.dll' Vital='yes' />
+            <File Id='libtasn1xV32' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dll\libtasn1.dll' Vital='yes' />
+	    	<ServiceInstall Id="SafedServiceV32"
+		    Description="Safed is a program that facilitates the central collection and processing of Windows vista/2008/7 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
+		    ErrorControl="normal"
+		    Name="SafedV32"
+		    DisplayName="Safed"
+		    Start="auto"
+		    Type="ownProcess"
+		    Vital="yes">
+	      	<ServiceConfig FirstFailureActionType="none" SecondFailureActionType="none" ThirdFailureActionType="none" />
+    	    	</ServiceInstall>
+	   	<ServiceControl Id="SafedServiceControlV32" Name="SafedV32" Remove="uninstall" Stop="uninstall" Start="install" />
+          </Component>
+          <Component Id='SafedV64' Guid='291B76C1-ED46-4456-A8C0-0F8886BEB8EA' DiskId="1" Win64="yes">
+            <File Id='SafedEXEV64' Name='Safed.exe' LongName='Safed.exe' Source='SafedV64.exe' Vital='yes' KeyPath="yes" />
+	      <File Id='ADQV64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+		<File Id='RegImportV64' Name='Safed.reg' Source='SafedV.reg'/>
+            <File Id='regex2xV64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
+            <File Id='gcryptxV64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />
+            <File Id='gnutlsxV64' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dllx64\gnutls26.dll' Vital='yes' />
+            <File Id='errorxV64' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dllx64\libgpgEr.dll' Vital='yes' />
+            <File Id='libtasn1xV64' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dllx64\libtasn1.dll' Vital='yes' />
+	    	<ServiceInstall Id="SafedServiceV64"
+		    Description="Safed is a program that facilitates the central collection and processing of Windows vista/2008/7 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
+		    ErrorControl="normal"
+		    Name="SafedV64"
+		    DisplayName="Safed"
+		    Start="auto"
+		    Type="ownProcess"
+		    Vital="yes">
+	      	<ServiceConfig FirstFailureActionType="none" SecondFailureActionType="none" ThirdFailureActionType="none" />
+    	    	</ServiceInstall>
+	   	<ServiceControl Id="SafedServiceControlV64" Name="SafedV64" Remove="uninstall" Stop="uninstall" Start="install" />
+          </Component>
+
+          <Component Id='SafedMore' Guid='4B31E54E-842E-4501-B241-2BACAA14F9CD' DiskId="1" Win64="$(var.Win64YesNo)">
+	      <File Id='GetLAdms' Name='GetLAdms.vbs' LongName='GetLocalAdmins.vbs' Source='GetLocalAdmins.vbs' Vital='yes' />
+	      <Registry Id='SafedEvent' Root='HKLM' Key='SYSTEM\CurrentControlSet\Services\EventLog\Application\Safed' Action='createKey'/>
+	      <Registry Id="SafedEvent1" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\EventLog\Application\Safed" Name="EventMessageFile" Value="[INSTALLDIR]Safed.exe" Type="expandable" Action="write" />
+	      <Registry Id="SafedEvent2" Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\EventLog\Application\Safed" Name="TypesSupported" Value="7" Type="integer" Action="write" />
+	    	<Registry Id="RemoveReg" Action="removeKeyOnUninstall" Root="HKLM" Key="SOFTWARE\Wuerth PHoenix\AuditService" />
+          </Component>
+
+          <Component Id='ExtraFiles' Guid='18C96069-0036-4A60-8782-51483BCD42B9' DiskId="1" Win64="$(var.Win64YesNo)">
+            <File Id='Readme' Name='Readme.txt' Source='Readme.txt'/>
+            <File Id='SafedIcon' Name='wp.ico' Source='wp.ico'/>
+            <File Id="SafedShortcut.txt" Name="Safed.url" LongName="Safed.url" Vital="yes" KeyPath="yes" Source="SafedShortcut.txt">
+              <Shortcut Id="startmenuInternet" Directory="ProgramMenuDir" Advertise="yes" Name="Safed" LongName="Safed for Windows" WorkingDirectory="INSTALLDIR" Icon="Safed.ico" />
+            </File>
+            <RemoveFolder Id="DeleteShortcutFolder" Directory="ProgramMenuDir" On="uninstall" />   
+          </Component>
+
+        </Directory>
+      </Directory>
+
+
+      <Directory Id="ProgramMenuFolder" Name="PMenu" LongName="Programs">
+        <Directory Id="ProgramMenuDir" Name="IA" LongName='Wuerth Phoenix' />
+      </Directory>
+
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='SafedMore' />
+ 	<Feature Id='MainProgramV' Level='1'>
+ 		<Feature Id='mpV32' Level='1'>
+    			<ComponentRef Id='SafedV32' />
+			<Condition Level="0" >VersionNT64</Condition>
+  		</Feature>
+ 		<Feature Id='mpV64' Level='1'>
+    			<ComponentRef Id='SafedV64' />
+			<Condition Level="0" >NOT VersionNT64</Condition>
+  		</Feature>
+		<Condition Level="0" >NOT VersionNT >= 600</Condition>
+  	</Feature>
+ 	<Feature Id='MainProgram' Level='1'>
+ 		<Feature Id='mp32' Level='1'>
+    			<ComponentRef Id='Safed32' />
+			<Condition Level="0" >VersionNT64</Condition>
+  		</Feature>
+ 		<Feature Id='mp64' Level='1'>
+    			<ComponentRef Id='Safed64' />
+			<Condition Level="0" >NOT VersionNT64</Condition>
+  		</Feature>
+		<Condition Level="0" >VersionNT >= 600</Condition>
+  	</Feature>
+      <ComponentRef Id='ExtraFiles' />
+    </Feature>
+
+
+    <Icon Id="Safed.ico" SourceFile="wp.ico" />
+    <InstallExecuteSequence>
+      <Custom Action="InstallReg" After='InstallFiles'>(<![CDATA[ $Safed32 > 2 ]]> AND W32) OR (<![CDATA[ $Safed64 > 2 ]]> AND W64) OR (<![CDATA[ $SafedV32 > 2 ]]> AND WV32) OR (<![CDATA[ $SafedV64 > 2 ]]> AND WV64)</Custom>
+      <Custom Action="AddReadMe" After="CostFinalize" />
+      <Custom Action="AddURL" After="CostFinalize" />
+      <Custom Action="AddDisplayIcon" After="CostFinalize" />
+      <Custom Action="SetOldPath" Sequence="1">OLDPATH</Custom>
+      <Custom Action="RemoveOldProd" Sequence="2">OLDPATH</Custom>
+      <RemoveExistingProducts After="FindRelatedProducts" />
+    </InstallExecuteSequence>
+
+    <CustomAction Id="SetOldPath" Property="OldUninstallPath" Value='[OLDPATH]unins000.exe' />
+    <CustomAction Id="RemoveOldProd" Property="OldUninstallPath" ExeCommand='"[OldUninstallPath]" /verysilent' />
+    <CustomAction Id="InstallReg" Directory="INSTALLDIR" ExeCommand='regedit /s "[INSTALLDIR]Safed.reg"' Execute="deferred" />
+    <CustomAction Id="AddReadMe" Property="ARPREADME" Value="[INSTALLDIR]Readme.txt" HideTarget="no" />
+    <CustomAction Id="AddURL" Property="ARPURLINFOABOUT" Value="http://www.wuerth-phoenix.com/neteye" HideTarget="no" />
+    <CustomAction Id="AddDisplayIcon" Property="ARPPRODUCTICON" Value="Safed.ico" HideTarget="no" />
+
+
+  </Product>
+</Wix>

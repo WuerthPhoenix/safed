@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# checking for Linux
+uname | grep "Linux" > /dev/null
+
+if [ $? -lt 1 ]
+then
+	cp src/Makefile.Linux src/Makefile
+	exit
+fi
+
+# checking for HP-UX
+uname | grep "HP-UX" > /dev/null
+
+if [ $? -lt 1 ]
+then
+	cp src/Makefile.hpux src/Makefile
+	exit
+fi
+
+# checking for IBM-AIX
+uname | grep AIX > /dev/null
+
+if  [ $? -lt 1 ]
+then
+        cp src/Makefile.AIX src/Makefile
+	exit
+else
+        cp src/Makefile.Solaris src/Makefile
+fi
+
+
+

@@ -1,0 +1,2 @@
+#
+/usr/sbin/auditstream | auditpr -htecrlpPR -t 0 -v | /usr/bin/safedjoin | /usr/bin/safedcore &

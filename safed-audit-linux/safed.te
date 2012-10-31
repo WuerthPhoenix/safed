@@ -1,0 +1,77 @@
+# Snare selinux module
+# Inserts rules that allow the dispatcher to run.
+# Compile / install with:
+# checkmodule -M -m -o safed.mod safed.te
+# semodule_package -o safed.pp -m safed.mod
+# semodule -i safed.pp
+
+module safed 1.5;
+
+require {
+	role object_r; 
+	role system_r; 
+
+	class chr_file read;
+	class dir { write search };
+	class file { execute execute_no_trans getattr ioctl read }; 
+	class file write;
+	class netif { tcp_recv tcp_send udp_send };
+	class node { tcp_recv tcp_send udp_send };
+	class tcp_socket { accept bind create ioctl listen name_bind node_bind read recv_msg send_msg setopt write sendto };
+	class udp_socket { create ioctl send_msg write };
+	class association { sendto recvfrom };
+	# last/lastb
+	class lnk_file read;
+	class process signull;
+	class packet { send recv };
+
+	type auditctl_exec_t;
+	type auditctl_t;
+	type auditd_t; 
+	type inaddr_any_node_t;
+	type netif_t;
+	type node_t;
+	type lo_node_t;
+	type port_t;
+	type etc_t;
+	# type shadow_t;
+	type usr_t;
+	type bin_t; 
+	type hostname_exec_t; 
+	type net_conf_t; 
+	type urandom_device_t; 
+	type unlabeled_t;
+	type syslogd_port_t;
+	type tmp_t;
+	# last/lastb
+	type unconfined_t;
+	type var_log_t;
+	type wtmp_t;
+ };
+
+allow auditd_t auditctl_exec_t:file { execute execute_no_trans read };
+allow auditd_t self:tcp_socket { accept bind create ioctl listen read setopt write sendto };
+allow auditd_t self:udp_socket { create ioctl write };
+allow auditd_t inaddr_any_node_t:tcp_socket node_bind;
+allow auditd_t netif_t:netif { tcp_recv tcp_send udp_send };
+allow auditd_t node_t:node { tcp_recv tcp_send udp_send };
+allow auditd_t lo_node_t:node { tcp_recv tcp_send udp_send };
+allow auditd_t port_t:tcp_socket { name_bind recv_msg send_msg };
+allow auditd_t port_t:udp_socket send_msg;
+allow auditd_t syslogd_port_t:udp_socket send_msg;
+allow auditd_t unlabeled_t:association { sendto recvfrom };
+allow auditd_t unlabeled_t:packet { send recv };
+#allow auditd_t shadow_t:file { getattr read };
+allow auditd_t usr_t:file { getattr ioctl read };
+allow auditd_t etc_t:file write;
+allow auditd_t bin_t:dir search;
+allow auditd_t bin_t:file { execute execute_no_trans read };
+allow auditd_t bin_t:lnk_file { read };
+allow auditd_t hostname_exec_t:file { execute execute_no_trans read };
+allow auditd_t net_conf_t:file { getattr read };
+allow auditd_t urandom_device_t:chr_file read;
+allow auditd_t unconfined_t:process signull;
+allow auditd_t var_log_t:file { getattr read };
+allow auditd_t var_log_t:dir write;
+allow auditd_t wtmp_t:file { getattr read };
+allow auditctl_t tmp_t:file { getattr read };

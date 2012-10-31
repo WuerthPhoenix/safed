@@ -1,0 +1,1 @@
+It requires the libaudit-dev package (containing header files and static libraries such as /usr/include/libaudit.h and /usr/lib/libaudit.so needed to develop applications that use the audit framework libraries)

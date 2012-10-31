@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# Restart Safed Audit, including updating the config file.
+#
+
+/usr/sbin/audit shutdown
+
+EVENTS=`/usr/bin/cat /etc/safed/safed.conf | /usr/bin/grep "event=" | /usr/bin/sed 's/.*event=[\(]*//' | /usr/bin/sed 's/[\(][^\)]*[\)]//g' | /usr/bin/awk '{print $1}'|sed 's/[\)]$//'`
+
+IFS=','
+NEWEVENTS=`for i in $EVENTS; do
+	echo $i
+done | /usr/bin/sort | /usr/bin/uniq | /usr/bin/awk '{printf("%s,",$0);} END { print "\n"; }' | sed 's/,$//'`
+
+if [ -z "$NEWEVENTS" ]; then
+	echo "No events found in the safed.conf file - I will not update the audit configuration file."
+	exit
+fi
+
+if [ -f /etc/security/audit/safedconfig.template ]; then
+	/usr/bin/cat /etc/security/audit/safedconfig.template | /usr/bin/sed "s/SAFED_EVENTS_TEMPLATE/$NEWEVENTS/" > /etc/security/audit/config
+fi
+
+echo "/etc/security/audit/config file updated"
+
+/usr/sbin/audit start
