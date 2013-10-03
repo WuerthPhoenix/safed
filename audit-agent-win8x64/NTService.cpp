@@ -689,6 +689,7 @@ BOOL CNTService::OnUserControl(DWORD dwOpcode)
 
 void CNTService::DebugMsg(const char* pszFormat, ...){
 	EXPANDINPUT;
-	LogMsg(2,TRUE, buf);
+	//LogMsg(2,TRUE, buf);
+	LogMsg(2,FALSE, buf);
 }
 

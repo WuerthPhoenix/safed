@@ -73,7 +73,8 @@ int getDwLogLevel(){
 void LogExtOnlyDebugMsg(int level , const char* pszFormat, ...)
 {
 	EXPANDINPUT;
-	LogMsg(level,TRUE, buf);
+	//LogMsg(level,TRUE, buf);
+	LogMsg(level,FALSE, buf);
 }
 
 void LogExtMsg(int level , const char* pszFormat, ...)
