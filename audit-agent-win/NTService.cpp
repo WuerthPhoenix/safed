@@ -8,6 +8,8 @@
 #include "LogUtils.h"
 #include "Version.h"
 
+
+
 // NOTE: FOR DFAT TESTING ONLY
 //#define DEBUG_TO_FILE 1
 
@@ -259,6 +261,7 @@ void CNTService::LogEvent(WORD wType, DWORD dwID,
                           const char* pszS2,
                           const char* pszS3)
 {
+
     const char* ps[3];
     ps[0] = pszS1;
     ps[1] = pszS2;
@@ -307,6 +310,7 @@ BOOL CNTService::StartService()
     LogExtOnlyDebugMsg(WARNING_LOG,"Returned from StartServiceCtrlDispatcher()");
     return b;
 }
+
 
 // static member function (callback)
 void CNTService::ServiceMain(DWORD dwArgc, LPTSTR* lpszArgv)
@@ -842,6 +846,7 @@ void CNTService::OnDeviceRemove(char *msg)
 
 void CNTService::DebugMsg(const char* pszFormat, ...){
 	EXPANDINPUT;
-	LogMsg(2,TRUE, buf);
+	//LogMsg(2,TRUE, buf);
+	LogMsg(2,FALSE, buf);
 }
 

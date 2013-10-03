@@ -909,7 +909,7 @@ int file_has_changed (LogNode *f, int fh) {
 			LogExtMsg(INFORMATION_LOG,"File name has changed\nOLD NAME:[%s]\nNEW NAME:[%s]", f->old_name, f->name);
 			strncpy_s(f->old_name,_countof(f->old_name),f->name,_TRUNCATE);
 			change = 1;
-		} else if (sizeoffile < f->size) {
+		} else if (stats.st_size < f->size) {
 			LogExtMsg(INFORMATION_LOG,"%s: File truncated\n", f->name);
 			change = 1;
 		} else if (f->mtime > stats.st_mtime) {
