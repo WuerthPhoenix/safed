@@ -348,7 +348,9 @@ BOOL  SendToSocket(HostNode *hcn, char *buf, int nSize, char *szError, int eSize
 					break;
 				}
 			}else{
+				LogExtMsg(ERROR_LOG,"sending to server......>: %s",buf); 
 				bytessent = sendto(hcn->Socket,buf,nSize,0,(SOCKADDR *)&hcn->server,sizeof(hcn->server));
+				LogExtMsg(ERROR_LOG,"sent to server......>: %d = ",bytessent,WSAGetLastError());
 				if(bytessent==-1) {
 					LogExtMsg(ERROR_LOG,"error sending to server. WSA ERROR: %d",WSAGetLastError()); 
 					ret = FALSE;

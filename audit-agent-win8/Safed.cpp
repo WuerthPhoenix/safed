@@ -47,6 +47,12 @@
 #include "webserver.h"
 #include "SafedLog.h"
 #include "Safed.h"
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+#include <stdlib.h>
+#include <crtdbg.h>
+#include <eh.h>
+#include "Version.h"
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 
 // memory testing only
@@ -66,6 +72,9 @@
 
 // Pull this from registry
 DWORD			WEBSERVER_ACTIVE = 0;
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+DWORD			HANDLER_ACTIVE = 0;
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 DWORD			WEBSERVER_TLS = 0;
 
 DWORD			g_dwLastError			= 0L;
@@ -940,6 +949,7 @@ BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwFor
 	GetSyslogDynamic(&dwSyslogDynamic);
 	GetSyslogHeader(&dwSyslogHeader);
 	GetWEBSERVER_ACTIVE(&WEBSERVER_ACTIVE);
+	GetHANDLER_ACTIVE(&HANDLER_ACTIVE);
 	GetWEBSERVER_TLS(&WEBSERVER_TLS);
 	GetPortNumber(&dwPortNumber);
 	GetNumberFiles(&dwNumberFiles);
@@ -993,6 +1003,67 @@ BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwFor
 
 }
 
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+void myInvalidParameterHandler(const wchar_t* expression,
+   const wchar_t* function, 
+   const wchar_t* file, 
+   unsigned int line, 
+   uintptr_t pReserved)
+{
+	LogExtMsg(ERROR_LOG,"Invalid parameter detected in function %s.File: %s Line: %d\n", function, file, line);
+    LogExtMsg(ERROR_LOG,"Expression: %s\n", expression);
+  
+}
+int seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep)
+{
+	LogExtMsg(ERROR_LOG,"SEH:EXCEPTION %d\n at 0x%08x", code, ep->ExceptionRecord->ExceptionAddress);
+	// Structured Exception Handling
+    // Generate error report
+    // Execute exception handler
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
+{
+  // Do something, for example generate error report
+  //..
+  // Execute default exception handler next
+  return EXCEPTION_EXECUTE_HANDLER; 
+} 
+void my_terminate_handler()
+{
+  // Abnormal program termination (terminate() function was called)
+  // Do something here
+  // Finally, terminate program
+
+#ifdef _M_X64
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-64 is currently active.</font></CENTER><P>",SAFED_VERSION);
+#elif _M_IA64
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-64 is currently active.</font></CENTER><P>",SAFED_VERSION);
+#else
+	BOOL f64 = FALSE;
+	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+	LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+  
+    if (NULL != fnIsWow64Process) {
+        if (!fnIsWow64Process(GetCurrentProcess(),&f64)) {
+            // handle error
+			f64 = FALSE;
+        }
+    }
+
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-32 is currently active" ,SAFED_VERSION);
+#endif
+    LogExtMsg(ERROR_LOG,"ERROR HANDLER IS ACTIVE.!!!!!!");
+	LogExtMsg(ERROR_LOG,"TERMINATE:LAST ERROR %d\n", GetLastError());
+
+    exit(1); 
+}
+
+
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 void CSafedService::Run()
 {
@@ -1001,6 +1072,7 @@ void CSafedService::Run()
 		dwBytesRead = 0, dwMinNumberOfBytesNeeded = 0, dwCancel = 0, dwClose = 0;
 
 	static int recovery = 0;
+	static int CollectorThreadStopped = 0;
 	char* szSendString = NULL; // Nice big memory buffer - just in case.
 	char* szSendStringBkp = NULL;  // Nice big memory buffer - just in case.
 
@@ -1172,8 +1244,29 @@ void CSafedService::Run()
 	// and ask it to save it's current status.
 	g_Info.bTerminate = FALSE;
 
+	//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+   if(HANDLER_ACTIVE){
+        _invalid_parameter_handler oldHandler, newHandler;
+        newHandler = myInvalidParameterHandler;
+        oldHandler = _set_invalid_parameter_handler(newHandler);
+        // Disable the message box for assertions.
+        _CrtSetReportMode(_CRT_ASSERT, 0);
+
+		SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
+		set_terminate(my_terminate_handler);
+	}
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+
+ __try {
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+//   // Call printf_s with invalid parameters.
+//   char* formatString;
+//   formatString = NULL;
+//   printf(formatString);
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+
 	
-	LogExtMsg(DEBUG_LOG,"Entering main loop.");
+	LogExtMsg(INFORMATION_LOG,"Entering main loop SafedAgent Version %s.", SAFED_VERSION); 
 	// This is the service's main run loop.
 	int lastwait = 0,lastblockcount=0;
     while (m_bIsRunning) 
@@ -1186,6 +1279,7 @@ void CSafedService::Run()
 			m_bIsRunning=0;
 			break;
 		}
+
 		//while (EventHead && blockcount < 200) {//DMM
 		while (EventHead) {
 			LogExtMsg(INFORMATION_LOG,"VISTA: Checking VISTA Events..");
@@ -1258,9 +1352,11 @@ void CSafedService::Run()
 					break;
 				}
 				do {
-					try {
+					__try {
+					//try {
 						*MatchPointer=FastCheckObjective(EventID,etype,stype);
-					} catch(...) {
+					} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+					//catch(...) {
 						LogExtMsg(INFORMATION_LOG,"FastCheckObjective: Error encountered!");
 						LogExtMsg(INFORMATION_LOG,"MatchPointer is %ld, EventID is %d, etype is %d, stype is %d",*MatchPointer,EventID,etype,stype);
 						*MatchPointer=NULL;
@@ -1330,9 +1426,11 @@ void CSafedService::Run()
 					do {
 						LogExtMsg(INFORMATION_LOG,"begin MatchCount: %d", MatchCount);
 						// Some of the MS System calls used in CheckObjective are buggy.
-						try {
+						__try {
+						//try {
 							tcriticality=CheckObjective(*MatchPointer,ShortEventID,CurrentEvent->UserName,CurrentEvent->szTempString,matchedstr);
-						} catch(...) {
+						} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+						//} catch(...) {
 							LogExtMsg(INFORMATION_LOG,"CheckObjective CRASH");
 							tcriticality=0;
 						}
@@ -1517,6 +1615,11 @@ void CSafedService::Run()
 							if(SafedCounter >= MAXDWORD) {
 								SafedCounter=1;
 							}
+							if(CollectorThreadStopped) {
+								//if collection thread has been stoped due to send error.
+								StartCollectThread(m_hEventList[0]);
+								CollectorThreadStopped = 0;
+							}
 						}
 					}
 					tmpCounter = SafedCounter;
@@ -1540,6 +1643,11 @@ void CSafedService::Run()
 						}
 						EventCount++;
 						ReleaseMutex(hMutex);
+						//collection thread will been stoped due to send error.
+						if(recovery == 1 && !CollectorThreadStopped){
+							SetEvent(m_hCollectEvent[0]);
+							CollectorThreadStopped = 1;
+						}
 						break;
 					} else {
 						//Msg Sent! Update the status and log the event to the webcache
@@ -1819,6 +1927,11 @@ void CSafedService::Run()
 //DMM Old Status Save
 		//LogExtMsg(INFORMATION_LOG,"WaitForSingle Complete\n");//DMM
     }
+	/////////////////////DEBUG//////////
+  }__except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+	LogExtMsg(ERROR_LOG,"Safed EXCEPTION");
+  }
+	/////////////////////DEBUG//////////
 	nomemory:;
 	LogExtMsg(INFORMATION_LOG,"NetEye Safed Closing");
 
@@ -3123,6 +3236,7 @@ void CSafedService::OnStop() {
 }
 
 void CSafedService::OnSignal() {
+	LogExtMsg(WARNING_LOG,"NetEye Safed Signal request received"); 
 //DMM Old Status Save
 }
 
@@ -3178,6 +3292,13 @@ void GetCrit(DWORD * dwCrit)
 	if(!dwCrit) return;
 	*dwCrit=MyGetProfileDWORD("Config","CritAudit",0);
 }
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+void GetHANDLER_ACTIVE(DWORD * HANDLER_ACTIVE)
+{
+	if(!HANDLER_ACTIVE) return;
+	*HANDLER_ACTIVE=MyGetProfileDWORD("Config","Handler",0);
+}
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 void GetSyslog(DWORD * dwSyslog)
 {
