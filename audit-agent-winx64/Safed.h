@@ -118,6 +118,7 @@ void	GetSyslog				(DWORD * dwSyslog);
 void	GetSyslogDynamic		(DWORD * dwSyslogDynamic);
 void	GetSyslogHeader			(DWORD * dwSyslogHeader);
 void	GetWEBSERVER_ACTIVE		(DWORD * WEBSERVER_ACTIVE);
+void	GetHANDLER_ACTIVE		(DWORD * HANDLER_ACTIVE);
 void	GetWEBSERVER_TLS		(DWORD * WEBSERVER_TLS);
 void	GetPortNumber			(DWORD * dwPortNumber);
 void	GetSysAdminEnable		(DWORD * dwSAE);

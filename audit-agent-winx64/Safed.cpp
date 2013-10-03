@@ -45,6 +45,12 @@
 #include "webserver.h"
 #include "SafedLog.h"
 #include "Safed.h"
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+#include <stdlib.h>
+#include <crtdbg.h>
+#include <eh.h>
+#include "Version.h"
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 
 
@@ -66,6 +72,9 @@
 
 // Pull this from registry
 DWORD			WEBSERVER_ACTIVE = 0;
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+DWORD			HANDLER_ACTIVE = 0;
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 DWORD			WEBSERVER_TLS = 0;
 
 DWORD			g_dwLastError			= 0L;
@@ -480,6 +489,7 @@ BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwFor
 	GetSyslogDynamic(&dwSyslogDynamic);
 	GetSyslogHeader(&dwSyslogHeader);
 	GetWEBSERVER_ACTIVE(&WEBSERVER_ACTIVE);
+	GetHANDLER_ACTIVE(&HANDLER_ACTIVE);
 	GetWEBSERVER_TLS(&WEBSERVER_TLS);
 	GetPortNumber(&dwPortNumber);
 	GetNumberFiles(&dwNumberFiles);
@@ -537,6 +547,67 @@ BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwFor
 	return true;
 }
 
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+void myInvalidParameterHandler(const wchar_t* expression,
+   const wchar_t* function, 
+   const wchar_t* file, 
+   unsigned int line, 
+   uintptr_t pReserved)
+{
+	LogExtMsg(ERROR_LOG,"Invalid parameter detected in function %s.File: %s Line: %d\n", function, file, line);
+    LogExtMsg(ERROR_LOG,"Expression: %s\n", expression);
+  
+}
+int seh_filter(unsigned int code, struct _EXCEPTION_POINTERS* ep)
+{
+	LogExtMsg(ERROR_LOG,"SEH:EXCEPTION %d\n at 0x%08x", code, ep->ExceptionRecord->ExceptionAddress);
+	// Structured Exception Handling
+    // Generate error report
+    // Execute exception handler
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+LONG WINAPI MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionPtrs)
+{
+  // Do something, for example generate error report
+  //..
+  // Execute default exception handler next
+  return EXCEPTION_EXECUTE_HANDLER; 
+} 
+void my_terminate_handler()
+{
+  // Abnormal program termination (terminate() function was called)
+  // Do something here
+  // Finally, terminate program
+
+#ifdef _M_X64
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-64 is currently active.</font></CENTER><P>",SAFED_VERSION);
+#elif _M_IA64
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-64 is currently active.</font></CENTER><P>",SAFED_VERSION);
+#else
+	BOOL f64 = FALSE;
+	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+	LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+    fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+  
+    if (NULL != fnIsWow64Process) {
+        if (!fnIsWow64Process(GetCurrentProcess(),&f64)) {
+            // handle error
+			f64 = FALSE;
+        }
+    }
+
+	LogExtMsg(ERROR_LOG,"SafedAgent Version %s for Windows x86-32 is currently active" ,SAFED_VERSION);
+#endif
+    LogExtMsg(ERROR_LOG,"ERROR HANDLER IS ACTIVE.!!!!!!");
+	LogExtMsg(ERROR_LOG,"TERMINATE:LAST ERROR %d\n", GetLastError());
+
+    exit(1); 
+}
+
+
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 
 
@@ -740,8 +811,31 @@ void CSafedService::Run()
 	// and ask it to save it's current status.
 	g_Info.bTerminate = FALSE;
 	BOOL failure_exit = FALSE;
-	
-	LogExtMsg(INFORMATION_LOG,"Entering main loop."); 
+
+
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+   if(HANDLER_ACTIVE){
+	    LogExtMsg(ERROR_LOG,"ERROR HANDLER IS ACTIVE FROM NOW ON!!!!!!");
+        _invalid_parameter_handler oldHandler, newHandler;
+        newHandler = myInvalidParameterHandler;
+        oldHandler = _set_invalid_parameter_handler(newHandler);
+        // Disable the message box for assertions.
+        _CrtSetReportMode(_CRT_ASSERT, 0);
+
+		SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
+		set_terminate(my_terminate_handler);
+	}
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+
+  __try {
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+//   // Call printf_s with invalid parameters.
+//   char* formatString;
+//   formatString = NULL;
+//   printf(formatString);
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+
+	LogExtMsg(INFORMATION_LOG,"Entering main loop SafedAgent Version %s.", SAFED_VERSION); 
 	// This is the service's main run loop.
     while (m_bIsRunning) 
 	{
@@ -1578,9 +1672,11 @@ void CSafedService::Run()
 						}
 						
 						do {
-							try {
+							__try {
+							//try {
 								*MatchPointer=FastCheckObjective(EventID,etype,stype);
-							} catch(...) {
+							} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+							//} catch(...) {
 								LogExtMsg(DEBUG_LOG,"FastCheckObjective: Error encountered!");
 								LogExtMsg(DEBUG_LOG,"MatchPointer is %ld, EventID is %d, etype is %d, stype is %d",*MatchPointer,EventID,etype,stype);
 								*MatchPointer=NULL;
@@ -1654,9 +1750,11 @@ void CSafedService::Run()
 					LogExtMsg(DEBUG_LOG,"Getting Event Log Type"); 
 					
 					// Some of the MS System calls used in GetEventLogType are prone to error.
-					try {
+					__try {
+					//try {
 						GetEventLogType(EventLogType, pELR->EventType, _countof(EventLogType));
-					} catch(...) {
+					} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+					//} catch(...) {
 						LogExtMsg(DEBUG_LOG,"GetEventLogType error caught. EventType is %ld. Continuing.",pELR->EventType);
 						strncpy_s(EventLogType,_countof(EventLogType),"Success Audit",_TRUNCATE);
 						//continue;
@@ -1699,9 +1797,11 @@ void CSafedService::Run()
 					}
 					
 					if(SubmitTime) { LogExtMsg(DEBUG_LOG,"Date and Time grabbed: %s.",SubmitTime); } 
-					try {
+					__try {
+					//try {
 						ExpandStrings(pELR,EventLogSourceName[EventTriggered],ExpandedString,_countof(ExpandedString));
-					} catch (...) {
+					} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+					//} catch (...) {
 						int size;
 						size=pELR->DataOffset - pELR->StringOffset;
 						if(size >= _countof(ExpandedString)) {
@@ -1716,9 +1816,11 @@ void CSafedService::Run()
 					}
 					LogExtMsg(DEBUG_LOG,"Strings Expanded"); 
 					
-					try {
+					__try {
+					//try {
 						GetDataString(pELR,DataString,_countof(DataString));
-					} catch (...) {
+					} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+					//} catch (...) {
 						LogExtMsg(DEBUG_LOG,"CRASH: GetDataString Failure Caught"); 
 						strncpy_s(DataString,_countof(DataString),"N/A",_TRUNCATE);
 					}
@@ -1726,9 +1828,11 @@ void CSafedService::Run()
 					Category = pELR->EventCategory;
 					
 					// Some of the MS system calls use by GetCategoryString are buggy.
-					try {
+					__try {
+					//try {
 						GetCategoryString(pELR,EventLogSourceName[EventTriggered],SourceName,szCategoryString,_countof(szCategoryString));
-					} catch (...) {
+					} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+					//} catch (...) {
 						LogExtMsg(DEBUG_LOG,"CRASH: GetCategoryString Failure Caught"); 
 						strncpy_s(szCategoryString,_countof(szCategoryString),"N/A",_TRUNCATE);
 					}
@@ -1910,9 +2014,11 @@ void CSafedService::Run()
 								do {
 									LogExtMsg(INFORMATION_LOG,"begin MatchCount: %d", MatchCount);
 									// Some of the MS System calls used in CheckObjective are buggy.
-									try {
+									__try {
+									//try {
 										tcriticality=CheckObjective(*MatchPointer,ShortEventID,UserName,szTempString,matchedstr);
-									} catch(...) {
+									} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+										//} catch(...) {
 										LogExtMsg(DEBUG_LOG,"CheckObjective CRASH");
 										tcriticality=0;
 									}
@@ -2234,9 +2340,11 @@ void CSafedService::Run()
 							}
 							do {
 								LogExtMsg(INFORMATION_LOG,"USB fast checking");
-								try {
+								__try {
+								//try {
 									*MatchPointer=FastCheckObjective(EventID,etype,stype);
-								} catch(...) {
+								} __except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+								//} catch(...) {
 									LogExtMsg(INFORMATION_LOG,"FastCheckObjective: Error encountered!");
 									LogExtMsg(INFORMATION_LOG,"MatchPointer is %ld, EventID is %d, etype is %d, stype is %d",*MatchPointer,EventID,etype,stype);
 									*MatchPointer=NULL;
@@ -2413,6 +2521,11 @@ void CSafedService::Run()
 			endmsg: dwEventIDRead[EventTriggered]=dwNewestEventLogRecord;
 		}
     }
+		/////////////////////DEBUG//////////
+  }__except(seh_filter(GetExceptionCode(), GetExceptionInformation())){
+	LogExtMsg(ERROR_LOG,"Safed EXCEPTION");
+  }
+  	/////////////////////DEBUG//////////
 	nomemory:;
 	LogExtMsg(INFORMATION_LOG,"NetEye Safed Closing"); 
 
@@ -4390,6 +4503,8 @@ void CSafedService::OnStop() {
 }
 
 void CSafedService::OnSignal() {
+
+	LogExtMsg(WARNING_LOG,"NetEye Safed Signal request received"); 
 	// Save off our current position in each of our log files.
 	for (DWORD i=0;i<dwNumEventLogs + dwNumCustomEventLogs;i++) {
 		MyWriteProfileDWORD("Status",EventLogStatusName[i],dwEventIDRead[i]);
@@ -4454,6 +4569,13 @@ void GetCrit(DWORD * dwCrit)
 	if(!dwCrit) return;
 	*dwCrit=MyGetProfileDWORD("Config","CritAudit",0);
 }
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
+void GetHANDLER_ACTIVE(DWORD * HANDLER_ACTIVE)
+{
+	if(!HANDLER_ACTIVE) return;
+	*HANDLER_ACTIVE=MyGetProfileDWORD("Config","Handler",0);
+}
+//////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
 
 void GetSyslog(DWORD * dwSyslog)
 {
@@ -4797,19 +4919,4 @@ void DEBUGDumpEventLog(DWORD EventTriggered,DWORD dwBytesRead,PEVENTLOGRECORD pE
 		fclose(fp);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
