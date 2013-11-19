@@ -19,7 +19,7 @@
 #include <sys/stat.h>
 
 #include "LogUtils.h"
-
+#include "SAD.h"
 #include "WebPages.h"
 #include "Version.h"
 
@@ -681,6 +681,8 @@ int SysAdmin_Config(char *source, char *dest, int size)
 	//All strncpy_s or strncat_s functions in this routine have been designed avoid overflows
 	Reg_SysAdmin sysadmin_struct;
 	DWORD dw_sysadmin_error;
+	UINT i;
+	char *str_discovery[] = {"VBScript", "ADQuery", "ADQueryDNet"};
 		
 	dw_sysadmin_error = Read_SysAdmin_Registry(&sysadmin_struct);
 
@@ -712,11 +714,21 @@ int SysAdmin_Config(char *source, char *dest, int size)
 	if (sysadmin_struct.dw_ForceSysAdmin != 0) {
 		strncat_s(dest,size," checked",_TRUNCATE);
 	}	
-	strncat_s(dest,size,"></td></tr><tr bgcolor=#E7E5DD><td>Use VBS System Administrator Discovery?</td><td><input type=checkbox name=dw_VBS",_TRUNCATE);
-	if (sysadmin_struct.dw_VBS != 0) {
-		strncat_s(dest,size," checked",_TRUNCATE);
-	}	
-	strncat_s(dest,size,"></td></tr><tr bgcolor=#DEDBD2><td>Use System Administrator Filter as a Last?</td><td><input type=checkbox name=dw_LastSA",_TRUNCATE);
+
+	_snprintf_s(dest,size,_TRUNCATE,"%s></td></tr><tr bgcolor=#E7E5DD><td>System Administrator Discovery</td><td><select name=dw_VBS>",dest);
+	for (i = VBSCRIPT; i <= ADQUERYDNET; i++)
+	{
+		_snprintf_s(dest,size,_TRUNCATE,"%s<option",dest);
+		if (i == sysadmin_struct.dw_VBS) {
+			_snprintf_s(dest,size,_TRUNCATE,"%s selected>",dest);
+		} else {
+			_snprintf_s(dest,size,_TRUNCATE,"%s>",dest);
+		}
+		_snprintf_s(dest,size,_TRUNCATE,"%s%s",dest,str_discovery[i]);
+	}
+	_snprintf_s(dest,size,_TRUNCATE,"%s</select></td></tr>",dest);
+
+	strncat_s(dest,size,"<tr bgcolor=#DEDBD2><td>Use System Administrator Filter as a Last?</td><td><input type=checkbox name=dw_LastSA",_TRUNCATE);
 	if (sysadmin_struct.dw_LastSA != 0) {
 		strncat_s(dest,size," checked",_TRUNCATE);
 	}	
@@ -734,10 +746,11 @@ int SysAdmin_Set(char *source, char *dest, int size)
 {
 	//All strncpy or strncat functions in this routine have been designed avoid overflows
 	char *psource=source;
-	char Variable[100]="",  time_a_day[100]="";
+	char Variable[100]="",  time_a_day[100]="" , admin_discovery[100]="";
 	char Argument[100]="";
 	Reg_SysAdmin sysadmin_struct;
 	DWORD dw_error_sysadmin = 1;
+	char *str_discovery[] = {"VBScript", "ADQuery", "ADQueryDNet"};
 
 	if(!source || !dest || !size) {
 		return(0);
@@ -767,10 +780,19 @@ int SysAdmin_Set(char *source, char *dest, int size)
 			if (strcmp(Argument,"on") == 0)
 				sysadmin_struct.dw_ForceSysAdmin = 1;
 		}
-		if (strstr(Variable,"dw_VBS") != NULL) {
-			if (strcmp(Argument,"on") == 0)
-				sysadmin_struct.dw_VBS = 1;
+
+		if (strstr(Variable,"dw_VBS") != NULL)	{
+			strncpy_s(admin_discovery,_countof(admin_discovery),Argument,_TRUNCATE);
 		}
+
+		if(!strncmp(admin_discovery, str_discovery[VBSCRIPT],8)){
+			sysadmin_struct.dw_VBS = VBSCRIPT;
+		}else if(!strncmp(admin_discovery, str_discovery[ADQUERYDNET],11)){
+			sysadmin_struct.dw_VBS = ADQUERYDNET;
+		}else {
+			sysadmin_struct.dw_VBS = ADQUERY;
+		}
+
 		if (strstr(Variable,"dw_LastSA") != NULL) {
 			if (strcmp(Argument,"on") == 0)
 				sysadmin_struct.dw_LastSA = 1;

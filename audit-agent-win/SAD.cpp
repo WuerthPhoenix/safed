@@ -54,10 +54,10 @@ int GetAdmins(BOOL block, PROCESS_INFORMATION* piProcessInfo){
 	}
 	dir[strlen(dir) - strlen(pos)]='\0';
 	GetWindowsDirectory(windir, MAX_PATH) ;
-	if(isVBS){
+	if(isVBS == VBSCRIPT){
 		_snprintf_s(cmd,_countof(cmd),_TRUNCATE,"Cscript.exe \"%sGetLocalAdmins.vbs\" True",dir);
 		_snprintf_s(cmdexe,_countof(cmdexe),_TRUNCATE,"%s\\system32\\Cscript.exe",windir);
-	}else{
+	}else if(isVBS == ADQUERY){
 		if(getUselogfile() && (getDwLogLevel() >=  DEBUG_LOG)){
 			_snprintf_s(cmd,_countof(cmd),_TRUNCATE,"ADQuery.exe -debug \"-logfile=%s\"",getLogfilename());
 		}else if(getSAFEDDEBUG() && (getSAFEDDEBUG() >= DEBUG_LOG)){
@@ -66,6 +66,14 @@ int GetAdmins(BOOL block, PROCESS_INFORMATION* piProcessInfo){
 			_snprintf_s(cmd,_countof(cmd),_TRUNCATE,"ADQuery.exe");
 		}
 		_snprintf_s(cmdexe,_countof(cmdexe),_TRUNCATE,"%s\\ADQuery.exe",dir);
+
+	}else{
+		if(getSAFEDDEBUG() && (getSAFEDDEBUG() >= DEBUG_LOG)){
+			_snprintf_s(cmd,_countof(cmd),_TRUNCATE,"ADQueryDNet.exe -debug");	
+		}else{
+			_snprintf_s(cmd,_countof(cmd),_TRUNCATE,"ADQueryDNet.exe");
+		}
+		_snprintf_s(cmdexe,_countof(cmdexe),_TRUNCATE,"%s\\ADQueryDNet.exe",dir);
 
 	}
 
@@ -115,6 +123,7 @@ int GetAdmins(BOOL block, PROCESS_INFORMATION* piProcessInfo){
 		ret = 1;
 	}
     CloseHandle(hTokenDup);
+
     return ret;
 }
 

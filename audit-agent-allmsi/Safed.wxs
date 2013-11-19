@@ -43,6 +43,7 @@
           <Component Id='Safed32' Guid='B6514913-726C-4937-9BB4-7A8F0180199C' DiskId="1" Win64="no">
             <File Id='SafedEXE32' Name='Safed.exe' LongName='Safed.exe' Source='Safed32.exe' Vital='yes' KeyPath="yes" />
 	      <File Id='ADQ32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+	      <File Id='ADQDN32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
 		<File Id='RegImport32' Name='Safed.reg' Source='Safed.reg'/>
             <File Id='regex2x32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
             <File Id='gcryptx32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
@@ -64,6 +65,7 @@
           <Component Id='Safed64' Guid='70869FC1-D0EC-49d3-B53E-FBFE22D0BD75' DiskId="1" Win64="yes">
             <File Id='SafedEXE64' Name='Safed.exe' LongName='Safed.exe' Source='Safed64.exe' Vital='yes' KeyPath="yes" />
 	      <File Id='ADQ64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+	      <File Id='ADQDN64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
 		<File Id='RegImport64' Name='Safed.reg' Source='Safed.reg'/>
             <File Id='regex2x64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
             <File Id='gcryptx64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />
@@ -85,6 +87,7 @@
           <Component Id='SafedV32' Guid='81649438-895B-447f-ACF5-56505EAE3621' DiskId="1" Win64="no">
             <File Id='SafedEXEV32' Name='Safed.exe' LongName='Safed.exe' Source='SafedV32.exe' Vital='yes' KeyPath="yes" />
 	      <File Id='ADQV32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+	      <File Id='ADQDNV32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
 		<File Id='RegImportV32' Name='Safed.reg' Source='SafedV.reg'/>
             <File Id='regex2xV32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
             <File Id='gcryptxV32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
@@ -106,6 +109,7 @@
           <Component Id='SafedV64' Guid='291B76C1-ED46-4456-A8C0-0F8886BEB8EA' DiskId="1" Win64="yes">
             <File Id='SafedEXEV64' Name='Safed.exe' LongName='Safed.exe' Source='SafedV64.exe' Vital='yes' KeyPath="yes" />
 	      <File Id='ADQV64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+	      <File Id='ADQDNV64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
 		<File Id='RegImportV64' Name='Safed.reg' Source='SafedV.reg'/>
             <File Id='regex2xV64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
             <File Id='gcryptxV64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />

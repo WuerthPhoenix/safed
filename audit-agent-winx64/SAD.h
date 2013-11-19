@@ -1,4 +1,7 @@
 #define SYSADMINMACRO "@SYSADMINS@"
+#define VBSCRIPT 0
+#define ADQUERY 1
+#define ADQUERYDNET 2
 char* getSADStatus();
 char* getSAStr();
 void initSADStatus();
