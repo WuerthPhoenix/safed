@@ -829,7 +829,7 @@ int Write_SysAdmin_Registry(Reg_SysAdmin *pRegistry_struct)
 			  != ERROR_SUCCESS )
 		i_return_val += 16;
 
-	if ((pRegistry_struct->dw_VBS < VBSCRIPT) | (pRegistry_struct->dw_VBS > ADQUERYDNET))
+	if ((pRegistry_struct->dw_VBS < ADQUERY) | (pRegistry_struct->dw_VBS > ADQUERYDNET))
 		pRegistry_struct->dw_VBS = 0;
 	if ( RegSetValueEx(hKey, "VBS",0,REG_DWORD,
 			  (CONST BYTE *) &pRegistry_struct->dw_VBS,
