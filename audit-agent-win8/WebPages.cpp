@@ -682,7 +682,7 @@ int SysAdmin_Config(char *source, char *dest, int size)
 	Reg_SysAdmin sysadmin_struct;
 	DWORD dw_sysadmin_error;
 	UINT i;
-	char *str_discovery[] = {"VBScript", "ADQuery", "ADQueryDNet"};
+	char *str_discovery[] = {"ADQuery", "VBScript", "ADQueryDNet"};
 		
 	dw_sysadmin_error = Read_SysAdmin_Registry(&sysadmin_struct);
 
@@ -716,7 +716,7 @@ int SysAdmin_Config(char *source, char *dest, int size)
 	}	
 
 	_snprintf_s(dest,size,_TRUNCATE,"%s></td></tr><tr bgcolor=#E7E5DD><td>System Administrator Discovery</td><td><select name=dw_VBS>",dest);
-	for (i = VBSCRIPT; i <= ADQUERYDNET; i++)
+	for (i = ADQUERY; i <= ADQUERYDNET; i++)
 	{
 		_snprintf_s(dest,size,_TRUNCATE,"%s<option",dest);
 		if (i == sysadmin_struct.dw_VBS) {
@@ -750,7 +750,7 @@ int SysAdmin_Set(char *source, char *dest, int size)
 	char Argument[100]="";
 	Reg_SysAdmin sysadmin_struct;
 	DWORD dw_error_sysadmin = 1;
-	char *str_discovery[] = {"VBScript", "ADQuery", "ADQueryDNet"};
+	char *str_discovery[] = {"ADQuery", "VBScript", "ADQueryDNet"};
 
 	if(!source || !dest || !size) {
 		return(0);
