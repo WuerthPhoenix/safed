@@ -1512,11 +1512,27 @@ void CSafedService::Run()
 							}
 							stringp++;
 						}
+
+						char UserStr[514];
 						if(CurrentEvent->UserName && !strstr(CurrentEvent->UserName,"N/A")){
-							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->UserName,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
-						}else{
-							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,matchedstr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+							char* checkpos=strstr(CurrentEvent->UserName," ");
+							if(checkpos){// in case of space in user name put it in ""
+								_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"\"%s\"",CurrentEvent->UserName);
+							}else{
+								_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"%s",CurrentEvent->UserName);
+							}
+							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->UserName,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+						}else{//if user field = SYSTEM then check matchet in the payload of the event
+							char* checkpos=strstr(matchedstr," ");
+							if(checkpos){// in case of space in user name put it in ""
+								_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"\"%s\"",matchedstr);
+							}else{
+								_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"%s",matchedstr);
+							}
+							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,matchedstr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
 						}
+						_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,UserStr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+
 						if(CurrentEvent->DataString) { LogExtMsg(INFORMATION_LOG,"DataString: %s",CurrentEvent->DataString); }
 						if(CurrentEvent->szTempString) { LogExtMsg(INFORMATION_LOG,"szTempString: %s",CurrentEvent->szTempString); }
 						
