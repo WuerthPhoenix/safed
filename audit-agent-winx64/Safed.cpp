@@ -2089,12 +2089,27 @@ void CSafedService::Run()
 									} else {
 										_snprintf_s(header,_countof(header),_TRUNCATE,"%s%sSafed[%d][%d]:",Hostname,DELIM,pid,SafedCounter);
 									}
-									char* checkpos=strstr(UserName,"SYSTEM");
+									char* checkpos=strstr(UserName,"SYSTEM");//if user field = SYSTEM then check matchet in the payload of the event
+									char UserStr[514];
 									if(checkpos){
-										_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%s%s%d\0",header,DELIM,SubmitTime,DELIM,ShortEventID,DELIM,SourceName,DELIM,matchedstr,DELIM,SIDType,DELIM,EventLogType,DELIM,ComputerName,DELIM,szCategoryString,DELIM,DataString,DELIM,szTempString,DELIM,EventLogCounter[EventTriggered]);
+										checkpos=strstr(matchedstr," ");
+										if(checkpos){// in case of space in user name put it in ""
+											_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"\"%s\"",matchedstr);
+										}else{
+											_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"%s",matchedstr);
+										}
+										//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%s%s%d\0",header,DELIM,SubmitTime,DELIM,ShortEventID,DELIM,SourceName,DELIM,matchedstr,DELIM,SIDType,DELIM,EventLogType,DELIM,ComputerName,DELIM,szCategoryString,DELIM,DataString,DELIM,szTempString,DELIM,EventLogCounter[EventTriggered]);
 									}else{
-										_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%s%s%d\0",header,DELIM,SubmitTime,DELIM,ShortEventID,DELIM,SourceName,DELIM,UserName,DELIM,SIDType,DELIM,EventLogType,DELIM,ComputerName,DELIM,szCategoryString,DELIM,DataString,DELIM,szTempString,DELIM,EventLogCounter[EventTriggered]);
+										checkpos=strstr(UserStr," ");
+										if(checkpos){// in case of space in user name put it in ""
+											_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"\"%s\"",UserName);
+										}else{
+											_snprintf_s(UserStr,_countof(UserStr),_TRUNCATE,"%s",UserName);
+										}
+										//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%s%s%d\0",header,DELIM,SubmitTime,DELIM,ShortEventID,DELIM,SourceName,DELIM,UserName,DELIM,SIDType,DELIM,EventLogType,DELIM,ComputerName,DELIM,szCategoryString,DELIM,DataString,DELIM,szTempString,DELIM,EventLogCounter[EventTriggered]);
 									}
+									_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%s%s%d\0",header,DELIM,SubmitTime,DELIM,ShortEventID,DELIM,SourceName,DELIM,UserStr,DELIM,SIDType,DELIM,EventLogType,DELIM,ComputerName,DELIM,szCategoryString,DELIM,DataString,DELIM,szTempString,DELIM,EventLogCounter[EventTriggered]);
+
 									if(DataString) { LogExtMsg(INFORMATION_LOG,"DataString: %s",DataString); }
 									if(szTempString) { LogExtMsg(INFORMATION_LOG,"szTempString: %s",szTempString); }
 
