@@ -541,6 +541,9 @@ int main(int argc, char *argv[]) {
     timeout.tv_sec = 0;
     timeout.tv_nsec = waitTime;
     
+    // init sockets to set SOCKETSTATUSFILE
+	connectToServer();
+
     // create the thread that reads the messages from the cache, and sends them to the syslog server
     pthread_t send_thread_id;
     int result = pthread_create(&send_thread_id, NULL, (void *)sendLogThread, NULL);
@@ -677,6 +680,7 @@ int fixLastError(HostNode *currentHost) {
 			slog(LOG_NORMAL, "... cannot reopen network socket, exiting!\n");
 			currentHost->last_error=time(&currentHost->last_error);
 			currentHost->socket = 0;
+			unlink(SOCKETSTATUSFILE);
 			return(1);
 		}
 
@@ -686,6 +690,7 @@ int fixLastError(HostNode *currentHost) {
 			if (connect(currentHost->socket, (struct sockaddr *) &host.socketAddress, sizeof(struct sockaddr_in)) == -1) {
 				slog(LOG_NORMAL, "... cannot reconnect to remote host!\n");
 					currentHost->last_error=time(&currentHost->last_error);
+					unlink(SOCKETSTATUSFILE);
 					currentHost->socket = 0;
 					return(1);
 			}
@@ -761,6 +766,69 @@ int checkDataAvailableToReadOnSocket(int clientSocket) {
 }
 
 
+int connectToServer(){
+	host.socket = socket(AF_INET, host.protocol, 0);
+	if (host.socket < 0) {
+		sperror("socket()");
+		host.socket = 0;
+		host.last_error = time(&host.last_error);
+		unlink(SOCKETSTATUSFILE);
+		return -1;
+	}
+
+	// if I am using TCP ...
+	if (host.protocol == SOCK_STREAM) {
+		/*
+		 * I disable the Nagle algorithm: the segments are always sent as soon
+		 * as possible, even if there is only a small amount of  data.
+		 */
+		int nodelay = 1;
+		socklen_t optlen = sizeof nodelay;
+		if (setsockopt(host.socket, IPPROTO_TCP, TCP_NODELAY, &nodelay, optlen) == -1) {
+			//an error occurred
+			sperror("getsockopt(TCP_NODELAY)");
+		}
+
+		// ... and I connect the socket
+		if (connect(host.socket, (struct sockaddr *)&host.socketAddress, sizeof(struct sockaddr_in)) == -1) {
+			sperror("connect");
+			close(host.socket);
+			host.socket = 0;
+			host.last_error = time(&host.last_error);
+			unlink(SOCKETSTATUSFILE);
+			return (-1);
+		}
+		#ifdef TLSPROTOCOL
+		if(strcmp(TLS, host.protocolName) == 0){
+			if(TLSFAIL){
+				host.tlssession = NULL;
+			}else{
+				host.tlssession = initTLSSocket(host.socket, getNameFromIP(host.desthost));
+			}
+			if (!host.tlssession){
+				if(!TLSFAIL)sperror("connect");
+				else sperror("TLS initialization failed");
+				close(host.socket);
+				host.last_error=time(&host.last_error);
+				host.socket = 0;
+				unlink(SOCKETSTATUSFILE);
+				return (1);
+			}
+		}
+		#endif
+	}
+
+	struct stat buf;
+	if(stat(SOCKETSTATUSFILE, &buf)){
+		FILE* pidfile;
+		if ((pidfile = fopen(SOCKETSTATUSFILE,"w"))) {
+			fclose(pidfile);
+		}
+	}
+
+	return 0;
+}
+
 /**
  * Using the TCP protocol, it returns 0 only if the message is successfully delivered to the destination.
  */
@@ -773,55 +841,9 @@ int sendMessage(char *message) {
 
 	// if the socket is not open, I open it
 	if (!host.socket) {
-		host.socket = socket(AF_INET, host.protocol, 0);
-		if (host.socket < 0) {
-			sperror("socket()");
-			host.socket = 0;
-			host.last_error = time(&host.last_error);
-			unlink(SOCKETSTATUSFILE);
-			return -1;
-		}
-
-		// if I am using TCP ...
-		if (host.protocol == SOCK_STREAM) {
-			/*
-			 * I disable the Nagle algorithm: the segments are always sent as soon
-			 * as possible, even if there is only a small amount of  data.
-			 */
-			int nodelay = 1;
-			socklen_t optlen = sizeof nodelay;
-			if (setsockopt(host.socket, IPPROTO_TCP, TCP_NODELAY, &nodelay, optlen) == -1) {
-				//an error occurred
-				sperror("getsockopt(TCP_NODELAY)");
-			}
-
-			// ... and I connect the socket
-			if (connect(host.socket, (struct sockaddr *)&host.socketAddress, sizeof(struct sockaddr_in)) == -1) {
-				sperror("connect");
-				close(host.socket);
-				host.socket = 0;
-				host.last_error = time(&host.last_error);
-				unlink(SOCKETSTATUSFILE);
-				return (-1);
-			}
-			#ifdef TLSPROTOCOL
-			if(strcmp(TLS, host.protocolName) == 0){
-				if(TLSFAIL){
-					host.tlssession = NULL;
-				}else{
-					host.tlssession = initTLSSocket(host.socket, getNameFromIP(host.desthost));
-				}
-				if (!host.tlssession){
-					if(!TLSFAIL)sperror("connect");
-					else sperror("TLS initialization failed");
-					close(host.socket);
-					host.last_error=time(&host.last_error);
-					host.socket = 0;
-					unlink(SOCKETSTATUSFILE);
-					return (1);
-				}
-			}
-			#endif
+		int connectionStatus = connectToServer();
+		if(connectionStatus){
+			return connectionStatus;
 		}
 	}
 
@@ -898,16 +920,7 @@ int sendMessage(char *message) {
 		// the socket is closed, its file descriptor is not any longer valid
 		host.socket = 0;
 	}
-	if(!result){
-		struct stat buf;
-		if(stat(SOCKETSTATUSFILE, &buf)){
-			FILE* pidfile;
-			if ((pidfile = fopen(SOCKETSTATUSFILE,"w"))) {
-				fclose(pidfile);
-			}
-		}
-	}
-	else unlink(SOCKETSTATUSFILE);
+
 	slog(LOG_NORMAL, "... exiting sendMessage with return value: %d\n", result);
 	return result ;
 }

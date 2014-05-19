@@ -51,4 +51,5 @@ char* formatMsgForSyslog(const char* message, struct tm *currentTime);
 void* sendLogThread(void* args);
 int checkDataAvailableToReadOnSocket(int clientSocket);
 void usage (char *exe);
+int connectToServer();
 
