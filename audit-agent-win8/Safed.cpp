@@ -47,8 +47,8 @@
 #include "webserver.h"
 #include "SafedLog.h"
 #include "Safed.h"
+#include "SafedWMIUSB.h"
 //////////////////////DEBUG////////////////// 0xc0000417 STATUS_INVALID_CRUNTIME_PARAMETER
-#include <stdlib.h>
 #include <crtdbg.h>
 #include <eh.h>
 #include "Version.h"
@@ -157,6 +157,8 @@ char filename[1024]="";
 DWORD dwNumberFiles=2;
 BOOL SAOBJ=FALSE;
 int TLSSERVERFAIL = 0;
+
+
 
 CSafedService::CSafedService()
 :CNTService("SAFED")
@@ -331,10 +333,11 @@ BOOL CSafedService::OnInit()
 		LogExtMsg(ERROR_LOG,szError);
 		return FALSE;
 	}
-
-	m_hEventList = new HANDLE[2];
+//Stop Collection Log and WMI theads
+	m_hEventList = new HANDLE[3];//WMIUSB
 	m_hEventList[0] = CreateEvent(NULL, TRUE, FALSE, NULL);
 	m_hEventList[1] = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_hEventList[2] = CreateEvent(NULL, TRUE, FALSE, NULL);//WMIUSB
 
 	// Web server
 	web_hEventList[0] = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -351,6 +354,8 @@ BOOL CSafedService::OnInit()
 	if(m_hEventList[0] == NULL)
 	{	LogExtMsg(ERROR_LOG,"CreateEvent() Web notification failed");	return FALSE;	}
 	if(m_hEventList[1] == NULL)
+	{	LogExtMsg(ERROR_LOG,"CreateEvent() Log notification failed");	return FALSE;	}
+	if(m_hEventList[2] == NULL)//WMIUSB
 	{	LogExtMsg(ERROR_LOG,"CreateEvent() Log notification failed");	return FALSE;	}
 
 	if(m_hCollectEvent[0] == NULL)
@@ -375,7 +380,6 @@ BOOL CSafedService::OnInit()
 	}
 
 	if(!InitEvents())return FALSE;
-
 
 	StartCollectThread(m_hEventList[0]);
 
@@ -459,6 +463,7 @@ void CollectionThread(HANDLE event)
 		EvtClose(m_hEventLog[i]);
 	}
 	//-------------- thread --------------
+	LogExtMsg(INFORMATION_LOG,"Collection Thread Closing"); 
 	_endthread();
 }
 
@@ -940,7 +945,7 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 
 
 BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwForceNextTime, DWORD* dwSysAdminEnable, BOOL* ActivateChecksum, DWORD* dwCritAudit, DWORD* ClearTabs,
-			   char** szSendString, char** szSendStringBkp){
+			   char** szSendString, char** szSendStringBkp, DWORD* USBEnabled){
 	SAOBJ = FALSE;
 	GetHostname(Hostname,_countof(Hostname));
 	initLog();
@@ -998,7 +1003,7 @@ BOOL InitFromRegistry(int* dwTimesADay, DWORD* dwNextTimeDiscovery, DWORD* dwFor
 			strncat_s(initStatus,_countof(initStatus),"Attention: NetEye Safed HTTPS FAILED. It will proceed with HTTP",_TRUNCATE);	
 		}
 	}
-
+	*USBEnabled=MyGetProfileDWORD("Config","EnableUSB",0);
 	return true;
 
 }
@@ -1134,6 +1139,8 @@ void CSafedService::Run()
 	static BOOL ActivateChecksum=0;
 	
 	int retThread = 0;
+	DWORD USBEnabled = 0;
+	int USBInitialized = 0;
 
 	// Syslog, and output log time variables.
 	time_t currenttime,lasttime;
@@ -1202,7 +1209,7 @@ void CSafedService::Run()
 	//Start discovery process timestamp
 	DWORD SADStrt = 0;
 	// READ in our data
-	if(!InitFromRegistry(&dwTimesADay, &dwNextTimeDiscovery, &dwForceNextTime, &dwSysAdminEnable, &ActivateChecksum, &dwCritAudit, &ClearTabs, &szSendString, &szSendStringBkp))goto nomemory;;
+	if(!InitFromRegistry(&dwTimesADay, &dwNextTimeDiscovery, &dwForceNextTime, &dwSysAdminEnable, &ActivateChecksum, &dwCritAudit, &ClearTabs, &szSendString, &szSendStringBkp, &USBEnabled))goto nomemory;;
 	//if(!InitEvents())goto nomemory;;
 	if(WEBSERVER_ACTIVE) {
 		if(InitWebServer((unsigned short)dwPortNumber,lpszPassword,lpszIPAddress) >0) {
@@ -1236,6 +1243,12 @@ void CSafedService::Run()
 
 	retThread = StartSafedEThread(m_hEventList[1]);
 
+
+	if(USBEnabled){
+		if(!InitWMI(WMIFilter))goto nomemory;//WMIUSB
+		USBInitialized = 1;
+		StartWMIUSBThread(m_hEventList[2]);//WMIUSB
+	}
 
 
 	// Monitor the pipe
@@ -1322,6 +1335,9 @@ void CSafedService::Run()
 			} else if (strstr(CurrentEvent->EventLogSourceName,"DFS Replication") != NULL) {
 				stype = LOG_REP;
 				EventTriggered = 5;
+			} else if (strstr(CurrentEvent->EventLogSourceName,"USB") != NULL) {//WMIUSB
+				stype = LOG_SEC;//not really ... usb is not forwarded to sec, so put EventTriggered = USB_EVENT;
+				EventTriggered = USB_EVENT;
 			}
 
 			etype = CurrentEvent->EventLogLevel;
@@ -1531,7 +1547,12 @@ void CSafedService::Run()
 							}
 							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,matchedstr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
 						}
-						_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,UserStr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+						if(EventTriggered != USB_EVENT ){//WMIUSB
+							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,UserStr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+						}else{//WMIUSB
+							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->UserName,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString);			
+							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%s%s%s%s%s%s\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString);			
+						}
 
 						if(CurrentEvent->DataString) { LogExtMsg(INFORMATION_LOG,"DataString: %s",CurrentEvent->DataString); }
 						if(CurrentEvent->szTempString) { LogExtMsg(INFORMATION_LOG,"szTempString: %s",CurrentEvent->szTempString); }
@@ -1634,6 +1655,7 @@ void CSafedService::Run()
 							if(CollectorThreadStopped) {
 								//if collection thread has been stoped due to send error.
 								StartCollectThread(m_hEventList[0]);
+								if(USBInitialized)StartWMIUSBThread(m_hEventList[2]);//WMIUSB
 								CollectorThreadStopped = 0;
 							}
 						}
@@ -1662,15 +1684,16 @@ void CSafedService::Run()
 						//collection thread will been stoped due to send error.
 						if(recovery == 1 && !CollectorThreadStopped){
 							SetEvent(m_hCollectEvent[0]);
+							if(USBInitialized)TerminateWMIUSBThread();//WMIUSB
 							CollectorThreadStopped = 1;
 						}
 						break;
 					} else {
 						//Msg Sent! Update the status and log the event to the webcache
-						MyWriteProfileWString("Status",EventLogStatusName[EventTriggered],CurrentEvent->Bookmark);//DMM
+						if(EventTriggered != USB_EVENT )MyWriteProfileWString("Status",EventLogStatusName[EventTriggered],CurrentEvent->Bookmark);//DMM //WMIUSB
 						MCCurrent = CurrentEvent;
 						strncpy_s(MCCurrent->Hostname,_countof(MCCurrent->Hostname),Hostname,_TRUNCATE);
-						MCCurrent->EventLogCounter = EventLogCounter[EventTriggered];
+						if(EventTriggered != USB_EVENT )MCCurrent->EventLogCounter = EventLogCounter[EventTriggered];//WMIUSB
 						MCCurrent->SafedCounter = tmpCounter;
 						MCCurrent->next = NULL;
 						MCCurrent->prev = NULL;
@@ -1710,9 +1733,11 @@ void CSafedService::Run()
 						// Increment the NetEye Safed internal event counter
 						// Note: Maxdword is 4294967295
 						// Dont overflow our array either.
-						EventLogCounter[EventTriggered]++;
-						if(EventLogCounter[EventTriggered] >= MAXDWORD) {
-							EventLogCounter[EventTriggered]=1;
+						if(EventTriggered != USB_EVENT ){//WMIUSB
+							EventLogCounter[EventTriggered]++;
+							if(EventLogCounter[EventTriggered] >= MAXDWORD) {
+								EventLogCounter[EventTriggered]=1;
+							}
 						}
 					}
 					
@@ -1758,14 +1783,19 @@ void CSafedService::Run()
 		else wait=2000;
 		lastblockcount=blockcount;
 		lastwait=wait;
-		dwWaitRes=WaitForMultipleObjects(2,m_hEventList,FALSE,wait);
+		dwWaitRes=WaitForMultipleObjects(2,m_hEventList,FALSE,wait);//WMIUSB
 
 		// if(dwWaitRes != WAIT_FAILED && dwWaitRes != WAIT_TIMEOUT)
 		if(dwWaitRes != WAIT_FAILED)
 		{
 			EventTriggered=0;
 			stype = LOG_APP;	 // Assume application log if no valid source provided.
-			if(dwWaitRes == WAIT_OBJECT_0 + 1) {
+			if(dwWaitRes == WAIT_OBJECT_0 + 2) {//WMIUSB - thread has been stopped by web. start it again
+				//do nothing, this means there has been a web reset event, it will be handled below.
+				// this is just to prevent a delay
+				if(USBInitialized)StartWMIUSBThread(m_hEventList[2]);//WMIUSB
+				ResetEvent(m_hEventList[2]);
+			}else if(dwWaitRes == WAIT_OBJECT_0 + 1) {//Log thead has been stopped by web. start it agin
 				ResetEvent(m_hEventList[1]);
 				retThread = StartSafedEThread(m_hEventList[1]);
 				if(retThread <= 0 )goto nomemory;
@@ -1830,6 +1860,7 @@ void CSafedService::Run()
 						retThread = 0;
 						CloseSafedE();
 					}
+					if(USBInitialized)TerminateWMIUSBThread();//WMIUSB
 					DestroyList();
 
 					if(WEBSERVER_ACTIVE) {
@@ -1865,8 +1896,12 @@ void CSafedService::Run()
 						MatchList=NULL;
 					}
 					// READ in our data
-					if(!InitFromRegistry(&dwTimesADay, &dwNextTimeDiscovery, &dwForceNextTime, &dwSysAdminEnable, &ActivateChecksum, &dwCritAudit, &ClearTabs, &szSendString, &szSendString))goto nomemory;;
-					if(!InitEvents())goto nomemory;;
+					if(!InitFromRegistry(&dwTimesADay, &dwNextTimeDiscovery, &dwForceNextTime, &dwSysAdminEnable, &ActivateChecksum, &dwCritAudit, &ClearTabs, &szSendString, &szSendString, &USBEnabled))goto nomemory;;
+					if(!InitEvents())goto nomemory;
+					if(USBEnabled && !USBInitialized){
+						if(!InitWMI(WMIFilter))goto nomemory;//WMIUSB
+						USBInitialized = 1;
+					}
 					// Open our outgoing sockets.
 					OpenSockets();
 
@@ -1877,12 +1912,14 @@ void CSafedService::Run()
 						if(InitWebServer((unsigned short)dwPortNumber,lpszPassword,lpszIPAddress) >0) {
 							StartWebThread(m_hCollectEvent[1]);
 							StartCollectThread(m_hEventList[0]); //DMM potential for duplication
+							if(USBInitialized)StartWMIUSBThread(m_hEventList[2]);//WMIUSB
 						} else {
 							//sleep and try again
 							Sleep(2000);
 							if(InitWebServer((unsigned short)dwPortNumber,lpszPassword,lpszIPAddress) >0) {
 								StartWebThread(m_hCollectEvent[1]);
 								StartCollectThread(m_hEventList[0]); //DMM potential for duplication
+								if(USBInitialized)StartWMIUSBThread(m_hEventList[2]);//WMIUSB
 							} else {
 								LogExtMsg(ERROR_LOG,"Unable to start web server [2], disabling.");
 								WEBSERVER_ACTIVE = 0;
@@ -1969,6 +2006,10 @@ void CSafedService::Run()
 			}
 		}
 	}
+
+	if(USBInitialized)TerminateWMIUSBThread();//WMIUSB
+	dwWaitRes=WaitForSingleObject(m_hEventList[2],5000);//WMIUSB
+
 	CloseWebServer();
 
 	deinitSAD();	
@@ -1994,6 +2035,7 @@ void CSafedService::Run()
 	cleanEventLogStructures();
 	if( m_hEventList[0] ) ::CloseHandle(m_hEventList[0]);
 	if( m_hEventList[1] ) ::CloseHandle(m_hEventList[1]);
+	if( m_hEventList[2] ) ::CloseHandle(m_hEventList[1]);//WMIUSB
 	if( m_hCollectEvent[0] )	::CloseHandle(m_hCollectEvent);
 	if( m_hCollectEvent[1] )	::CloseHandle(m_hCollectEvent);
 	if( web_hEventList[0] ) ::CloseHandle(web_hEventList[0]);
@@ -2004,6 +2046,8 @@ void CSafedService::Run()
 
 	// Free memory used by the objectives lists
 	DestroyList();
+    //ReleaseWMI
+	if(USBInitialized) TerminateWMI();//WMIUSB
 
 	if(hMutex)CloseHandle(hMutex);
 	if(hMutexFile)CloseHandle(hMutexFile);
@@ -3494,6 +3538,7 @@ void GetClearTabs(DWORD * ClearTabs)
 	*ClearTabs=MyGetProfileDWORD("Config","ClearTabs",0);
 }
 
+
 DWORD GetTotalSavedLogs(FILE * fp){
 	DWORD cnt = 0;
 	char* line = (char*)malloc(dwMaxMsgSize*sizeof(char)); 
@@ -3637,6 +3682,7 @@ void HandleWebThread(HANDLE event)
 			}
 		}
 	}
+	LogExtMsg(INFORMATION_LOG,"Web Thread Closing"); 
 	SetEvent(event);
 	_endthread();
 }

@@ -17,6 +17,7 @@
 #define PROCESS_EVENTS "4688,4689,4690,4691"
 #define FILE_EVENTS "4656,4657,4658,4659,4660,4661,4662,4663,4690,4691"
 #define FILTERING_EVENTS "5152,5153,5154,5155,5156,5157,5158,5159,5447"
+#define USB_EVENTS "18,19,20"
 
 // Audit all events
 #define AUDIT_ALL -99
@@ -31,6 +32,7 @@
 #define IS_FILTERING_EVENTS(n)			(n==5152||n==5153||n==5154||n==5155||n==5156||n==5157||n==5158||n==5159||n==5447||n==AUDIT_ALL)
 #define IS_POLICY_CHANGE(n)             (n==4704||n==4705||n==4706||n==4706||n==4708||n==4709||n==4710||n==4711||n==4712||n==4713||n==4714||n==4715||n==4716||n==4864||n==AUDIT_ALL)
 #define IS_DIRECTORY_SERVICE_ACCESS(n)  (n==4661||n==AUDIT_ALL)
+#define IS_USB_EVENTS(n)				(n==18||n==19||n==20||n==AUDIT_ALL)
 
 #define LOGONOFF_TOKEN "Logon_Logoff"
 #define FILE_TOKEN "File_Events"
@@ -40,6 +42,7 @@
 #define MANAGE_TOKEN "User_Group_Management_Events"
 #define SECPOL_TOKEN "Security_Policy_Events"
 #define REBOOT_TOKEN "Reboot_Events"
+#define USB_TOKEN "USB_Audit_Events"
 
 #define CRITICAL_TOKEN "Critical"
 #define PRIORITY_TOKEN "Priority"
@@ -179,6 +182,7 @@ struct  Reg_Config
 	DWORD	dw_NumberLogFiles;
 	DWORD	dw_LogLevel;
 	DWORD	dw_CritAudit;
+	DWORD	dw_EnableUSB;
 };
 
 struct  Reg_SysAdmin

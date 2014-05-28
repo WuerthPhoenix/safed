@@ -60,6 +60,7 @@ int Read_Config_Registry(Reg_Config *pRegistry_struct)
 	DWORD dw_NumberLogFiles = 0;
 	DWORD dw_LogLevel = 1;
 	DWORD dw_CritAudit = 1;
+	DWORD dw_EnableUSB = 0;
 
 
 	//Defaults to NULL if no hostname found, or key is out of bounds.
@@ -89,6 +90,7 @@ int Read_Config_Registry(Reg_Config *pRegistry_struct)
 	dw_NumberLogFiles=MyGetProfileDWORD("Config","NumberLogFiles",1);
 	dw_LogLevel=MyGetProfileDWORD("Config","LogLevel",0);
 	dw_CritAudit=MyGetProfileDWORD("Config","CritAudit",0);
+	dw_EnableUSB=MyGetProfileDWORD("Config","EnableUSB",0);
 
 	pRegistry_struct->dw_Audit = dw_Audit;
 	pRegistry_struct->dw_FileAudit = dw_FileAudit;
@@ -97,6 +99,7 @@ int Read_Config_Registry(Reg_Config *pRegistry_struct)
 	pRegistry_struct->dw_NumberLogFiles = dw_NumberLogFiles;
 	pRegistry_struct->dw_LogLevel = dw_LogLevel;
 	pRegistry_struct->dw_CritAudit = dw_CritAudit;
+	pRegistry_struct->dw_EnableUSB = dw_EnableUSB;
 
 	return i_return_val;
 }
@@ -656,6 +659,8 @@ int Read_Objective_Registry(int i_objective_number, Reg_Objective *pRegistry_str
 			strncpy_s(pRegistry_struct->str_eventid_match,SIZE_OF_EVENTIDMATCH,FILE_TOKEN,_TRUNCATE);
 		} else  if (_stricmp(str_temp_eventids,FILTERING_EVENTS) == 0)	{
 			strncpy_s(pRegistry_struct->str_eventid_match,SIZE_OF_EVENTIDMATCH,FILTERING_TOKEN,_TRUNCATE);
+		} else if (_stricmp(str_temp_eventids,USB_EVENTS) == 0)	{
+			strncpy_s(pRegistry_struct->str_eventid_match,SIZE_OF_EVENTIDMATCH,USB_TOKEN,_TRUNCATE);
 		} else {
 			strncpy_s(pRegistry_struct->str_eventid_match,SIZE_OF_EVENTIDMATCH,str_temp_eventids,_TRUNCATE);
 		}
@@ -944,7 +949,17 @@ int Write_Config_Registry(Reg_Config *pRegistry_struct)
 			  != ERROR_SUCCESS )
 		i_return_val += 32;
 
-
+	// If EnableUSB is out of bounds, then it becomes 1
+	if ((pRegistry_struct->dw_EnableUSB < 0) | (pRegistry_struct->dw_EnableUSB > 1)) {
+		pRegistry_struct->dw_EnableUSB = 1;
+	}
+	if ( RegSetValueEx(hKey, "EnableUSB",0,REG_DWORD,
+			  (CONST BYTE *) &pRegistry_struct->dw_EnableUSB,
+			  sizeof(pRegistry_struct->dw_EnableUSB))
+			  != ERROR_SUCCESS ) {
+		i_return_val += 64;
+	}
+	
 	
 	//Close the registry key when done
 	RegCloseKey(hKey);
@@ -1243,6 +1258,8 @@ int Write_Objective_Registry(int i_objective_number, Reg_Objective *pRegistry_st
 			strncpy_s(str_EventIDMatch,SIZE_OF_EVENTIDMATCH,LOGON_LOGOFF_EVENTS,_TRUNCATE);
 		else if (_stricmp(pRegistry_struct->str_eventid_match,FILE_TOKEN) == 0)
 			strncpy_s(str_EventIDMatch,SIZE_OF_EVENTIDMATCH,FILE_EVENTS,_TRUNCATE);
+		else if (_stricmp(pRegistry_struct->str_eventid_match,USB_TOKEN) == 0)
+			strncpy_s(str_EventIDMatch,SIZE_OF_EVENTIDMATCH,USB_EVENTS,_TRUNCATE);
 		else if (_stricmp(pRegistry_struct->str_eventid_match,FILTERING_TOKEN) == 0)
 			strncpy_s(str_EventIDMatch,SIZE_OF_EVENTIDMATCH,FILTERING_EVENTS,_TRUNCATE);
 		else if (_stricmp(pRegistry_struct->str_eventid_match,PROCESS_TOKEN) == 0)

@@ -157,6 +157,7 @@ void	HandleWebThread(HANDLE event);
 int		StartCollectThread(HANDLE event);
 void CollectionThread(HANDLE event);
 
+
 typedef struct _tagEVENTID
 {
 	TCHAR lpszMachineName[_MAX_PATH + 1];

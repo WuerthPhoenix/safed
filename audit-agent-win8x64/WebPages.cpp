@@ -617,9 +617,12 @@ int Network_Config(char *source, char *dest, int size)
 
 	_snprintf_s(dest,size,_TRUNCATE,
 		"%s<tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>"
-		"<tr bgcolor=#E7E5DD><td>Max Message Size</td><td><input type=text size=7  name=dw_MaxMsgSize value=\"%d\"></td></tr><tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>",
+		"<tr bgcolor=#E7E5DD><td>Max Message Size</td><td><input type=text size=7  name=dw_MaxMsgSize value=\"%d\"></td></tr><tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>"
+		//"<tr bgcolor=#E7E5DD><td>Enable active USB auditing?<br>(This option requires the service to be fully restarted)</td><td><input type=checkbox name=dw_EnableUSB%s></td></tr><tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>",
+		"<tr bgcolor=#E7E5DD><td>Enable active USB auditing?</td><td><input type=checkbox name=dw_EnableUSB%s></td></tr><tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>",
 		dest,
-		network_struct.dw_MaxMsgSize);
+		network_struct.dw_MaxMsgSize,
+		(config_struct.dw_EnableUSB != 0?" checked":""));
 
 
 
@@ -853,6 +856,7 @@ int Network_Set(char *source, char *dest, int size)
 	config_struct.dw_NumberFiles = 0;
 	config_struct.dw_NumberLogFiles = 0;
 	config_struct.dw_LogLevel = 0;
+	config_struct.dw_EnableUSB = 0;
 
 
 	while((psource=GetNextArgument(psource,Variable,_countof(Variable),Argument,_countof(Argument))) != (char *)NULL) 
@@ -909,6 +913,10 @@ int Network_Set(char *source, char *dest, int size)
 		if (strstr(Variable,"dw_CritAudit") != NULL) {
 			if (strcmp(Argument,"on") == 0)
 				config_struct.dw_CritAudit = 1;
+		}
+		if (strstr(Variable,"dw_EnableUSB") != NULL) {
+			if (strcmp(Argument,"on") == 0)
+				config_struct.dw_EnableUSB = 1;
 		}
 
 	}
@@ -1425,7 +1433,8 @@ int Objective_Display(char *source, char *dest, int size)
 			SECPOL_TOKEN, (strstr(reg_objective.str_eventid_match,SECPOL_TOKEN) != NULL?" checked":""),
 			PROCESS_TOKEN, (strstr(reg_objective.str_eventid_match,PROCESS_TOKEN) != NULL?" checked":""),
 			REBOOT_TOKEN, (strstr(reg_objective.str_eventid_match,REBOOT_TOKEN) != NULL?" checked":""),
-			USERRIGHTS_TOKEN, (strstr(reg_objective.str_eventid_match,USERRIGHTS_TOKEN) != NULL?" checked":"")
+			USERRIGHTS_TOKEN, (strstr(reg_objective.str_eventid_match,USERRIGHTS_TOKEN) != NULL?" checked":""),
+			USB_TOKEN, (strstr(reg_objective.str_eventid_match,USB_TOKEN) != NULL?" checked":"")
 		);
 		if (strstr(reg_objective.str_eventid_match,LOGONOFF_TOKEN) ||
 			strstr(reg_objective.str_eventid_match,MANAGE_TOKEN) ||
@@ -1433,7 +1442,8 @@ int Objective_Display(char *source, char *dest, int size)
 			strstr(reg_objective.str_eventid_match,SECPOL_TOKEN) ||
 			strstr(reg_objective.str_eventid_match,PROCESS_TOKEN) ||
 			strstr(reg_objective.str_eventid_match,REBOOT_TOKEN) ||
-			strstr(reg_objective.str_eventid_match,USERRIGHTS_TOKEN) )
+			strstr(reg_objective.str_eventid_match,USERRIGHTS_TOKEN)  ||
+			strstr(reg_objective.str_eventid_match,USB_TOKEN))
 		{
 			reg_objective.str_eventid_match[0]='\0';
 			strncat_s(dest,size,"</tr><tr><td colspan=2><input type=radio name=str_eventid_match id=\"anyevt\" value=Any_Event onMouseover=\"ddrivetip(\'You can filter events through the Event ID Search Term field   \')\" onMouseout=\"hideddrivetip()\">Any event(s) </td></tr></table></div></td></tr>",_TRUNCATE);
@@ -5546,7 +5556,9 @@ int substituteEvents(char* obj, int reverse){
 							strcat(newObj, PROCESS_TOKEN);
 						} else if (_stricmp(events,FILE_EVENTS) == 0)	{
 							strcat(newObj, FILE_TOKEN);
-						} else {
+						} else if (_stricmp(events,USB_EVENTS) == 0)	{
+							strcat(newObj, USB_TOKEN);
+						}  else {
 							return 1;
 						}
 					}else{
@@ -5565,6 +5577,8 @@ int substituteEvents(char* obj, int reverse){
 							strcat(newObj,  PROCESS_EVENTS);
 						} else if (_stricmp(events,FILE_TOKEN) == 0)	{
 							strcat(newObj, FILE_EVENTS );
+						} else if (_stricmp(events,USB_TOKEN) == 0)	{
+							strcat(newObj, USB_EVENTS );
 						} else {
 							return 1;
 						}					
@@ -5630,6 +5644,7 @@ int GetConfig(SOCKET http_socket, gnutls_session session_https, char* fromServer
 		"\t sClientname=%s\n"\
 		"\t sDelimiter=%s\n"\
 		"\t dClearTabs=%d\n"\
+		"\t dEnableUSB=%d\n"\
 	"[SysAdmin]\n"\
 		"\t dSysAdministrators=%d\n"\
 		"\t dTimesADay=%d\n"\
@@ -5663,6 +5678,7 @@ int GetConfig(SOCKET http_socket, gnutls_session session_https, char* fromServer
 		strclientname,
 		strdelim,
 		MyGetProfileDWORD("Config","ClearTabs",0),
+		MyGetProfileDWORD("Config","EnableUSB",0),
 		MyGetProfileDWORD("SysAdmin","SysAdministrators",0),
 		MyGetProfileDWORD("SysAdmin","TimesADay",1),
 		MyGetProfileDWORD("SysAdmin","VBS",0),

@@ -101,14 +101,14 @@ int StartSafedEThread(HANDLE event)
 	e_m_hEventList = new HANDLE[1]; // 1 epilog event
 	e_m_hEventList[0] = CreateEvent(NULL, TRUE, FALSE, NULL);
 	if(e_m_hEventList[0] == NULL) {
-		LogExtMsg(ERROR_LOG,"CreateEvent() for SafedTrhread failed");
+		LogExtMsg(ERROR_LOG,"CreateEvent() for Safed Log Thread failed");
 		return 0;
 	}
 	threadid=(int)_beginthread( RunSafedE, 0, event);
-	LogExtMsg(INFORMATION_LOG,"DEBUG: Starting Safed  thread %d..",threadid); 
+	LogExtMsg(INFORMATION_LOG,"DEBUG: Starting Safed Log  thread %d..",threadid); 
 	if(threadid==-1)
 	{
-		LogExtMsg(ERROR_LOG,"Error in Safed thread creation");
+		LogExtMsg(ERROR_LOG,"Error in Safed Log thread creation");
 		return(-1);
 	}
 	return(1);
@@ -586,7 +586,7 @@ void RunSafedE(HANDLE event)
 	}
 
 	e_nomemory:;
-	LogExtMsg(INFORMATION_LOG,"Log Thread Closing"); 
+	LogExtMsg(INFORMATION_LOG,"Safed Log Thread Closing"); 
 	if (szSendString) free(szSendString);
 	if (szSendStringBkp) free(szSendStringBkp);
 	if(newtime)free(newtime);
