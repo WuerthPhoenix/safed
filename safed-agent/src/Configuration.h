@@ -107,13 +107,14 @@ int splitwatch(char *string, char *regexp, int *excludematchflag,int *newfile);
 int split_audit_objective(char *string, char *event, char *user, char *match, int *excludeflag, int *excludematchflag, int *returncode);
 
 int readConfigurationFile();
-
+int findDirFileName(char *dirpath, char* filename, regex_t *comparePattern);
 
 /*****************************************************/
 /* data type definition to handle log file data */
 /*****************************************************/
 typedef struct _logFileDataElement {
 	char fileName[MAX_AUDIT_CONFIG_LINE];
+	char dirName[MAX_AUDIT_CONFIG_LINE];
 
 	// File stream on which the file is open; -1 if it's not open.
 	FILE *fs;
@@ -139,6 +140,9 @@ typedef struct _logFileDataElement {
 	time_t last_error;
 
 	struct _logFileDataElement *next;
+	regex_t regexp;//in case of format file in directory
+	int dirCheck;
+	int isCorrectFormat;
 } LogFileData;
 
 void openLogFile(LogFileData *element);

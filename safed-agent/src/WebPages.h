@@ -67,6 +67,7 @@ struct Reg_Objective {
 
 struct Reg_Log {
 	char name[MAX_AUDIT_CONFIG_LINE];
+	char format[MAX_AUDIT_CONFIG_LINE];
 };
 
 // int          HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size);

@@ -1123,7 +1123,9 @@ int fileHasChanged(LogFileData *f) {
 		f->last_error = 0;
 		return(1);
 	}
-
+	if(f->isCorrectFormat ){
+		f->dirCheck++;
+	}
 	// check if the file is changed in size or modification time
 	if (
 		f->size == stats.st_size &&
@@ -1135,6 +1137,37 @@ int fileHasChanged(LogFileData *f) {
 		#endif
 	    ) {
 		// no changes in file size and modification time, nothing to do
+		//make sure there is no new file to watch yet
+		if(f->dirCheck >= 200){//200 checks before file format check. Reduce resources impact
+			char filename[MAX_AUDIT_CONFIG_LINE];
+			f->dirCheck = 0;
+			int findret = findDirFileName(f->dirName, filename, &f->regexp);
+			if(!findret && strlen(filename) && strcmp(f->fileName,filename)){
+				slog(LOG_NORMAL,  "Found new file %s\n", filename);
+				strncpy(f->fileName, filename, MAX_AUDIT_CONFIG_LINE);
+				FILE *fs = fopen(f->fileName, "r");
+				// change detected, close the old file,
+				// reset the stats and start from the beginning
+				if (f->fs) fclose(f->fs);
+				f->fs = fs;
+				if (stat(f->fileName, &stats) < 0) {
+					if (!f->last_error) slog(LOG_NORMAL, "Failed to find log file: %s\n", f->fileName);
+					f->last_error=time(&f->last_error);
+					return(-1);
+				}
+				f->size = stats.st_size;
+				#if defined(__hpux__) || defined(_AIX)
+				f->mtime = stats.st_mtime;
+				#else
+				f->mtime = stats.st_mtim;
+				#endif
+				f->dev = stats.st_dev;
+				f->ino = stats.st_ino;
+				f->mode = stats.st_mode;
+				f->last_error = 0;
+				return(1);
+			}
+		}
 		return(0);
 	} else {
 		// if I am on this branch, there is a change regarding the size or the modification time of the file
@@ -1186,6 +1219,38 @@ int fileHasChanged(LogFileData *f) {
 				return(0);
 			else
 				return(1);
+		}else{
+			//make sure there is no new file to watch yet
+			if(f->dirCheck >= 200){//200 checks before file format check. Reduce resources impact
+				char filename[MAX_AUDIT_CONFIG_LINE];
+				f->dirCheck = 0;
+				int findret = findDirFileName(f->dirName, filename, &f->regexp);
+				if(!findret && strlen(filename) && strcmp(f->fileName,filename)){
+					slog(LOG_NORMAL,  "Found new file %s\n", filename);
+					strncpy(f->fileName, filename, MAX_AUDIT_CONFIG_LINE);
+					FILE *fs = fopen(f->fileName, "r");
+					// change detected, close the old file,
+					// reset the stats and start from the beginning
+					if (f->fs) fclose(f->fs);
+					f->fs = fs;
+					if (stat(f->fileName, &stats) < 0) {
+						if (!f->last_error) slog(LOG_NORMAL, "Failed to find log file: %s\n", f->fileName);
+						f->last_error=time(&f->last_error);
+						return(-1);
+					}
+					f->size = stats.st_size;
+					#if defined(__hpux__) || defined(_AIX)
+					f->mtime = stats.st_mtime;
+					#else
+					f->mtime = stats.st_mtim;
+					#endif
+					f->dev = stats.st_dev;
+					f->ino = stats.st_ino;
+					f->mode = stats.st_mode;
+					f->last_error = 0;
+				}
+			}
+
 		}
 		return(1);
 	}

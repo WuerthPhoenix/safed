@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <fcntl.h>
+#include <dirent.h>
+#include <regex.h>
 #include "Configuration.h"
 #include "Misc.h"
 
@@ -44,6 +46,60 @@ HostNode host;
 /* This section implements the list of log files to be monitored */
 /*****************************************************************/
 LogFileData *logFileHead,  *logFileTail = NULL;
+regex_t *compPattern;
+
+/*
+ * the filter function to use with scandir/4; it returns a value different from 0
+ * only if entry->name is of the form of the filter
+ */
+int filterLogFileName(const struct dirent *entry) {
+	return (regexec(compPattern, entry->d_name, (size_t) 0, NULL, 0) == 0);
+}
+/*
+ * the sort function to use with scandir/4; it allows to sort the directory entries
+ * in descending order; if the entries are in the form YYMMDD then it means that
+ * it starts from the youngest to the oldest.
+ */
+
+int reverseSortLogFileName(const struct dirent **e1, const struct dirent **e2) {
+	return alphasort(e2, e1);
+}
+
+/*
+ * char *dirpath input parameter - directoory to check
+ * regex_t *comparePattern input parameter - regexp to apply
+ * char* filename Output parameter
+ * return 0 on success
+ */
+int findDirFileName(char *dirpath, char* filename, regex_t *comparePattern) {
+	struct dirent **entrylist;
+	int found = 0;
+	if(!dirpath || !filename || !comparePattern) return 1;
+	compPattern = comparePattern;
+	int n = scandir(dirpath, &entrylist, filterLogFileName, reverseSortLogFileName);
+
+	struct stat s;
+	if (n < 0) {
+		perror("scandir");
+	} else {
+		int i = 0;
+		while (i < n) {
+			if(!found){
+				sprintf(filename, "%s/%s", dirpath, entrylist[i]->d_name);
+				if( !stat(filename,&s) &&  (s.st_mode & S_IFREG)){
+				   found = 1;
+				}
+			}
+		   free(entrylist[i]);
+		   i++;
+		}
+		free(entrylist);
+	}
+	if (!found){
+		strcpy(filename, "");
+	}
+	return 0;
+}
 
 
 /*
@@ -54,6 +110,11 @@ LogFileData *logFileHead,  *logFileTail = NULL;
  */
 int addLogWatch(char *string) {
 	char *pos, *pos2;
+	struct stat s;
+	char pattern[1024];
+	char filenamepattern [1024] = "";
+	char filename[MAX_AUDIT_CONFIG_LINE];
+
 	// removing the "log=" prefix from string
 	string += strlen("log=");
 	if (strlen(string)) {	// if string is not empty
@@ -65,6 +126,66 @@ int addLogWatch(char *string) {
 			if (pos && pos2 && pos < pos2) {
 				string = pos + 1; // now string is the absolute file path
 			}
+			//Check format
+			newLogFile->isCorrectFormat = 0;
+			newLogFile->dirCheck = 0;
+			pos = strstr(string, "|");//for file pattern
+			if(pos){
+				pos2 = pos + 1;
+				*pos = '\0';
+
+				//check dir
+				if( stat(string,&s) == 0 )
+				{
+				    if( s.st_mode & S_IFDIR )
+				    {
+						slog(LOG_NORMAL,  "Dir %s\n", string);
+				    }
+				}else{
+					slog(LOG_ERROR,  "Dir %s\n", string);
+					return (0);
+				}
+				//check file pattern (format)
+				if(strlen(pos2)){
+					strncpy(pattern, pos2, sizeof(pattern));
+					pos = strstr(pattern,"\%");
+					if(pos){
+						//replace % with YYMMDD reg exp [0-9]{6}
+						pos2 = pos + 1;
+						*pos = '\0';
+						sprintf(filenamepattern, "%s%s%s", pattern, "[0-9]{6}" ,pos2);
+					}else{
+						sprintf(filenamepattern, "%s", pattern);
+					}
+				}else{
+					sprintf(filenamepattern, ".*%s.*.*", "[0-9]{6}" ,string);
+				}
+
+				int ret = regcomp(&newLogFile->regexp, filenamepattern, REG_EXTENDED | REG_NOSUB);
+
+				if(!ret){
+					int findret = findDirFileName(string, filename, &newLogFile->regexp);
+					if(!findret && strlen(filename)){
+						slog(LOG_NORMAL,  "Found %s\n", filename);
+						strncpy(newLogFile->dirName, string, MAX_AUDIT_CONFIG_LINE);
+						sprintf(string, "%s",filename);
+						newLogFile->isCorrectFormat = 1;
+					}else{
+						slog(LOG_ERROR,  "No file Found %s\n", filenamepattern);
+						regfree(&newLogFile->regexp);
+						return 0;
+					}
+				}else{
+					char errorMsg [1000] = "";
+					regerror(ret, &newLogFile->regexp, errorMsg, sizeof(errorMsg));
+					slog(LOG_ERROR,  "Error reg exp %s\n", errorMsg );
+					regfree(&newLogFile->regexp);
+					return 0;
+				}
+
+				//Check format - end
+			}
+
 			// recording the log file name
 			strncpy(newLogFile->fileName, string, MAX_AUDIT_CONFIG_LINE);
 			newLogFile->next = NULL;
@@ -242,6 +363,7 @@ void destroyList(void) {
 	LogFileData *currentLogFile = logFileHead;
 	while(currentLogFile) {
 		logFileHead=currentLogFile->next;
+		if(currentLogFile->isCorrectFormat) regfree(&currentLogFile->regexp);
 		if (currentLogFile->fs) fclose(currentLogFile->fs);
 		free(currentLogFile);
 		currentLogFile=logFileHead;

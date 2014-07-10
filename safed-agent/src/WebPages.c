@@ -30,7 +30,7 @@
 	GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
-#define VERSION "1.6.1"
+#define VERSION "1.7.0"
 
 
 extern void trim(char *);
@@ -3138,6 +3138,12 @@ void getlog(char *string, struct Reg_Log *log_struct)
 		if (pos && pos2 && pos < pos2) {
 			stringp = pos + 1;
 		}
+		pos = strstr(stringp, "|");//for file pattern
+		if(pos){
+			pos2 = pos + 1;
+			*pos = '\0';
+			strncpy(log_struct->format, pos2, MAX_AUDIT_CONFIG_LINE);
+		}
 		// Record the name and open the file for reading
 		strncpy(log_struct->name, stringp, MAX_AUDIT_CONFIG_LINE);
 	}
@@ -3346,9 +3352,14 @@ int Log_Config(char *source, char *dest, int size)
 				  str_name_metachar_remove,
 				  MAX_AUDIT_CONFIG_LINE * 2);
 
+
 			if (strlen(log_struct.name) == 0) {
 				strncat(dest, "&nbsp", size - strlen(dest));
 			} else {
+				char *pos = strstr(str_name_metachar_remove, "|");
+				if(pos){
+					*pos = '\0';
+				}
 				strncat(dest, str_name_metachar_remove,
 					size - strlen(dest));
 			}
@@ -3470,11 +3481,26 @@ int Log_Display(char *source, char *dest, int size)
 
 
 		strncat(dest,
-			"<tr bgcolor=#E7E5DD><td>Log File<br></td><td><input type=text name=str_log_name size=50 value=\"",
+			"<tr bgcolor=#E7E5DD><td>Log File or Directory<br></td><td><input type=text name=str_log_name size=50 value=\"",
 			size - strlen(dest));
 		strncat(dest, log_struct.name,
 			size - strlen(dest));
 		strncat(dest, "\"></td></tr>", size - strlen(dest));
+
+		strncat(dest,
+				"<tr bgcolor=#DEDBD2><td>Log Name Format:<br />(optional)"
+				"<a href=\"javascript:void(0)\" onClick=\"myWindow = window.open('', 'tinyWindow', 'width=350,height=300'); "
+					"myWindow.document.write('<html><body><p>A percent sign (%) is used the represent the date format YYMMDD. Regular expressions are acceptable.</p>"
+					"<p>e.g. log names like ISALOG_20060913_WEB_000.w3c would be represented as ISALOG_20%_WEB_*.w3c).</p>"
+					"If this field is not defined, the first matching entry will be used (this is fine in most cases).</body></html>'); "
+					"myWindow.document.close();"
+					"\">Help</a></td>"
+					"<td><input type=text name=str_log_format size=50 value=\"",
+				size - strlen(dest));
+		strncat(dest, log_struct.format,
+			size - strlen(dest));
+		strncat(dest, "\"></td></tr>", size - strlen(dest));
+
 
 		strncat(dest, "</table><br>", size - strlen(dest));
 		strncat(dest, "<input type=hidden name=lognumber value=",
@@ -3595,6 +3621,11 @@ int Log_Result(char *source, char *dest, int size)
 				sizeof (log_struct.name));
 		}
 		
+		if (strstr(Variable, "str_log_format") != NULL) {
+			strncpy(log_struct.format, Argument,
+				sizeof (log_struct.format));
+		}
+
 		if (strstr(Variable, "lognumber") != NULL) {
 			strncpy(str_log_count, Argument,
 				sizeof (str_log_count));
@@ -3649,10 +3680,15 @@ int Log_Result(char *source, char *dest, int size)
 						if (headertype ==
 						    CONFIG_INPUT) {
 							// WRITE OUT NEW LOG MONITOR HERE
-							fprintf(configfile,
-								"	log=%s\n",
-								log_struct.name);
-
+							if(strlen(log_struct.format)){
+								fprintf(configfile,
+									"	log=GenericLog:%s|%s\n",
+									log_struct.name,log_struct.format);
+							}else{
+								fprintf(configfile,
+									"	log=GenericLog:%s\n",
+									log_struct.name);
+							}
 							wroteconfig = 1;
 						}
 					} else {
@@ -3675,9 +3711,15 @@ int Log_Result(char *source, char *dest, int size)
 				if (!wroteconfig) {
 					// Must not have been an input header in the file...
 					// WRITE OUT NEW LOG MONITOR HERE
+					if(strlen(log_struct.format)){
 					fprintf(configfile,
-						"\n\n[Input]\n	log=%s\n",
-						log_struct.name);
+						"\n\n[Input]\n	log=GenericLog:%s|%s\n",
+						log_struct.name,log_struct.format);
+					}else{
+						fprintf(configfile,
+							"\n\n[Input]\n	log=GenericLog:%s\n",
+							log_struct.name);
+					}
 				}
 
 				if (fclose(configfile)) {
