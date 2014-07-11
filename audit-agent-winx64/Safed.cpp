@@ -147,8 +147,8 @@ USBCache *USBMsgTail=NULL;
 // Locker
 HANDLE hMutex=NULL;
 HANDLE hUSBMutex=NULL;
-HANDLE hMutexFile=NULL;
-HANDLE hMutexCount=NULL;
+HANDLE hMutexFile=NULL;//500ms should be enough for flushing to local cache
+HANDLE hMutexCount=NULL;//5000ms to be sure in case tcp send fails!
 HANDLE web_hEventList[3]; // two elements at the moment. The forth is fore resend logs
 DWORD WebResetFlag=0;
 
@@ -801,6 +801,14 @@ void CSafedService::Run()
 	////////////////// REMEMBER TO FREE THESE SOCKETS LATER!!!!   REDREDRED
 	// Ok, we have finished our general configuration reads.
 
+	//if any cache try to send it to the first host. cache works only with one host now
+	hostcurrentnode=getHostHead();
+	if(hostcurrentnode && hostcurrentnode->Socket != INVALID_SOCKET) {
+		if(sentIndex && strlen(sentFile)){
+			SendFailedCache(hostcurrentnode, sentFile, _countof(sentFile),&sentIndex, dwMaxMsgSize);
+			SetSentIndex(sentFile,sentIndex);
+		}
+	}
 
 	retThread = StartSafedEThread(m_hEventList[dwNumEventLogs + dwNumCustomEventLogs+ 1]);
 
@@ -1350,7 +1358,7 @@ void CSafedService::Run()
 
 						}
 						BOOL DataSent=0;
-						DWORD dwWaitCount = WaitForSingleObject(hMutexCount,1000);
+						DWORD dwWaitCount = WaitForSingleObject(hMutexCount,5000);
 						if(dwWaitCount == WAIT_OBJECT_0) {
 
 							if(dwSyslogHeader) {
@@ -1411,6 +1419,7 @@ void CSafedService::Run()
 
 									} else {
 										recovery = -1; //backuped message has been sent
+										LogExtMsg(ERROR_LOG,"sending recovered event msg  ......>: %s",szSendStringBkp); 
 									}
 
 								} 
@@ -1434,15 +1443,20 @@ void CSafedService::Run()
 								}
 								hostcurrentnode=hostcurrentnode->next;
 							}
+							/*cache in local file
 							if(DataSent){
+							*/
 								SafedCounter++;
 								if(SafedCounter >= MAXDWORD) {
 									SafedCounter=1;
 								}
-
+							/*cache in local file
 							}
+							*/
 							ReleaseMutex(hMutexCount);	
+							/*cache in local file
 							if(DataSent){
+							*/
 								// Write the data out to a disk, if requested.
 								if(usefile) {
 									dwWaitFile = WaitForSingleObject(hMutexFile,500);
@@ -1454,7 +1468,9 @@ void CSafedService::Run()
 									}
 									ReleaseMutex(hMutexFile);	
 								}
+							/*cache in local file
 							}
+							*/
 
 						}
 						g_Info.bTerminate = TRUE;
@@ -2070,8 +2086,9 @@ void CSafedService::Run()
 
 								}
 								BOOL DataSent=0;
+								BOOL FailFromCache=0;
 								DWORD tmpCounter=0;
-								DWORD dwWaitCount = WaitForSingleObject(hMutexCount,1000);
+								DWORD dwWaitCount = WaitForSingleObject(hMutexCount,5000);
 								if(dwWaitCount == WAIT_OBJECT_0) {
 								
 									if(dwSyslogHeader) {
@@ -2172,17 +2189,20 @@ void CSafedService::Run()
 												hostcurrentnode->Socket=INVALID_SOCKET;
 											} else {
 												recovery = -1; //backuped message has been sent
+												LogExtMsg(ERROR_LOG,"sending recovered event msg  ......>: %s",szSendStringBkp); 
 											}
 
 										} 
 										if(recovery != 1){// try to send the current message only if no backuped message exists
-											BOOL FailFromCache = 0;
 											dwWaitFile = WaitForSingleObject(hMutexFile,500);
 											if(dwWaitFile == WAIT_OBJECT_0) {
 												if(sentIndex && strlen(sentFile)){
-													FailFromCache=SendFailedCache(hostcurrentnode, sentFile, _countof(sentFile),&sentIndex, dwMaxMsgSize);
+													GetSentIndex(sentFile,_countof(sentFile), &sentIndex);
+													if(sentIndex && strlen(sentFile)){
+														FailFromCache=SendFailedCache(hostcurrentnode, sentFile, _countof(sentFile),&sentIndex, dwMaxMsgSize);
+														SetSentIndex(sentFile,sentIndex);
+													}
 												}
-												SetSentIndex(sentFile,sentIndex);
 											}
 											ReleaseMutex(hMutexFile);
 											if(!FailFromCache){
@@ -2204,16 +2224,21 @@ void CSafedService::Run()
 										}
 										hostcurrentnode=hostcurrentnode->next;
 									}
+									/*cache in local file
 									if(DataSent){
+									*/
 										SafedCounter++;
 										if(SafedCounter >= MAXDWORD) {
 											SafedCounter=1;
 										}
+									/*cache in local file
 									}
+									*/
 								}
 								tmpCounter = SafedCounter;
 								ReleaseMutex(hMutexCount);	
 								// Did we push out at least one record?
+/*cache in local file
 								if(!DataSent) {
 									dwEvLogCounter--;
 									dwNewestEventLogRecord=dwEvLogCounter;
@@ -2221,7 +2246,7 @@ void CSafedService::Run()
 									// Break out of the for/next loop.
 									goto endmsg;
 								} else {
-
+*/
 									MCCurrent = (MsgCache *)malloc(sizeof(MsgCache));
 									if (MCCurrent) {
 										memset(MCCurrent,0,sizeof(MsgCache));
@@ -2276,8 +2301,9 @@ void CSafedService::Run()
 									if(EventLogCounter[EventTriggered] >= MAXDWORD) {
 										EventLogCounter[EventTriggered]=1;
 									}
-
+/*cache in local file
 								}
+								*/
 								// Write the data out to a disk, if requested.
 								if(usefile) {
 									dwWaitFile = WaitForSingleObject(hMutexFile,500);
@@ -2287,8 +2313,34 @@ void CSafedService::Run()
 										fflush(OutputFile);
 										fclose(OutputFile);
 									}
+									if(!FailFromCache){//in case not failed to send cached data
+										char* posslash = strstr(filename,"\\");
+										char* tmpslash = posslash;
+										while(posslash){
+											tmpslash = posslash + 1;
+											posslash = strstr(tmpslash,"\\");
+										}
+										if(tmpslash){
+											int lastSentIndex = 0;
+											char lastSentFile[255];
+											GetSentIndex(lastSentFile,_countof(lastSentFile), &lastSentIndex);
+											if(!DataSent && ((!lastSentIndex || (strlen(lastSentFile) == 0)) || !strcmp(lastSentFile, tmpslash))){
+												//if send fails and no index has been set yet or a greater value for the same file log has been set by onother thread
+												strncpy_s(sentFile,_countof(sentFile),tmpslash,_TRUNCATE);
+												if(SafedCounter > 1 ){
+													sentIndex = SafedCounter -1;
+													if(!lastSentIndex || lastSentIndex > sentIndex){
+														SetSentIndex(sentFile,sentIndex);//in case failed to send data and no cache toll now
+													}else{
+														sentIndex = lastSentIndex;
+													}
+												}
+											}
+										}
+									}
 									ReleaseMutex(hMutexFile);	
 								}
+								FailFromCache = 0;
 							}
 								
 	#ifdef MEMDEBUG
@@ -2621,7 +2673,7 @@ BOOL changeCacheFileName(struct tm newtime){
 BOOL resetSafedCounter(struct tm *newtime){
 	BOOL ret = TRUE;
 	time_t currenttime;
-	DWORD dwWaitCount = WaitForSingleObject(hMutexCount,500);
+	DWORD dwWaitCount = WaitForSingleObject(hMutexCount,5000);
 	time(&currenttime);
 	localtime_s(newtime,&currenttime);
 	if(dwWaitCount == WAIT_OBJECT_0) {

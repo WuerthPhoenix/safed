@@ -1,2 +1,2 @@
-MakeSafedMSI.bat -dversion=1.7.0
-SafedMSIVersion.bat 1_7_0
+MakeSafedMSI.bat -dversion=1.7.1
+SafedMSIVersion.bat 1_7_1

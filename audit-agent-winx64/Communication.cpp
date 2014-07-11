@@ -384,8 +384,9 @@ int SendFailedCache(HostNode *hcn, char *sFile, int size, int* sIndex, DWORD dwM
 	int error = 0;
 	TCHAR szError[MAX_STRING]="";
 	char* line = (char*)malloc(dwMaxMsgSize*sizeof(char)); 
-			if (line)line[0]='\0';
-	else{ 
+	if (line){
+		line[0]='\0';
+	}else{ 
 		LogExtMsg(ERROR_LOG,"NO MEMORY LEFT!!!");
 		return 1;
 	
@@ -400,7 +401,7 @@ int SendFailedCache(HostNode *hcn, char *sFile, int size, int* sIndex, DWORD dwM
 		 LogExtMsg(ERROR_LOG,"Error opening: %s\n", tempdir);
 		 return 1;
 	 } 
-   
+    LogExtMsg(ERROR_LOG,"sending from cache ......>: %s  from index %d",sFile,*sIndex); 
    // List all the files in the directory with some info about them.
 	int i =0;
 	char *next;
@@ -431,13 +432,14 @@ int SendFailedCache(HostNode *hcn, char *sFile, int size, int* sIndex, DWORD dwM
 				while (fgets(line, dwMaxMsgSize, cache)) {
 					cnt++;
 					if(cnt >= *sIndex){
-						 if(!SendToSocket(hcn, line, dwMaxMsgSize, szError, _countof(szError))){
+						 if(!SendToSocket(hcn, line, (int)strlen(line), szError, _countof(szError))){
 							error = 1;
 							strncpy_s(sFile,size,list[j],_TRUNCATE);
 							*sIndex = cnt;
 							break;
 						}			
 					}
+					line[0]='\0';
 				}
 				fclose(cache);
 				if(error)break;

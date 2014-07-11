@@ -67,6 +67,7 @@ LogNode *lhead=NULL;
 LogNode *ltail=NULL;
 LogNode *lcurrent=NULL;
 
+
 //Shared between web thread log thread and main
 extern int MCCount;
 extern MsgCache *MCHead;
@@ -226,9 +227,10 @@ void RunSafedE(HANDLE event)
 
 					BOOL DataSent=0;
 					BOOL FailFromCache=0;
-					DWORD TheCounter = SafedCounter;
-					DWORD dwWaitCount = WaitForSingleObject(hMutexCount,1000);
+					DWORD tmpCounter=0;
+					DWORD dwWaitCount = WaitForSingleObject(hMutexCount,5000);
 					if(dwWaitCount == WAIT_OBJECT_0) {
+						DWORD TheCounter = SafedCounter;
 
 						if(usefile) {
 							// Check to see whether we need to rotate our log file.
@@ -283,6 +285,7 @@ void RunSafedE(HANDLE event)
 										e_hostcurrentnode->Socket=INVALID_SOCKET;
 									} else {
 										recovery = -1; //backuped message has been sent
+										LogExtMsg(ERROR_LOG,"sending recovered log msg  ......>: %s",szSendStringBkp); 
 									}
 
 								} 
@@ -291,8 +294,10 @@ void RunSafedE(HANDLE event)
 								if(recovery != 1){// try to send the current message only if no backuped message exists
 									dwWaitFile = WaitForSingleObject(hMutexFile,500);
 									if(dwWaitFile == WAIT_OBJECT_0) {
+										GetSentIndex(sentFile,_countof(sentFile), &sentIndex);
 										if(sentIndex && strlen(sentFile)){
 											FailFromCache=SendFailedCache(e_hostcurrentnode, sentFile, _countof(sentFile),&sentIndex, dwMaxMsgSize);
+											SetSentIndex(sentFile,sentIndex);
 										}
 									}
 									ReleaseMutex(hMutexFile);
@@ -304,7 +309,7 @@ void RunSafedE(HANDLE event)
 											// Close the socket. Restablish it on the next cycle, if we can.
 											CloseSocket(e_hostcurrentnode->Socket, e_hostcurrentnode->tlssession);
 											e_hostcurrentnode->Socket=INVALID_SOCKET;
-											if(recovery == 0)recovery = 1;//if backuped message is sent , it will not be sent again
+											if(recovery == 0)recovery = 1;//if backuped message is sent , it will not be sent again											
 										} else {
 											strcpy(szSendStringBkp, szSendString);
 											DataSent=1;
@@ -325,6 +330,7 @@ void RunSafedE(HANDLE event)
 						}
 					
 					}
+					tmpCounter = SafedCounter;
 					ReleaseMutex(hMutexCount);	
 
 					// Write the data out to a disk, if requested.
@@ -344,21 +350,30 @@ void RunSafedE(HANDLE event)
 								posslash = strstr(tmpslash,"\\");
 							}
 							if(tmpslash){
-								if(!DataSent && (!sentIndex || (strlen(sentFile) == 0))){
+								int lastSentIndex = 0;
+								char lastSentFile[255];
+								GetSentIndex(lastSentFile,_countof(lastSentFile), &lastSentIndex);
+								if(!DataSent && ((!lastSentIndex || (strlen(lastSentFile) == 0)) || !strcmp(lastSentFile, tmpslash))){
+									//if send fails and no index has been set yet or a greater value for the same file log has been set by onother thread
 									strncpy_s(sentFile,_countof(sentFile),tmpslash,_TRUNCATE);
-									if(SafedCounter > 1)
+									if(SafedCounter > 1 ){
 										sentIndex = SafedCounter -1;
+										if(!lastSentIndex || lastSentIndex > sentIndex){
+											SetSentIndex(sentFile,sentIndex);//in case failed to send data and no cache toll now
+										}else{
+											sentIndex = lastSentIndex;
+										}
+									}
 								}
 							}
-
 						}
-						SetSentIndex(sentFile,sentIndex);//in case failed to send data and no cache toll now
 						ReleaseMutex(hMutexFile);	
 					}
 					FailFromCache = 0;
 
 					// Did we push out at least one record?
-					/*if(!DataSent) {
+					/*cache in local file
+					if(!DataSent) {
 						// Break out of the for/next loop.
 						LogExtMsg(ERROR_LOG,"ERROR: Failed to send msg");
 						mymsg->cached = 1;
@@ -366,8 +381,9 @@ void RunSafedE(HANDLE event)
 						mymsg = mymsg->next;
 						hasCash=1;
 						continue;
-					}*/
-
+					}
+					*/
+					//Msg Sent! Update the status and log the event to the webcache
 					MCCurrent = (MsgCache *)malloc(sizeof(MsgCache));
 					if (MCCurrent) {
 						memset(MCCurrent,0,sizeof(MsgCache));
@@ -384,7 +400,7 @@ void RunSafedE(HANDLE event)
 						strncpy_s(MCCurrent->szTempString, MAX_EVENT, bufmsg,_TRUNCATE);
 						if(bufmsg)free(bufmsg);
 						MCCurrent->criticality = 0;
-						MCCurrent->SafedCounter = SafedCounter;
+						MCCurrent->SafedCounter = tmpCounter;
 						MCCurrent->ShortEventID = 0;
 						MCCurrent->SourceName[0]='\0';
 						MCCurrent->UserName[0]='\0';
@@ -424,7 +440,7 @@ void RunSafedE(HANDLE event)
 					} else {
 						LogExtMsg(ERROR_LOG,"Unable to allocate latest event cache\n");
 					}
-
+					
 
 					LCHead = mymsg->next;
 					if(mymsg->msg)free(mymsg->msg);
