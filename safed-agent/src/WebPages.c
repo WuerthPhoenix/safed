@@ -30,7 +30,7 @@
 	GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
-#define VERSION "1.7.1"
+#define VERSION "1.7.2"
 
 
 extern void trim(char *);
@@ -3772,10 +3772,15 @@ int Log_Result(char *source, char *dest, int size)
 						    i_log) {
 							// Replace this log monitor with the new version.
 							// WRITE OUT NEW LOG MONITOR HERE
+							if(strlen(log_struct.format)){
 							fprintf(configfile,
-								"	log=%s\n",
-								log_struct.name);
-
+								"	log=GenericLog:%s|%s\n",
+								log_struct.name,log_struct.format);
+							}else{
+							fprintf(configfile,
+                                                                "       log=GenericLog:%s\n",
+                                                                log_struct.name);
+							}
 							position += size;
 							logcounter++;
 							continue;
