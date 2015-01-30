@@ -14,7 +14,7 @@ CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
 all: safed
 
 safed: safed.o Configuration.o MemoryCache.o Misc.o webserver.o WebPages.o WebPagesAudit.o webutilities.o MessageFile.o $(GNUTLS_C)
-	$(CC) $(LDFLAGS) $^ -pthread -lcrypt -lnsl -lrt $(GNUTLS_L) -o safed
+	$(CC) $(LDFLAGS) $^ -lpthread -lcrypt -lnsl -lrt $(GNUTLS_L) -o safed
 	
 
 SafedTLS.o:	SafedTLS.c SafedTLS.h
