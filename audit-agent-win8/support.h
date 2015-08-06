@@ -95,7 +95,8 @@
 #define SIZE_OF_PASSWORD		 256
 #define SIZE_OF_USERMATCH		 256
 #define SIZE_OF_GENERALMATCH	 512
-#define SIZE_OF_EVENTLOG		 35
+//FIX Custom File - max size of log name - see also MAX_SIZE_OF_EVENTLOG and Read_Objective_Registry %SIZE_OF_EVENTLOG
+#define SIZE_OF_EVENTLOG		 120
 #define SIZE_OF_CRITICALITY		 12
 #define SIZE_OF_EVENTIDMATCH	 256
 #define SIZE_OF_AN_OBJECTIVE	 1056

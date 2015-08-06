@@ -142,8 +142,8 @@ HKEY MyGetServiceRegistryKey()
 
 
 
- 
-DWORD QueryKey(HKEY hKey, char result[MAXCUSTOMLOGS][35], int first, int second) 
+//FIX Custom File 
+DWORD QueryKey(HKEY hKey, char result[MAXCUSTOMLOGS][MAX_SIZE_OF_EVENTLOG], int first, int second) 
 { 
     TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
     DWORD    cbName;                   // size of name string 

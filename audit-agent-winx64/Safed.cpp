@@ -971,6 +971,9 @@ void CSafedService::Run()
 					stype = LOG_DNS;
 				} else if(LogCounter == 5) {
 					stype = LOG_REP;
+				} else {
+					//FIX Custom File
+					stype = LOG_CUS;
 				}
 				//MessageCounter = 0;
 

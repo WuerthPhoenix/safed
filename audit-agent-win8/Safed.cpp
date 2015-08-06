@@ -105,7 +105,8 @@ DWORD			dwNumCustomEventLogs = 0;
 WCHAR			(* EventLogStatusName)[_MAX_PATH + 1]=NULL;
 TCHAR			(* EventLogSourceName)[_MAX_PATH + 1]=NULL;
 TCHAR			(* OtherEventLogSourceNames)[_MAX_PATH + 1]=NULL;
-char			CustomLogName[10*SIZE_OF_EVENTLOG]="";// max 10 objectives with custom event logs are supported
+//FIX Custom File
+char			CustomLogName[100*SIZE_OF_EVENTLOG]="";// max 100 objectives with custom event logs are supported
 
 DWORD			*EventLogCounter;
 
@@ -208,7 +209,6 @@ int ReadCustomEventLogs()
 	int tot_custom = 0;
 
     CustomLogName[0]='\0';
-	
 
 	while((dw_objective_error = Read_Objective_Registry(i_objective_count,&reg_objective))==0) {
 
@@ -228,6 +228,7 @@ int ReadCustomEventLogs()
 		}
 		i_objective_count++;
 	}
+
 	return tot_custom;
 }
 
@@ -284,9 +285,6 @@ BOOL InitEvents(){
 	wcsncpy_s(EventLogStatusName[LOG_TYPE_DNS],_countof(EventLogStatusName[LOG_TYPE_DNS]),L"LOG_TYPE_DNS",_TRUNCATE);
 	wcsncpy_s(EventLogStatusName[LOG_TYPE_FRS],_countof(EventLogStatusName[LOG_TYPE_FRS]),L"LOG_TYPE_FRS",_TRUNCATE);
 
-
-
-
 	char* begin = CustomLogName;
 	for (DWORD i=0;i<dwNumCustomEventLogs;i++) {
 		char* p = strstr(begin,"#");
@@ -294,8 +292,7 @@ BOOL InitEvents(){
 		if(!p){
 				strncpy_s(tmp,SIZE_OF_EVENTLOG,begin,_TRUNCATE);
 		}else{
-			strncpy_s(tmp,p - begin,begin,_TRUNCATE);
-			tmp[p - begin] = '\0'; 
+			strncpy_s(tmp,p - begin + 1,begin,_TRUNCATE);
 			begin = p + 1;
 			p = strstr(begin,"#");
 		}
@@ -430,6 +427,7 @@ void CollectionThread(HANDLE event)
 				(EVT_SUBSCRIBE_CALLBACK) EventSubCallBack,  // Callback.
 				Flags   // Flags.
 				);
+
 		} else {
 			hEvtBookmark[i] = NULL;
 		}
@@ -530,6 +528,22 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 		}
     }    
     //Display the Event XML on console
+	/*//debug event
+	FILE * OutputFile=(FILE *)NULL;
+	fopen_s(&OutputFile,"c:\\debugevent2.txt","a");
+	if(OutputFile) {
+			 wchar_t buf2[200];
+			 
+			swprintf(buf2, 200, L"Channel: %s\n", (EvtVarTypeNull == pValues[EvtSystemChannel].Type) ? L"" : pValues[EvtSystemChannel].StringVal);
+			fputws(buf2,OutputFile);
+			swprintf(buf2, 200, L"Eventid: %lu\n", pValues[EvtSystemEventID].UInt16Val);
+			fputws(buf2,OutputFile);
+
+			fflush(OutputFile);
+			fclose(OutputFile);
+	}
+    */
+
 
 	//------------------------------
 	WORD EventID = pValues[EvtSystemEventID].UInt16Val;
@@ -768,6 +782,8 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 					} else {
 						LogExtMsg(INFORMATION_LOG,"Error in bookmark: %d",GetLastError());
 					}
+					//FIX Custom File
+				    ecur->EventLogCounter=EventTriggered;
 				}
 			}
 		}
@@ -1348,6 +1364,10 @@ void CSafedService::Run()
 			} else if (strstr(CurrentEvent->EventLogSourceName,"USB") != NULL) {//WMIUSB
 				stype = LOG_SEC;//not really ... usb is not forwarded to sec, so put EventTriggered = USB_EVENT;
 				EventTriggered = USB_EVENT;
+			} else{
+				//FIX Custom File
+				stype = LOG_CUS;
+				EventTriggered = CurrentEvent->EventLogCounter;
 			}
 
 			etype = CurrentEvent->EventLogLevel;
@@ -2390,8 +2410,14 @@ BOOL CheckLogExists(TCHAR *LogName, int LeaveRetention)
 
 	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKeyName, 0L, KEY_READ|KEY_SET_VALUE, &hk) != ERROR_SUCCESS) {
 		if(LogName) { LogExtMsg(WARNING_LOG,"Cannot determine if log %s exists - openkey failed",LogName); } 
-		return(FALSE);
+		wsprintf(szKeyName, _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\%s"), LogName);
+		//FIX Custom File
+	    if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKeyName, 0L, KEY_READ|KEY_SET_VALUE, &hk) != ERROR_SUCCESS) {
+		    if(LogName) { LogExtMsg(WARNING_LOG,"Cannot determine if log %s exists - openkey failed",LogName); } 
+		    return(FALSE);
+		}
 	}
+    if(LogName) { LogExtMsg(INFORMATION_LOG,"Log %s exists - openkey success",LogName); }
 
 	//No need to check for "File" under 2008/Vista
 

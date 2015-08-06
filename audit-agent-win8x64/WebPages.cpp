@@ -1308,8 +1308,16 @@ int Objective_Config(char *source, char *dest, int size)
 DWORD getCustomLogNames(char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG])
 {
    DWORD tot = 0;
+   DWORD totapp = 0;
+   int next = 0;
+   int notcustom = 0;
+   char CustomLogNameListTmp[50][SIZE_OF_EVENTLOG];//max 50 Event System Logs are supported
    for(int i =0 ; i < MAXCUSTOMLOGS; i++)
 		CustomLogNameList[i][0]='\0';
+
+   for(int i =0 ; i < 50; i++)
+		CustomLogNameListTmp[i][0]='\0';
+
    HKEY hTestKey;
    TCHAR szKeyName[MAX_STRING]="";
 	_snprintf_s(szKeyName, _countof(szKeyName),_TRUNCATE,_T("SYSTEM\\CurrentControlSet\\Services\\EventLog"));
@@ -1321,18 +1329,55 @@ DWORD getCustomLogNames(char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG])
         &hTestKey) == ERROR_SUCCESS
       )
    {
-      tot = QueryKey(hTestKey, CustomLogNameList,MAXCUSTOMLOGS, SIZE_OF_EVENTLOG);
+      tot = QueryKey(hTestKey, CustomLogNameListTmp,50, SIZE_OF_EVENTLOG);
+	  if(tot > 50){//max 50 Event System Logs are supported an total MAXCUSTOMLOGS
+		tot = 50;
+	  }
 	  for(int i =0 ; i < tot; i++){
-		if(!strcmp(CustomLogNameList[i],"Security") || !strcmp(CustomLogNameList[i],"Application")||
-			!strcmp(CustomLogNameList[i],"Directory Service") || !strcmp(CustomLogNameList[i],"DNS Server")||
-			!strcmp(CustomLogNameList[i],"System") || !strcmp(CustomLogNameList[i],"File Replication Service"))
-			CustomLogNameList[i][0]='\0';
+		if(!strcmp(CustomLogNameListTmp[i],"Security") || !strcmp(CustomLogNameListTmp[i],"Application")||
+			!strcmp(CustomLogNameListTmp[i],"Directory Service") || !strcmp(CustomLogNameListTmp[i],"DNS Server")||
+			!strcmp(CustomLogNameListTmp[i],"System") || !strcmp(CustomLogNameListTmp[i],"File Replication Service")){
+				CustomLogNameListTmp[i][0]='\0';
+				notcustom++;
+		}
+	  }
+
+   }
+   tot = tot - notcustom;
+   RegCloseKey(hTestKey);
+
+   _snprintf_s(szKeyName, _countof(szKeyName),_TRUNCATE,_T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels"));
+   if( RegOpenKeyEx( HKEY_LOCAL_MACHINE,
+        szKeyName,
+        0,
+        KEY_READ,
+        &hTestKey) == ERROR_SUCCESS
+      )
+   {
+      totapp = QueryKey(hTestKey, CustomLogNameList,MAXCUSTOMLOGS - tot, SIZE_OF_EVENTLOG);
+	  //FIX Custom File
+	  if(totapp > MAXCUSTOMLOGS - tot){
+		totapp = MAXCUSTOMLOGS - tot;
 	  }
    }
-   
+
    RegCloseKey(hTestKey);
+
+
+
+   for(int i =0 ; i < tot + notcustom; i++){
+		if(strlen(CustomLogNameListTmp[i]) > 0){
+		    strcpy(CustomLogNameList[totapp + next],CustomLogNameListTmp[i]);
+			next++;
+		}
+    }
+
+
+   tot = totapp + next;
    return tot;
 }
+
+
 
 
 int Objective_Display(char *source, char *dest, int size)
@@ -1532,7 +1577,7 @@ int Objective_Display(char *source, char *dest, int size)
 			REPLOG_TOKEN,(strstr(reg_objective.str_eventlog_type,REPLOG_TOKEN) != NULL?" checked":""),
 			CUSLOG_TOKEN,(strstr(reg_objective.str_eventlog_type,CUSLOG_TOKEN) != NULL?" checked":"")
 		);
-		char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG];//max 100 Event Logs are supported
+		char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG];//max 1000 Event Logs are supported
 		DWORD totcustom = getCustomLogNames(CustomLogNameList);
 		int selected = 0;
 		for (int i = 0; i < totcustom; i++)
@@ -2645,15 +2690,17 @@ int ShowLicense(SOCKET http_socket, gnutls_session session_https)
 }
 
 int GetCustomLogs(SOCKET http_socket, gnutls_session session_https){
-	char msg[MAXCUSTOMLOGS*SIZE_OF_EVENTLOG]= "No custom event log have been found in SYSTEM\\CurrentControlSet\\Services\\EventLog!";
+	//FIX Custom File
+	char msg[SIZE_OF_EVENTLOG + 100]= "No custom event log have been found in SYSTEM\\CurrentControlSet\\Services\\EventLog or SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels!";
 	int first = 1;
-	char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG];//max 100 Event Logs are supported
+	char CustomLogNameList[MAXCUSTOMLOGS][SIZE_OF_EVENTLOG];//max 1000 Event Logs are supported
 	DWORD totcustom = getCustomLogNames(CustomLogNameList);
 	for (int i = 0; i < totcustom; i++)
 	{
 		if(strlen(CustomLogNameList[i]) > 0){
 			if(!first){
-				strncat_s(msg,MAXCUSTOMLOGS*SIZE_OF_EVENTLOG,"|",_TRUNCATE);
+				//FIX Custom File
+				strncpy_s(msg,MAXCUSTOMLOGS*SIZE_OF_EVENTLOG,"|",_TRUNCATE);
 				strncat_s(msg,MAXCUSTOMLOGS*SIZE_OF_EVENTLOG,CustomLogNameList[i],_TRUNCATE);
 
 			}else{
@@ -2661,13 +2708,13 @@ int GetCustomLogs(SOCKET http_socket, gnutls_session session_https){
 				strncpy_s(msg,MAXCUSTOMLOGS*SIZE_OF_EVENTLOG,CustomLogNameList[i],_TRUNCATE);
 
 			}
+			//FIX Custom File
+		    if(WEBSERVER_TLS) 
+			    sendTLS(msg,session_https);
+		    else
+			    send(http_socket,msg,(int)strlen(msg),0);
 		}
 	}
-
-	if(WEBSERVER_TLS) 
-		sendTLS(msg,session_https);
-	else
-		send(http_socket,msg,(int)strlen(msg),0);
 
 	return 0;
 }
