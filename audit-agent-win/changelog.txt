@@ -7,4 +7,4 @@
 1.6.8 - user with blank supported
 1.7.0 - USB audit for win 2008 +
 1.7.1 - local cache update
-1.7.2 - custom logs for win 2008 +
+1.8.0 - custom logs for win 2008 +
