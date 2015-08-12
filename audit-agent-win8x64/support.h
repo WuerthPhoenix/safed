@@ -263,6 +263,7 @@ struct _msgcache {
 	TCHAR SIDType[100];
 	TCHAR EventLogType[60];
 	TCHAR szCategoryString[256];
+	TCHAR Task[256];
 	char DataString[MAX_EVENT];
 	char szTempString[MAX_EVENT];
 	DWORD EventLogCounter;

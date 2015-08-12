@@ -1,1 +1,1 @@
-#define SAFED_VERSION "1.8.0"
+#define SAFED_VERSION "1.8.1"

@@ -4,5 +4,5 @@ audit-agent-win8 -> Safed.exe rename it to SafedV32.exe
 audit-agent-winx64 -> Safed.exe rename it to Safed64.exe
 audit-agent-win8x64 -> Safed.exe rename it to SafedV64.exe
 copy in this dir all executable Safed32.exe,SafedV32.exe,Safed64.exe,SafedV64.exe and run
-MakeSafedMSI.bat -dversion=1.8.0
-SafedMSIVersion.bat 1_8_0
+MakeSafedMSI.bat -dversion=1.8.1
+SafedMSIVersion.bat 1_8_1

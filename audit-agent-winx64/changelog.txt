@@ -1,5 +1,5 @@
 1.6.2 - fix loop event log corruption
-1.6.3 - error messages "Event Log Corruption" trasmitted to server removed for win 20088 +
+1.6.3 - error messages "Event Log Corruption" trasmitted to server removed for win 2008 +
 1.6.4 - sap record log file support
 1.6.5 - truncated file support
 1.6.6 - ADQueryDNet.exe administrator discovery added
@@ -8,3 +8,4 @@
 1.7.0 - USB audit for win 2008 +
 1.7.1 - local cache update
 1.8.0 - custom logs for win 2008 +
+1.8.1 - Full Source name, Task(id) and Task Category strings for win 2008 +

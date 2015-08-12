@@ -465,6 +465,59 @@ void CollectionThread(HANDLE event)
 	_endthread();
 }
 
+/* ///////////////////////////////////////////////////////////////
+// function taken from MSDN: https://msdn.microsoft.com/en-us/library/windows/desktop/dd996923(v=vs.85).aspx
+*/ ///////////////////////////////////////////////////////////////
+// Gets the specified message string from the event. If the event does not
+// contain the specified message, the function returns NULL.
+LPWSTR GetMessageString(EVT_HANDLE hMetadata, EVT_HANDLE hEvent, EVT_FORMAT_MESSAGE_FLAGS FormatId)
+{
+    LPWSTR pBuffer = NULL;
+    DWORD dwBufferSize = 0;
+    DWORD dwBufferUsed = 0;
+    DWORD status = 0;
+
+    if (!EvtFormatMessage(hMetadata, hEvent, 0, 0, NULL, FormatId, dwBufferSize, pBuffer, &dwBufferUsed))
+    {
+        status = GetLastError();
+        if (ERROR_INSUFFICIENT_BUFFER == status)
+        {
+            // An event can contain one or more keywords. The function returns keywords
+            // as a list of keyword strings. To process the list, you need to know the
+            // size of the buffer, so you know when you have read the last string, or you
+            // can terminate the list of strings with a second null terminator character 
+            // as this example does.
+            if ((EvtFormatMessageKeyword == FormatId))
+                pBuffer[dwBufferSize-1] = L'\0';
+            else
+                dwBufferSize = dwBufferUsed;
+
+            pBuffer = (LPWSTR)malloc(dwBufferSize * sizeof(WCHAR));
+
+            if (pBuffer)
+            {
+                EvtFormatMessage(hMetadata, hEvent, 0, 0, NULL, FormatId, dwBufferSize, pBuffer, &dwBufferUsed);
+
+                // Add the second null terminator character.
+                if ((EvtFormatMessageKeyword == FormatId))
+                    pBuffer[dwBufferUsed-1] = L'\0';
+            }
+            else
+            {
+                wprintf(L"malloc failed\n");
+            }
+        }
+        else if (ERROR_EVT_MESSAGE_NOT_FOUND == status || ERROR_EVT_MESSAGE_ID_NOT_FOUND == status)
+            ;
+        else
+        {
+            wprintf(L"EvtFormatMessage failed with %u\n", status);
+        }
+	}
+
+    return pBuffer;
+}
+
 DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context, EVT_HANDLE Event)
 {
 	WCHAR *pBuff = NULL;
@@ -656,6 +709,10 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 	}
 
 	bRet = EvtFormatMessage(hPubConfig, Event, NULL, dwPropertyCount, pValues, 9, dwBuffSize, pBuff, &dwBuffUsed);
+
+	LPWSTR pwsCategoryName = NULL;
+	pwsCategoryName = GetMessageString(hPubConfig, Event, EvtFormatMessageTask);
+
 	LogExtMsg(INFORMATION_LOG,"got message");
 
 	//pBuff = new WCHAR[4096];
@@ -730,7 +787,17 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 		strncpy_s(ecur->EventLogSourceName, _countof(ecur->EventLogSourceName), "System",_TRUNCATE);
 		strncpy_s(ecur->UserName, 256, "N/A",_TRUNCATE);
 		strncpy_s(ecur->SIDType, 100, "N/A",_TRUNCATE);
-		strncpy_s(ecur->szCategoryString, 256, "None",_TRUNCATE);
+
+		char cCategoryName[256];
+		WideCharToMultiByte(CP_ACP,0,pwsCategoryName,-1,(LPSTR)&cCategoryName,256,NULL,NULL);
+		if (pwsCategoryName) {
+			strncpy_s(ecur->szCategoryString, sizeof(ecur->szCategoryString), (const char *)&cCategoryName, _TRUNCATE);
+		} else {
+			strncpy_s(ecur->szCategoryString, 256, "None",_TRUNCATE);
+		}
+		free(pwsCategoryName);
+		pwsCategoryName = NULL;
+
 		ecur->DataString[0] = '\0';
 		ecur->szTempString[0] = '\0';
 		ecur->EventLogCounter=0;
@@ -760,6 +827,18 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 		////EventID				= XML EventID
 		ecur->ShortEventID = EventID; 
 
+		// Task
+		start = strstr(tempevent,"<Task");
+		if (start) {
+			start = strstr(start,">");
+			if (start) {
+				start = start+1;
+				end = strstr(start,"<");
+				if (end) {
+					strncpy_s(ecur->Task,_countof(ecur->Task),start,end-start);
+				}
+			}
+		}
 		////EventLogSourceName				= XML Channel
 		start = strstr(tempevent,"<Channel");
 		if (start) {
@@ -1579,9 +1658,32 @@ void CSafedService::Run()
 							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,matchedstr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
 						}
 						if(EventTriggered != USB_EVENT ){//WMIUSB
-							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s%s%d\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,UserStr,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString,DELIM,EventLogCounter[EventTriggered]);
+							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%stask=%s%s%s%s%s%s%s%s%s (%s)%s%s%s%d\n",
+								header,DELIM,
+								CurrentEvent->SubmitTime,DELIM,
+								ShortEventID,DELIM,
+								CurrentEvent->EventLogSourceName,DELIM,
+								UserStr,DELIM,
+								CurrentEvent->Task, DELIM,
+								CurrentEvent->SIDType,DELIM,
+								CurrentEvent->EventLogType,DELIM,
+								CurrentEvent->Hostname,DELIM,
+								CurrentEvent->SourceName, CurrentEvent->szCategoryString,DELIM,
+								CurrentEvent->szTempString,DELIM,
+								EventLogCounter[EventTriggered]);
 						}else{//WMIUSB
-							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%s%s%s%s%s%s%s%s%s%s\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,ShortEventID,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->UserName,DELIM,CurrentEvent->SIDType,DELIM,CurrentEvent->EventLogType,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString);			
+							_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%seventid=%ld%s%s%suser=%s%stask=%s%s%s%s%s%s%s%s%s (%s)%s%s\n",
+								header,DELIM,
+								CurrentEvent->SubmitTime,DELIM,
+								ShortEventID,DELIM,
+								CurrentEvent->EventLogSourceName,DELIM,
+								CurrentEvent->UserName,DELIM,
+								CurrentEvent->Task, DELIM,
+								CurrentEvent->SIDType,DELIM,
+								CurrentEvent->EventLogType,DELIM,
+								CurrentEvent->Hostname,DELIM,
+								CurrentEvent->SourceName, CurrentEvent->szCategoryString,DELIM,
+								CurrentEvent->szTempString);			
 							//_snprintf_s(szSendString,dwMaxMsgSize*sizeof(char),_TRUNCATE,"%s%s%s%s%s%s%s%s%s\n",header,DELIM,CurrentEvent->SubmitTime,DELIM,CurrentEvent->Hostname,DELIM,CurrentEvent->EventLogSourceName,DELIM,CurrentEvent->szTempString);			
 						}
 
