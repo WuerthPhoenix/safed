@@ -2,7 +2,7 @@
 
 ## Description
 
-Safed is the acronym of Security Auditing ForwardEr Deamon. It is an open source agent suite, based on the SNARE agent provided by Intersect Allinace. 
+Safed is the acronym of **S**ecurity **A**uditing **F**orward**E**r **D**eamon. It is an open source agent suite, based on the SNARE agent provided by Intersect Allinace. 
 The existing open source basis was enhanced as follows:
 - Reliability of the communication between agent and syslog server
 - Resend not received logs
