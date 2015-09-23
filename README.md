@@ -33,7 +33,7 @@ The installation and configuration guide can be downloaded [here](http://www.net
 
 ## News
 
-News and updates can be found on this [blog](http://www.neteye-blog.com/page/2/?s=Safed&x=0&y=0&lang=en).
+News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed&x=0&y=0&lang=en).
 
 
 ## Building From Source
