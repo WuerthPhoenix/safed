@@ -58,6 +58,7 @@ case "$1" in
 	
 	if [ -f /usr/bin/safed ] ; then
 		echo "safed starting."
+        touch /var/log/safed/$(date +%Y%m%d).log
 		uname | grep AIX > /dev/null
 		if [ $? -eq 0 ]; then
 		 	startsrc -a '-l' -s safed
