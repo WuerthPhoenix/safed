@@ -18,8 +18,8 @@ The existing open source basis was enhanced as follows:
 - safed-audit-aix: the safed component that allows safed to interoperate with the IBM AIX audit component
 - audit-agent-win: the safed agent for Win2003
 - audit-agent-winx64: the safed agent for Win2003 for 64 processors (changes only the Visual C++ project)
-- audit-agent-win8: the safed agent for Win2008
-- audit-agent-win8x64: the safed agent for Win2008 for 64 bit processors
+- audit-agent-win8: the safed agent for Win2008/2012
+- audit-agent-win8x64: the safed agent for Win2008/2012 for 64 bit processors
 - audit-agent-allmsi: 
 - gnutls: the gnutls library compiled for 32 bit processors
 - regexp: the regexp library compiled for 32 bit processors
