@@ -798,6 +798,8 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 		free(pwsCategoryName);
 		pwsCategoryName = NULL;
 
+		//strncpy_s(ecur->szCategoryString, 256, pBuff2.AnsiStringVal,_TRUNCATE);
+		//strncpy_s(ecur->szCategoryString, 256, "None",_TRUNCATE);
 		ecur->DataString[0] = '\0';
 		ecur->szTempString[0] = '\0';
 		ecur->EventLogCounter=0;
@@ -959,6 +961,10 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 				//Audit Success
 				ecur->EventLogLevel=TYPE_SUCCESS;
 				strncpy_s(ecur->EventLogType,_countof(ecur->EventLogType),"Success Audit",_TRUNCATE);
+			} else {
+				//Default: information
+				ecur->EventLogLevel=TYPE_INFO;
+				strncpy_s(ecur->EventLogType,_countof(ecur->EventLogType),"Information",_TRUNCATE);			
 			}
 		}
 
