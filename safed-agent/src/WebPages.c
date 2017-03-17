@@ -30,7 +30,7 @@
 	GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
-#define VERSION "1.8.2"
+#define VERSION "1.8.3"
 
 
 extern void trim(char *);

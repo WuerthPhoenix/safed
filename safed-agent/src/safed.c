@@ -1173,17 +1173,6 @@ int fileHasChanged(LogFileData *f) {
 		// if I am on this branch, there is a change regarding the size or the modification time of the file
 		slog(LOG_NORMAL, " ... detected a change in: %s\n", f->fileName);
 
-		// update the descriptors
-		f->size = stats.st_size;	// size of file, in bytes
-		#if defined(__hpux__) || defined(_AIX)
-		f->mtime = stats.st_mtime;
-		#else
-		f->mtime = stats.st_mtim;	// time of last modification
-		#endif
-		f->dev = stats.st_dev;		// device containing the file
-		f->ino = stats.st_ino;		// inode number
-		f->mode = stats.st_mode;	// file mode
-
 		int strange=0;
 		// Something has changed, find out what and take action
 		if (stats.st_size < f->size) {
@@ -1204,6 +1193,17 @@ int fileHasChanged(LogFileData *f) {
 			strange = 1;
 		}
 		#endif
+
+                // update the descriptors
+                f->size = stats.st_size;        // size of file, in bytes
+                #if defined(__hpux__) || defined(_AIX)
+                f->mtime = stats.st_mtime;
+                #else
+                f->mtime = stats.st_mtim;       // time of last modification
+                #endif
+                f->dev = stats.st_dev;          // device containing the file
+                f->ino = stats.st_ino;          // inode number
+                f->mode = stats.st_mode;        // file mode
 
 		if (strange) {
 			// Something went wrong, so ditch the old descriptor and
