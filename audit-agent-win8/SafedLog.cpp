@@ -557,7 +557,7 @@ void RunSafedE(HANDLE event)
 								LCCurrent->msg = (char*)malloc(dwMaxMsgSize*sizeof(char)); // Nice big memory buffer - just in case.
 								if (LCCurrent->msg){
 									LCCurrent->msg[0]='\0';
-									LCCurrent->msglen=strlen(logbuffer);
+									LCCurrent->msglen= strlen(logbuffer) > dwMaxMsgSize ? dwMaxMsgSize: strlen(logbuffer);
 									strncpy_s(LCCurrent->msg, dwMaxMsgSize*sizeof(char), logbuffer,_TRUNCATE);
 									LCCurrent->msg[LCCurrent->msglen]='\0';
 									LCCurrent->next=NULL;
