@@ -83,16 +83,16 @@ int InitWebServer(unsigned short port,char *password, char *ip)
 	http_listen_socket = socket(AF_INET, SOCK_STREAM,0); // TCP socket
 	
 	if (http_listen_socket == INVALID_SOCKET){
-		LogExtMsg(INFORMATION_LOG,"bind() failed: INVALID_SOCKET");
+		LogExtMsg(ERROR_LOG,"bind() failed: INVALID_SOCKET");
 		return -1;
 	}
 	if (setsockopt(http_listen_socket,SOL_SOCKET,SO_DONTLINGER,"0",1)) {
-		LogExtMsg(INFORMATION_LOG,"setsockopt(DONTLINGER) failed: SOCKET_ERROR");
+		LogExtMsg(ERROR_LOG,"setsockopt(DONTLINGER) failed: SOCKET_ERROR");
 		//return -1;
 	}
 	if (bind(http_listen_socket,(struct sockaddr*)&local,sizeof(local) ) 
 		== SOCKET_ERROR) {
-		LogExtMsg(INFORMATION_LOG,"bind() failed: SOCKET_ERROR");
+		LogExtMsg(ERROR_LOG,"bind() failed: SOCKET_ERROR");
 		// give it another few chances to bind
 		for (int i=0;;i++) {
 			Sleep(1000);
@@ -103,7 +103,7 @@ int InitWebServer(unsigned short port,char *password, char *ip)
 	}
 
 	if (listen(http_listen_socket,5) == SOCKET_ERROR) {
-		LogExtMsg(INFORMATION_LOG,"listen() failed: SOCKET_ERROR");
+		LogExtMsg(ERROR_LOG,"listen() failed: SOCKET_ERROR");
 		return -1;
 	}
 

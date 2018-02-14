@@ -437,11 +437,12 @@ int Read_Objective_Registry(int i_objective_number, Reg_Objective *pRegistry_str
 	// NOTE: This line is TAB delimited.
 	// Note str_general_temp is 514 bytes to allow for the two wildcard characters
 	//sscanf_s(str_objective,"%4[^\t]\t%4[^\t]\t%4[^\t]\t%256[^\t]\t%514[^\t]\t%4[^\t]\t%256[^\t]\t%4[^\t]\t%4[^\n]\n",str_temp_pri,_countof(str_temp_pri),str_temp_evt_type,_countof(str_temp_evt_type),str_temp_log_type,_countof(str_temp_log_type),str_temp_eventids,_countof(str_temp_eventids),str_temp_general,_countof(str_temp_general),str_temp_user_match_type,_countof(str_temp_user_match_type),str_temp_usr,_countof(str_temp_usr),str_temp_event_match_type,_countof(str_temp_event_match_type),str_temp_general_match_type,_countof(str_temp_general_match_type));
+	//sscanf_s(str_objective,"%4[^\t]\t%4[^\t]\t%35[^\t]\t%256[^\t]\t%514[^\t]\t%4[^\t]\t%256[^\t]\t%4[^\t]\t%4[^\n]\n",str_temp_pri,_countof(str_temp_pri),str_temp_evt_type,_countof(str_temp_evt_type),str_temp_log_type,_countof(str_temp_log_type),str_temp_eventids,_countof(str_temp_eventids),str_temp_general,_countof(str_temp_general),str_temp_user_match_type,_countof(str_temp_user_match_type),str_temp_usr,_countof(str_temp_usr),str_temp_event_match_type,_countof(str_temp_event_match_type),str_temp_general_match_type,_countof(str_temp_general_match_type));
 	//FIX Custom File
 	//SIZE_OF_EVENTLOG = 120   %4[^\t]\t%4[^\t]\t%SIZE_OF_EVENTLOG < 256
 	sscanf_s(str_objective,"%4[^\t]\t%4[^\t]\t%256[^\t]\t%256[^\t]\t%514[^\t]\t%4[^\t]\t%256[^\t]\t%4[^\t]\t%4[^\n]\n",str_temp_pri,_countof(str_temp_pri),str_temp_evt_type,_countof(str_temp_evt_type),str_temp_log_type,_countof(str_temp_log_type),str_temp_eventids,_countof(str_temp_eventids),str_temp_general,_countof(str_temp_general),str_temp_user_match_type,_countof(str_temp_user_match_type),str_temp_usr,_countof(str_temp_usr),str_temp_event_match_type,_countof(str_temp_event_match_type),str_temp_general_match_type,_countof(str_temp_general_match_type));
 
-	/*//debug events
+    /*//debug events
 	FILE * OutputFile=(FILE *)NULL;
 	fopen_s(&OutputFile,"c:\\debugevent.txt","a");
 	if(OutputFile) {
@@ -471,6 +472,17 @@ int Read_Objective_Registry(int i_objective_number, Reg_Objective *pRegistry_str
 			str_temp_log_type[4]='\0';
 
 	}
+
+	/*
+	fopen_s(&OutputFile,"c:\\debugevent.txt","a");
+	if(OutputFile) {
+			fputs("\n",OutputFile);
+			fputs(str_temp_log_type_custom,OutputFile);
+			fputs("\n",OutputFile);
+			fflush(OutputFile);
+			fclose(OutputFile);
+	}
+	*/
 
 	strncpy_s(pRegistry_struct->str_eventlog_type_custom,SIZE_OF_EVENTLOG,"",_TRUNCATE);
 

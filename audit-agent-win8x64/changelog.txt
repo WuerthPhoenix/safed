@@ -11,3 +11,4 @@
 1.8.1 - Full Source name, Task(id) and Task Category strings for win 2008 +
 1.8.2 - events with event log level == 0 and keywords = 0x8000000000000000 (Google pw sync) win 2008 +
 1.8.3 - crashes when file line size > 2048
+1.8.4 - suppressed debug log
