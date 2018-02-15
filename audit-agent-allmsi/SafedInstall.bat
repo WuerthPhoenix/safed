@@ -7,6 +7,8 @@ ver | findstr /i "[Version\ 5" > nul
 IF %ERRORLEVEL% EQU 0 goto ver_xp
 ver | findstr /i "[Version\ 6" > nul
 IF %ERRORLEVEL% EQU 0 goto ver_vista
+ver | findstr /i "[Version\ 10" > nul
+IF %ERRORLEVEL% EQU 0 goto ver_vista
 goto warn
 
 :ver_xp
