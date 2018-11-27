@@ -378,7 +378,7 @@ void ListenThread(HANDLE event)
 		strncpy_s(ip_address,_countof(ip_address),inet_ntoa(from.sin_addr),_TRUNCATE);
 
 		if(WEBSERVER_TLS){		
-			if(!TLSSERVERFAIL)session_https = initSTLSSocket(http_message_socket,getNameFromIP(ip_address));
+			if(!TLSSERVERFAIL)session_https = initSTLSSocket(http_message_socket,ip_address);
 			else session_https = NULL;
 			if (!session_https){
 				closesocket(http_message_socket);

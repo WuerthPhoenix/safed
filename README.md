@@ -20,10 +20,12 @@ The existing open source basis was enhanced as follows:
 - audit-agent-winx64: the safed agent for Win2003 for 64 processors (changes only the Visual C++ project)
 - audit-agent-win8: the safed agent for Win2008/2012
 - audit-agent-win8x64: the safed agent for Win2008/2012 for 64 bit processors
-- audit-agent-allmsi: 
-- gnutls: the gnutls library compiled for 32 bit processors
-- regexp: the regexp library compiled for 32 bit processors
+- audit-agent-allmsi: msi build scripts 
+- includes: the header files for gnutls and regexp 
+- x32: the gnutls and regexp library compiled for 32 bit processors
 - x64: the gnutls and regexp library compiled for 64 bit processors
+- gnutls: the gnutls 3.6.4 
+- regexp: the regexp 2.7
 
 
 ## Installation And Configuration

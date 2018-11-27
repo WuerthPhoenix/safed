@@ -244,7 +244,7 @@
 				MinimalRebuild="true"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="0"
+				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="false"
 				PrecompiledHeaderFile=".\Debug/Safed.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -339,7 +339,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\pr00088\Desktop\gnutls\gnutls-2.10.1\include\gnutls&quot;;&quot;C:\Documents and Settings\pr00088\Desktop\gnutls\gnutls-2.10.1\include&quot;;&quot;C:\Documents and Settings\pr00088\Desktop\regexp\regex-2.7-bin\include&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\regexp-2.7&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\gnutls-3.6.4&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ssize_t=long"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
@@ -364,11 +364,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib gdi32.lib user32.lib winspool.lib comdlg32.lib shell32.lib regex.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib delayimp.lib setupapi.lib comsuppw.lib psapi.lib libgnutls-26.lib libgcrypt-11.lib Activeds.lib ADSIid.lib"
+				AdditionalDependencies="kernel32.lib gdi32.lib user32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib delayimp.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
 				OutputFile=".\Release/Safed.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Documents and Settings\pr00088\Desktop\gnutls\gnutls-2.10.1\bin&quot;;&quot;C:\Documents and Settings\pr00088\Desktop\regexp\regex-2.7-bin\lib&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Documents and Settings\pr00088.WP\Desktop\x32&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;"
 				DelayLoadDLLs="advapi32.dll;activeds.dll;user32.dll"
 				ProgramDatabaseFile=".\Release/Safed.pdb"
 				SubSystem="1"
@@ -434,7 +434,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\pr00088\Desktop\gnutls\gnutls-2.10.1\include\gnutls&quot;;&quot;C:\Documents and Settings\pr00088\Desktop\regexp\regex-2.7-bin\include&quot;;&quot;C:\Documents and Settings\pr00088\Desktop\gnutls\gnutls-2.10.1\include&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
@@ -795,14 +795,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SafedLog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SafedTLS.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Safed.cpp"
 				>
 				<FileConfiguration
@@ -859,6 +851,14 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\SafedLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SafedTLS.cpp"
+				>
 			</File>
 			<File
 				RelativePath="support.cpp"
@@ -1076,15 +1076,15 @@
 				>
 			</File>
 			<File
+				RelativePath="Safed.h"
+				>
+			</File>
+			<File
 				RelativePath=".\SafedLog.h"
 				>
 			</File>
 			<File
 				RelativePath=".\SafedTLS.h"
-				>
-			</File>
-			<File
-				RelativePath="Safed.h"
 				>
 			</File>
 			<File

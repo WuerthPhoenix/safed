@@ -42,14 +42,19 @@
 	  <Directory Id='INSTALLDIR' Name='Safed'>
           <Component Id='Safed32' Guid='B6514913-726C-4937-9BB4-7A8F0180199C' DiskId="1" Win64="no">
             <File Id='SafedEXE32' Name='Safed.exe' LongName='Safed.exe' Source='Safed32.exe' Vital='yes' KeyPath="yes" />
-	      <File Id='ADQ32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
-	      <File Id='ADQDN32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
-		<File Id='RegImport32' Name='Safed.reg' Source='Safed.reg'/>
-            <File Id='regex2x32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
-            <File Id='gcryptx32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
-            <File Id='gnutlsx32' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dll\gnutls26.dll' Vital='yes' />
-            <File Id='errorx32' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dll\libgpgEr.dll' Vital='yes' />
-            <File Id='libtasn1x32' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dll\libtasn1.dll' Vital='yes' />
+	        <File Id='ADQ32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+	        <File Id='ADQDN32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
+		    <File Id='RegImport32' Name='Safed.reg' Source='Safed.reg'/>
+            <File Id='regex2x32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />			
+			<File Id='libffix32' Name='ffi6.dll' LongName='libffi-6.dll' Source='dll\libffi-6.dll' Vital='yes' />
+			<File Id='libgccssehx32' Name='gccseh1.dll' LongName='libgcc_s_sjlj-1.dll' Source='dll\libgcc_s_sjlj-1.dll' Vital='yes' />
+			<File Id='libgmpx32' Name='gmp10.dll' LongName='libgmp-10.dll' Source='dll\libgmp-10.dll' Vital='yes' />
+			<File Id='libgnutlsx32' Name='gnutls30.dll' LongName='libgnutls-30.dll' Source='dll\libgnutls-30.dll' Vital='yes' />
+			<File Id='libhogweedx32' Name='hogweed4.dll' LongName='libhogweed-4.dll' Source='dll\libhogweed-4.dll' Vital='yes' />
+			<File Id='libidn2x32' Name='idn20.dll' LongName='libidn2-0.dll' Source='dll\libidn2-0.dll' Vital='yes' />
+			<File Id='libnettlex32' Name='nettle6.dll' LongName='libnettle-6.dll' Source='dll\libnettle-6.dll' Vital='yes' />
+			<File Id='libp11kitx32' Name='p11kit0.dll' LongName='libp11-kit-0.dll' Source='dll\libp11-kit-0.dll' Vital='yes' />
+			<File Id='libwinpthreadx32' Name='winpthr.dll' LongName='libwinpthread-1.dll' Source='dll\libwinpthread-1.dll' Vital='yes' />
 	    	<ServiceInstall Id="SafedService32"
 		    Description="Safed is a program that facilitates the central collection and processing of Windows NT/2000/XP/2003 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
 		    ErrorControl="normal"
@@ -64,14 +69,19 @@
           </Component>
           <Component Id='Safed64' Guid='70869FC1-D0EC-49d3-B53E-FBFE22D0BD75' DiskId="1" Win64="yes">
             <File Id='SafedEXE64' Name='Safed.exe' LongName='Safed.exe' Source='Safed64.exe' Vital='yes' KeyPath="yes" />
-	      <File Id='ADQ64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
-	      <File Id='ADQDN64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
-		<File Id='RegImport64' Name='Safed.reg' Source='Safed.reg'/>
-            <File Id='regex2x64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
-            <File Id='gcryptx64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />
-            <File Id='gnutlsx64' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dllx64\gnutls26.dll' Vital='yes' />
-            <File Id='errorx64' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dllx64\libgpgEr.dll' Vital='yes' />
-            <File Id='libtasn1x64' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dllx64\libtasn1.dll' Vital='yes' />
+	        <File Id='ADQ64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+	        <File Id='ADQDN64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
+		    <File Id='RegImport64' Name='Safed.reg' Source='Safed.reg'/>
+            <File Id='regex2x64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />			
+			<File Id='libffix64' Name='ffi6.dll' LongName='libffi-6.dll' Source='dllx64\libffi-6.dll' Vital='yes' />
+			<File Id='libgccssehx64' Name='gccseh1.dll' LongName='libgcc_s_seh-1.dll' Source='dllx64\libgcc_s_seh-1.dll' Vital='yes' />
+			<File Id='libgmpx64' Name='gmp10.dll' LongName='libgmp-10.dll' Source='dllx64\libgmp-10.dll' Vital='yes' />
+			<File Id='libgnutlsx64' Name='gnutls30.dll' LongName='libgnutls-30.dll' Source='dllx64\libgnutls-30.dll' Vital='yes' />
+			<File Id='libhogweedx64' Name='hogweed4.dll' LongName='libhogweed-4.dll' Source='dllx64\libhogweed-4.dll' Vital='yes' />
+			<File Id='libidn2x64' Name='idn20.dll' LongName='libidn2-0.dll' Source='dllx64\libidn2-0.dll' Vital='yes' />
+			<File Id='libnettlex64' Name='nettle6.dll' LongName='libnettle-6.dll' Source='dllx64\libnettle-6.dll' Vital='yes' />
+			<File Id='libp11kitx64' Name='p11kit0.dll' LongName='libp11-kit-0.dll' Source='dllx64\libp11-kit-0.dll' Vital='yes' />
+			<File Id='libwinpthreadx64' Name='winpthr.dll' LongName='libwinpthread-1.dll' Source='dllx64\libwinpthread-1.dll' Vital='yes' />			
 	    	<ServiceInstall Id="SafedService64"
 		    Description="Safed is a program that facilitates the central collection and processing of Windows NT/2000/XP/2003 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
 		    ErrorControl="normal"
@@ -86,14 +96,19 @@
           </Component>
           <Component Id='SafedV32' Guid='81649438-895B-447f-ACF5-56505EAE3621' DiskId="1" Win64="no">
             <File Id='SafedEXEV32' Name='Safed.exe' LongName='Safed.exe' Source='SafedV32.exe' Vital='yes' KeyPath="yes" />
-	      <File Id='ADQV32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
-	      <File Id='ADQDNV32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
-		<File Id='RegImportV32' Name='Safed.reg' Source='SafedV.reg'/>
-            <File Id='regex2xV32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />
-            <File Id='gcryptxV32' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dll\gcrypt.dll' Vital='yes' />
-            <File Id='gnutlsxV32' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dll\gnutls26.dll' Vital='yes' />
-            <File Id='errorxV32' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dll\libgpgEr.dll' Vital='yes' />
-            <File Id='libtasn1xV32' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dll\libtasn1.dll' Vital='yes' />
+	        <File Id='ADQV32' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery32.exe' Vital='yes' />
+	        <File Id='ADQDNV32' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
+		    <File Id='RegImportV32' Name='Safed.reg' Source='SafedV.reg'/>
+            <File Id='regex2xV32' Name='regex2.dll' LongName='regex2.dll' Source='dll\regex2.dll' Vital='yes' />	
+			<File Id='libffixV32' Name='ffi6.dll' LongName='libffi-6.dll' Source='dll\libffi-6.dll' Vital='yes' />
+			<File Id='libgccssehxV32' Name='gccseh1.dll' LongName='libgcc_s_sjlj-1.dll' Source='dll\libgcc_s_sjlj-1.dll' Vital='yes' />
+			<File Id='libgmpxV32' Name='gmp10.dll' LongName='libgmp-10.dll' Source='dll\libgmp-10.dll' Vital='yes' />
+			<File Id='libgnutlsxV32' Name='gnutls30.dll' LongName='libgnutls-30.dll' Source='dll\libgnutls-30.dll' Vital='yes' />
+			<File Id='libhogweedxV32' Name='hogweed4.dll' LongName='libhogweed-4.dll' Source='dll\libhogweed-4.dll' Vital='yes' />
+			<File Id='libidn2xV32' Name='idn20.dll' LongName='libidn2-0.dll' Source='dll\libidn2-0.dll' Vital='yes' />
+			<File Id='libnettlexV32' Name='nettle6.dll' LongName='libnettle-6.dll' Source='dll\libnettle-6.dll' Vital='yes' />
+			<File Id='libp11kitxV32' Name='p11kit0.dll' LongName='libp11-kit-0.dll' Source='dll\libp11-kit-0.dll' Vital='yes' />
+			<File Id='libwinpthreadxV32' Name='winpthr.dll' LongName='libwinpthread-1.dll' Source='dll\libwinpthread-1.dll' Vital='yes' />
 	    	<ServiceInstall Id="SafedServiceV32"
 		    Description="Safed is a program that facilitates the central collection and processing of Windows vista/2008/7 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
 		    ErrorControl="normal"
@@ -108,14 +123,19 @@
           </Component>
           <Component Id='SafedV64' Guid='291B76C1-ED46-4456-A8C0-0F8886BEB8EA' DiskId="1" Win64="yes">
             <File Id='SafedEXEV64' Name='Safed.exe' LongName='Safed.exe' Source='SafedV64.exe' Vital='yes' KeyPath="yes" />
-	      <File Id='ADQV64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
-	      <File Id='ADQDNV64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
-		<File Id='RegImportV64' Name='Safed.reg' Source='SafedV.reg'/>
-            <File Id='regex2xV64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />
-            <File Id='gcryptxV64' Name='gcrypt.dll' LongName='libgcrypt-11.dll' Source='dllx64\gcrypt.dll' Vital='yes' />
-            <File Id='gnutlsxV64' Name='gnutls26.dll' LongName='libgnutls-26.dll' Source='dllx64\gnutls26.dll' Vital='yes' />
-            <File Id='errorxV64' Name='libgpgEr.dll' LongName='libgpg-error-0.dll' Source='dllx64\libgpgEr.dll' Vital='yes' />
-            <File Id='libtasn1xV64' Name='libtasn1.dll' LongName='libtasn1-3.dll' Source='dllx64\libtasn1.dll' Vital='yes' />
+	        <File Id='ADQV64' Name='ADQuery.exe' LongName='ADQuery.exe' Source='ADQuery64.exe' Vital='yes' />
+	        <File Id='ADQDNV64' Name='ADQDNet.exe' LongName='ADQueryDNet.exe' Source='ADQueryDNet.exe' Vital='yes' />
+		    <File Id='RegImportV64' Name='Safed.reg' Source='SafedV.reg'/>
+            <File Id='regex2xV64' Name='regex2.dll' LongName='regex2.dll' Source='dllx64\regex2.dll' Vital='yes' />	
+			<File Id='libffixV64' Name='ffi6.dll' LongName='libffi-6.dll' Source='dllx64\libffi-6.dll' Vital='yes' />
+			<File Id='libgccssehxV64' Name='gccseh1.dll' LongName='libgcc_s_seh-1.dll' Source='dllx64\libgcc_s_seh-1.dll' Vital='yes' />
+			<File Id='libgmpxV64' Name='gmp10.dll' LongName='libgmp-10.dll' Source='dllx64\libgmp-10.dll' Vital='yes' />
+			<File Id='libgnutlsxV64' Name='gnutls30.dll' LongName='libgnutls-30.dll' Source='dllx64\libgnutls-30.dll' Vital='yes' />
+			<File Id='libhogweedxV64' Name='hogweed4.dll' LongName='libhogweed-4.dll' Source='dllx64\libhogweed-4.dll' Vital='yes' />
+			<File Id='libidn2xV64' Name='idn20.dll' LongName='libidn2-0.dll' Source='dllx64\libidn2-0.dll' Vital='yes' />
+			<File Id='libnettlexV64' Name='nettle6.dll' LongName='libnettle-6.dll' Source='dllx64\libnettle-6.dll' Vital='yes' />
+			<File Id='libp11kitxV64' Name='p11kit0.dll' LongName='libp11-kit-0.dll' Source='dllx64\libp11-kit-0.dll' Vital='yes' />
+			<File Id='libwinpthreadxV64' Name='winpthr.dll' LongName='libwinpthread-1.dll' Source='dllx64\libwinpthread-1.dll' Vital='yes' />			
 	    	<ServiceInstall Id="SafedServiceV64"
 		    Description="Safed is a program that facilitates the central collection and processing of Windows vista/2008/7 Event Log information. All three primary event logs (Application, System and Security) are monitored, and the secondary logs (DNS, Active Directory, and File Replication) are monitored if available. Event information is converted to tab delimited text format, then delivered to a remote server."
 		    ErrorControl="normal"

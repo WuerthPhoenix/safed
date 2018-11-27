@@ -3813,7 +3813,7 @@ void HandleWebThread(HANDLE event)
 	StartThread(web_hEventList[0]);
 	//while (m_bIsRunning) {
 	while (1) {
-		dwWaitRes=WaitForMultipleObjects(3,web_hEventList,FALSE,5000);
+		dwWaitRes=WaitForMultipleObjects(3,web_hEventList,FALSE,500); //5000ms it too high. 500 will be enough for tht web server
 		if(dwWaitRes != WAIT_FAILED) {
 			if(dwWaitRes == WAIT_OBJECT_0) {
 				// Web server has data to read.

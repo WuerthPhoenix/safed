@@ -4,12 +4,13 @@
 #endif
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
+#include <abstract.h>
 
 
 int initTLS();
 int initSTLS();
-gnutls_session initTLSSocket(SOCKET , const char *);
-gnutls_session initSTLSSocket(SOCKET, const char *);
+gnutls_session initTLSSocket(SOCKET , char *);
+gnutls_session initSTLSSocket(SOCKET, char *);
 int deinitTLS();
 int deinitSTLS(); 
 int deinitTLSSocket(gnutls_session, BOOL);

@@ -13,3 +13,4 @@
 1.8.3 - crashes when file line size > 2048
 1.8.4 - suppressed debug log
 1.8.5 - install adapted for windows 2016
+1.9.0 - update gnutls to 3.6.4 supporting TLS 1.3

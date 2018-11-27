@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <winsock2.h>
 #include <windows.h>
-#include <gcrypt.h>
 
 #include "support.h"
 #include "RegKeyUtilities.h"
@@ -247,7 +246,7 @@ SOCKET ConnectToServer(HostNode *hcn, char *szError, int size)
 				return INVALID_SOCKET;
 			}
 			if(SocketType == SOCKETTYPE_TCP_TLS){
-				if(!TLSFAIL)hcn->tlssession = initTLSSocket(hSocket, getNameFromIP(lpszDestination));
+				if(!TLSFAIL)hcn->tlssession = initTLSSocket(hSocket, inet_ntoa(hcn->server.sin_addr));
 				else hcn->tlssession = NULL;
 				if (!hcn->tlssession){
 					closesocket(hSocket);
