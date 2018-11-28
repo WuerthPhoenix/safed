@@ -22,10 +22,11 @@ The existing open source basis was enhanced as follows:
 - audit-agent-win8x64: the safed agent for Win2008/2012 for 64 bit processors
 - audit-agent-allmsi: msi build scripts 
 - includes: the header files for gnutls and regexp 
-- x32: the gnutls and regexp library compiled for 32 bit processors
-- x64: the gnutls and regexp library compiled for 64 bit processors
-- gnutls: the gnutls 3.6.4 
-- regexp: the regexp 2.7
+- win/x32: the gnutls and regexp library compiled for windows (32 bit processors)
+- win/x64: the gnutls and regexp library compiled for windows (64 bit processors)
+- win/gnutls: the gnutls 3.6.4 
+- win/regexp: the regexp 2.7
+
 
 
 ## Installation And Configuration
@@ -41,7 +42,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 ## Building From Source
 
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
-
+For secure communications GnuTLS 3.6.4 is requested - supporting TLS 1.3 (https://gnutls.org/)
 
 ## License
 
