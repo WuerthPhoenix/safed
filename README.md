@@ -42,6 +42,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 ## Building From Source
 
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
+
 For secure communications GnuTLS 3.6.4 is requested - supporting TLS 1.3 (https://gnutls.org/)
 
 ## License
