@@ -73,7 +73,7 @@ struct Reg_Log {
 // int          HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size);
 #ifdef TLSPROTOCOL
 int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size,
-		   int http_listen_socket, int http_message_socket, gnutls_session session_https, char* fromServer);
+		   int http_listen_socket, int http_message_socket, gnutls_session_t session_https, char* fromServer);
 #else
 int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size,
 		   int http_listen_socket, int http_message_socket, char* fromServer);
@@ -109,7 +109,7 @@ void destroyList(void);
 int debracket(char *source, char *dest, int length);
 
 #ifdef TLSPROTOCOL
-int GetConfig(int http_socket, gnutls_session session_https, char* fromServer);
+int GetConfig(int http_socket, gnutls_session_t session_https, char* fromServer);
 #else
 int GetConfig(int http_socket, char* fromServer);
 #endif

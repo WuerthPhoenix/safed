@@ -14,19 +14,16 @@
 #include <unistd.h>
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>
+#include <gnutls/abstract.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <gcrypt.h>
 #include <pthread.h>
 #include <errno.h>
 #include <netdb.h>
 #include "SafedTLS.h"
 #include "Misc.h"
-
-GCRY_THREAD_OPTION_PTHREAD_IMPL;
-
 
 
 /* A TLS client that loads the certificate and key.
@@ -38,19 +35,18 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #define DH_BITS 1024
 
 
-gnutls_x509_crt crt;
-gnutls_x509_privkey key;
-gnutls_certificate_credentials xcred;
-gnutls_certificate_credentials x509_cred;
-gnutls_dh_params dh_params;
+gnutls_pcert_st crt;
+gnutls_privkey_t key;
+gnutls_certificate_credentials_t xcred;
+gnutls_certificate_credentials_t x509_cred;
 int TLSINIT = 0;
 
 
 static void wrap_db_init (void);
 static void wrap_db_deinit (void);
-static int wrap_db_store (void *dbf, gnutls_datum key, gnutls_datum data);
-static gnutls_datum wrap_db_fetch (void *dbf, gnutls_datum key);
-static int wrap_db_delete (void *dbf, gnutls_datum key);
+static int wrap_db_store (void *dbf, gnutls_datum_t key, gnutls_datum_t data);
+static gnutls_datum_t wrap_db_fetch (void *dbf, gnutls_datum_t key);
+static int wrap_db_delete (void *dbf, gnutls_datum_t key);
 #define TLS_SESSION_CACHE 10
 #define MAX_SESSION_ID_SIZE 32
 #define MAX_SESSION_DATA_SIZE 512
@@ -83,41 +79,41 @@ char* getKEY_FILE(){
  * gnutls_certificate_client_set_retrieve_function( session, cert_callback),
  * before a handshake.
  */
-static int cert_callback(gnutls_session session,
-		const gnutls_datum * req_ca_rdn, int nreqs,
-		const gnutls_pk_algorithm * sign_algos, int sign_algos_length,
-		gnutls_retr_st * st) {
+static int cert_callback(gnutls_session_t session,
+		const gnutls_datum_t * req_ca_rdn, int nreqs,
+		const gnutls_pk_algorithm_t * sign_algos, int sign_algos_length,
+		gnutls_pcert_st ** pcert, unsigned int *pcert_length, gnutls_privkey_t * pkey) {
 	char issuer_dn[256];
 	int i, ret;
 	size_t len;
-	gnutls_certificate_type type;
+	gnutls_certificate_type_t type;
 	/* Print the server's trusted CAs
 	 */
-	if (nreqs > 0)
-		slog(LOG_NORMAL, "- Server's trusted authorities:\n");
+	if (nreqs > 0){
+                slog(LOG_NORMAL, "- Server's trusted authorities:\n");
 
-	else
-		slog(LOG_NORMAL, "- Server did not send us any trusted authorities names.\n");
+	}else{
+		slog(LOG_NORMAL,"- Server did not send us any trusted authorities names.\n");
+	}
 	/* print the names (if any) */
 	for (i = 0; i < nreqs; i++) {
 		len = sizeof(issuer_dn);
 		ret = gnutls_x509_rdn_get(&req_ca_rdn[i], issuer_dn, &len);
 		if (ret >= 0) {
-			slog(LOG_NORMAL, " [%d]: ", i);
-			slog(LOG_NORMAL, "%s\n", issuer_dn);
+			slog(LOG_NORMAL,"%s\n", issuer_dn);
 		}
 	}
+
 	/* Select a certificate and return it.
 	 * The certificate must be of any of the "sign algorithms"
 	 * supported by the server.
 	 */
 	type = gnutls_certificate_type_get(session);
+	*pcert_length = 0;
 	if (type == GNUTLS_CRT_X509) {
-		st->type = type;
-		st->ncerts = 1;
-		st->cert.x509 = &crt;
-		st->key.x509 = key;
-		st->deinit_all = 0;
+		*pcert_length = 1;
+        *pcert = &crt;
+        *pkey = key;
 	} else {
 		return -1;
 	}
@@ -125,176 +121,61 @@ static int cert_callback(gnutls_session session,
 }
 
 
-
-/* This function will try to verify the peer's certificate, and
- * also check if the hostname matches and the activation, expiration dates..
- */
-static int verify_certificate(gnutls_session session, const char *hostname) {
+static int cert_verify_callback (gnutls_session_t session){
+	int rc;
 	unsigned int status;
-	const gnutls_datum *cert_list;
-	unsigned int cert_list_size;
-	int ret;
-	gnutls_x509_crt cert;
-	/* This verification function uses the trusted CAs in the credentials
-	 * structure. So you must have installed one or more CA certificates.
-	 */
-	ret = gnutls_certificate_verify_peers2(session, &status);
-	if (ret < 0) {
-		slog(LOG_NORMAL, "Error in gnutls_certificate_verify_peers2 \n");
-		return -1;
-	}
-	if (status & GNUTLS_CERT_INVALID){
-		slog(LOG_NORMAL, "The certificate is not trusted.\n");
-		if (status & GNUTLS_CERT_SIGNER_NOT_FOUND)
-			slog(LOG_NORMAL, "The certificate hasn't got a known issuer.\n");
-		if (status & GNUTLS_CERT_REVOKED)
-			slog(LOG_NORMAL, "The certificate has been revoked.\n");
-		if (status & GNUTLS_CERT_SIGNER_NOT_CA)
-			slog(LOG_NORMAL, "signer is not a CA\n");
-		return -1;
-	}
-
-	slog(LOG_NORMAL, "The certificate is valid.\n");
-
-	/* Up to here the process is the same for X.509 certificates and
-	 * OpenPGP keys. From now on X.509 certificates are assumed. This can
-	 * be easily extended to work with openpgp keys as well.
-	 */
-	if (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509)
-		return -1;
-
-	cert_list = gnutls_certificate_get_peers(session, &cert_list_size);
-	if (cert_list == NULL) {
-		slog(LOG_NORMAL, "No certificate was found!\n");
-		return -1;
-	}
-	ret = 0;
-	slog(LOG_NORMAL, "Certificate was found!\n");
-	time_t now;
-	time(&now);
-	time_t certtime;
-	int i;
-	for(i = 0 ; i < cert_list_size ; ++i) {
-		if (gnutls_x509_crt_init(&cert) < 0) {
-			slog(LOG_ERROR, "error in initialization\n");
-			ret = -1;
-			break;
-		}
-		/* This is not a real world example, since we only check the first
-		 * certificate in the given chain.
-		 */
-		if (gnutls_x509_crt_import(cert, &cert_list[i], GNUTLS_X509_FMT_DER) < 0) {
-			slog(LOG_ERROR, "error parsing certificate\n");
-			ret = -1;
-		}else{
-			slog(LOG_NORMAL, "Certificate was parsed!\n");
-			certtime = gnutls_x509_crt_get_activation_time(cert);
-			if ((certtime != -1) && ((long)now > (long)certtime)){
-				slog(LOG_NORMAL, "Certificate is active!\n");
-				certtime = gnutls_x509_crt_get_expiration_time(cert);
-				if ((certtime != -1) && ((long)now < (long)certtime)){
-					slog(LOG_NORMAL, "Certificate is not expired!\n");
-					if (i == 0){
-							if(!gnutls_x509_crt_check_hostname(cert, hostname)) {
-								slog (LOG_NORMAL, "The certificate's owner does not match hostname '%s'\n",
-									hostname);
-								ret = -1;
-							}else {
-								slog(LOG_NORMAL, "The certificate's owner matchs hostname '%s'\n", hostname);
-								ret = 0;
-							}
-					}
-				}else ret = -1;
-			}else ret = -1;
-		}
-
-		gnutls_x509_crt_deinit (cert);
-		if (ret == -1) break;
-	}
-
-
-
-	return ret;
+	rc = gnutls_certificate_verify_peers2 (session, &status);
+	if (rc != 0 || status != 0){
+		slog(LOG_ERROR,"** Verifying server certificate failed...\n");
+        return -1;
+    }
+  return 0;
 }
 
 
-
-
-
-/* Helper functions to load a certificate and key
- * files into memory.
- */
-static gnutls_datum load_file(const char *file) {
-	FILE *f;
-	gnutls_datum loaded_file = { NULL, 0 };
-	long filelen;
-	void *ptr;
-
-	if (!(f = fopen(file, "r")) || fseek(f, 0, SEEK_END) != 0 || (filelen
-			= ftell(f)) < 0 || fseek(f, 0, SEEK_SET) != 0 || !(ptr = malloc(
-			(size_t) filelen)) || fread(ptr, 1, (size_t) filelen, f)
-			< (size_t) filelen) {
-		return loaded_file;
-	}
-	loaded_file.data = (unsigned char *)ptr;
-	loaded_file.size = (unsigned int) filelen;
-	return loaded_file;
-}
-static void unload_file(gnutls_datum data) {
-	free(data.data);
-}
-static int generate_dh_params(void) {
-	/* Generate Diffie-Hellman parameters - for use with DHE
-	 * kx algorithms. When short bit length is used, it might
-	 * be wise to regenerate parameters.
-	 *
-	 * Check the ex-serv-export.c example for using static
-	 * parameters.
-	 */
-	gnutls_dh_params_init(&dh_params);
-	gnutls_dh_params_generate2(dh_params, DH_BITS);
-	return 0;
-}
 /* Load the certificate and the private key.
  */
-static int load_keys(void) {
-	int ret;
-	gnutls_datum data;
-	data = load_file(CERT_FILE);
-	if (data.data == NULL) {
-		slog(LOG_ERROR, "*** Error loading cert file.\n");
+static int load_keys(void){
+    int ret;
+    gnutls_datum_t data;
+
+    ret = gnutls_load_file(CERT_FILE, &data);
+	if ( ret < 0) {
+		slog(LOG_ERROR,"*** Error reading cert file.\n");
 		return -1;
 	}
-	gnutls_x509_crt_init(&crt);
-	ret = gnutls_x509_crt_import(crt, &data, GNUTLS_X509_FMT_PEM);
-	if (ret < 0) {
-		slog(LOG_ERROR, "*** Error loading key file: %s\n",gnutls_strerror(ret));
+
+    ret = gnutls_pcert_import_x509_raw(&crt, &data, GNUTLS_X509_FMT_PEM, 0);
+	if ( ret < 0) {
+		slog(LOG_ERROR,"*** Error loading cert file.\n");
 		return -1;
 	}
-	unload_file(data);
-	data = load_file (KEY_FILE);
-	if (data.data == NULL) {
-		slog(LOG_ERROR, "*** Error loading key file.\n");
+    gnutls_free(data.data);
+
+    ret = gnutls_load_file(KEY_FILE, &data);
+	if ( ret < 0) {
+		slog(LOG_ERROR,"*** Error reading key file.\n");
 		return -1;
 	}
-	gnutls_x509_privkey_init(&key);
-	ret = gnutls_x509_privkey_import(key, &data, GNUTLS_X509_FMT_PEM);
-	if (ret < 0) {
-		slog(LOG_ERROR, "*** Error loading key file: %s\n", gnutls_strerror(ret));
+    ret = gnutls_privkey_init(&key);
+	if ( ret < 0) {
+		slog(LOG_ERROR,"*** Error initializing key file.\n");
 		return -1;
 	}
-	unload_file(data);
+
+    ret = gnutls_privkey_import_x509_raw(key, &data, GNUTLS_X509_FMT_PEM, NULL, 0);
+	if ( ret < 0) {
+		slog(LOG_ERROR,"*** Error loading key file.\n");
+		return -1;
+	}
+    gnutls_free(data.data);
 	return 0;
 }
-
 
 int init_global(){
 	int ret = 0;
 
 	if(!TLSINIT){
-		/* gcry_control must be called first, so that the thread system is correctly set up */
-		gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
-
 		ret=gnutls_global_init();
 		if(ret!=0) {
 			slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
@@ -319,76 +200,61 @@ char* getNameFromIP(char* ip){
 	return he->h_name;
 }
 
-long sendTLS(char* msg, gnutls_session session){
-	return sendTLS2(msg, session,  0);
-}
-long sendTLS2(char* msg, gnutls_session session,  int size){
-	if(!size)size = strlen(msg);
-	return gnutls_record_send(session, msg, size);
-}
-
-
-long recvTLS(char* msg, int size, gnutls_session session){
-	return gnutls_record_recv(session, msg, size);
-}
 
 //TLS Client
-
 int initTLS() {
-	slog(LOG_DEBUG, "initTLS starting.\n");
+	slog(LOG_NORMAL,"initTLS starting.\n");
 	int ret;
 	ret = init_global();
 	if(ret){
 		return -1;
 	}
-
-
+	//not supported with 2.12.1, ok with 2.12.23
 	if(load_keys()) return -1;
 	/* X509 stuff */
 	ret=gnutls_certificate_allocate_credentials(&xcred);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
 	/* sets the trusted cas file
 	 */
 	ret=gnutls_certificate_set_x509_trust_file(xcred, CAFILE, GNUTLS_X509_FMT_PEM);
 	if(ret < 0){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
 
-	gnutls_certificate_client_set_retrieve_function(xcred, cert_callback);
-	/* Initialize TLS session
-	 */
-	slog(LOG_DEBUG, "initTLS done.\n");
+	/* If client holds a certificate it can be set using the following:
+    */
+	ret=gnutls_certificate_set_x509_key_file(xcred, CERT_FILE, KEY_FILE, GNUTLS_X509_FMT_PEM);
+	if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
+		return -1;
+	}
+
+	slog(LOG_NORMAL,"initTLS done.\n");
 	return 0;
 }
-
 //When rsyslog server is not available or missconfigured gnutls_handshake will hang up !!!
-gnutls_session initTLSSocket(int socketSafed, const char *SERVER) {
-	slog(LOG_DEBUG, "initTLSSocket for %s starting.\n",SERVER);
+gnutls_session_t initTLSSocket(int socketSafed, char *SERVER) {
+	slog(LOG_NORMAL,"initTLSSocket for %s (%s) starting.\n",SERVER, getNameFromIP(SERVER));
 	int ret;
-	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
-	gnutls_session session;
+	const char *err;
+	gnutls_session_t session;
+
 	ret=gnutls_init(&session, GNUTLS_CLIENT);
 	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
-		return NULL;
-	}
-	/* Use default priorities */
-	ret=gnutls_set_default_priority(session);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
-		deinitTLSSocket(session,0);
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return NULL;
 	}
 
-	/* put the x509 certification priority to the current session
-		 */
-	ret=gnutls_certificate_type_set_priority(session, cert_type_priority);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	/* Use default priorities */
+	//ret=gnutls_set_default_priority(session);
+	ret=gnutls_priority_set_direct(session, "NORMAL:-VERS-TLS1.0:-VERS-TLS1.1", &err);
+	if(ret < 0){
+		//slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", err);
 		deinitTLSSocket(session,0);
 		return NULL;
 	}
@@ -396,47 +262,67 @@ gnutls_session initTLSSocket(int socketSafed, const char *SERVER) {
 	/* put the x509 credentials to the current session
 	 */
 	ret=gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, xcred);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		deinitTLSSocket(session,0);
 		return NULL;
 	}
+
+	gnutls_certificate_set_retrieve_function2(xcred, cert_callback);
+	gnutls_certificate_set_verify_function (xcred, cert_verify_callback);
+        gnutls_certificate_set_verify_flags (xcred, 0);
+
 	/* connect to the peer
 	 */
-	gnutls_transport_set_ptr(session, (gnutls_transport_ptr) socketSafed);
+        gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
+	gnutls_transport_set_int(session, socketSafed);
 	/* Perform the TLS handshake
 	 */
-	ret = gnutls_handshake(session);
+
+	do {
+            ret = gnutls_handshake(session);
+        }while (ret < 0 && gnutls_error_is_fatal(ret) == 0);
+	
 	//gnutls_handshake hangs up becausof rsyslog when the server is missconfigured
 	if (ret < 0) {
-		slog(LOG_NORMAL, "*** Handshake failed %s\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"*** Handshake failed %s\n",gnutls_strerror(ret));
 		//gnutls_perror(ret);
 		deinitTLSSocket(session,0);
 		return NULL;
 	} else {
-		slog(LOG_DEBUG, "- Handshake was completed\n");
+		slog(LOG_ERROR,"- Handshake was completed\n");
 	}
 
-	if(verify_certificate(session, SERVER)){
-		deinitTLSSocket(session,1);
-		return NULL;
-	}
-	slog(LOG_DEBUG, "initTLSSocket for %s done.\n",SERVER);
+	slog(LOG_NORMAL,"initTLSSocket for %s done.\n",SERVER);
 	return session;
+}
+
+
+long sendTLS(char* msg, gnutls_session_t session){
+	return sendTLS2(msg, session,  0);
+}
+long sendTLS2(char* msg, gnutls_session_t session,  int size){
+	if(!size)size = strlen(msg);
+	return gnutls_record_send(session, msg, size);
+}
+
+
+long recvTLS(char* msg, int size, gnutls_session_t session){
+	return gnutls_record_recv(session, msg, size);
 }
 
 int deinitTLS() {
 	TLSINIT--;
 	if(xcred)gnutls_certificate_free_credentials(xcred);
 	gnutls_global_deinit();
-	slog(LOG_DEBUG, "deinitTLS done.\n");
+	slog(LOG_NORMAL, "deinitTLS done.\n");
 	return 0;
 }
 
-int deinitTLSSocket(gnutls_session session,int bye) {
+int deinitTLSSocket(gnutls_session_t session,int bye) {
 	if(bye)gnutls_bye(session, GNUTLS_SHUT_RDWR);
 	gnutls_deinit(session);
-	slog(LOG_DEBUG, "deinitTLSSocket done.\n");
+	slog(LOG_NORMAL, "deinitTLSSocket done.\n");
 	return 0;
 }
 
@@ -448,31 +334,25 @@ int deinitSTLS() {
 		wrap_db_deinit ();
 	}
 	if(x509_cred)gnutls_certificate_free_credentials(x509_cred);
-	if(dh_params)gnutls_dh_params_deinit(dh_params);
 	if(!TLSINIT)gnutls_global_deinit();
-	slog(LOG_DEBUG, "deinitTLS done.\n");
+	slog(LOG_NORMAL, "deinitTLS done.\n");
 	return 0;
 }
 
 
-
-
 int initSTLS() {
 
-	slog(LOG_DEBUG, "initSTLS starting.\n");
+	slog(LOG_NORMAL,"Web server initSTLS starting.\n");
 	int ret;
 	ret = init_global();
 	if(ret){
 		return -1;
 	}
 
-	//gnutls_global_set_log_function (tls_log_func);
-	//gnutls_global_set_log_level (9);
-
 	/* X509 stuff */
 	ret=gnutls_certificate_allocate_credentials(&x509_cred);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
 	/* sets the trusted cas file
@@ -481,58 +361,55 @@ int initSTLS() {
 
 	ret=gnutls_certificate_set_x509_trust_file(x509_cred, CAFILE, GNUTLS_X509_FMT_PEM);
 	if(ret < 0){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
 
 
 	ret=gnutls_certificate_set_x509_crl_file(x509_cred, CRLFILE,GNUTLS_X509_FMT_PEM);
 	/*if(ret < 0){//not mandatory
-		verboseOutput("Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}*/
 
 	ret=gnutls_certificate_set_x509_key_file(x509_cred, CERT_FILE, KEY_FILE,GNUTLS_X509_FMT_PEM);
 	if(ret < 0){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
-	 /* Generate Diffie-Hellman parameters - for use with DHE
-	   * kx algorithms. These should be discarded and regenerated
-	   * once a week or once a month. Depends on the
-	   * security requirements.
-	   */
 
-	ret=generate_dh_params();//generate them at any startup!!!
-	if(ret < 0){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+    ret = gnutls_certificate_set_known_dh_params(x509_cred, GNUTLS_SEC_PARAM_MEDIUM);
+    if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return -1;
 	}
 
 	if (TLS_SESSION_CACHE != 0){
 		wrap_db_init ();
 	}
-	gnutls_certificate_set_dh_params(x509_cred, dh_params);
 
-	slog(LOG_DEBUG, "initSTLS done.\n");
+	slog(LOG_NORMAL,"Web server initSTLS done.\n");
 	return 0;
 }
 
-gnutls_session initSTLSSocket(int socketSafed, const char *SERVER) {
-	slog(LOG_DEBUG, "initSTLSSocket for %s starting.\n",SERVER);
+gnutls_session_t initSTLSSocket(int socketSafed, char *SERVER) {
+	slog(LOG_NORMAL,"Web server initSTLSSocket for %s (%s) starting.\n",SERVER, getNameFromIP(SERVER));
 	int ret;
-	gnutls_session session;
+	const char *err;
+	gnutls_session_t session;
 	ret=gnutls_init(&session, GNUTLS_SERVER);
 
 	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		return NULL;
 	}
 
 	/* Use default priorities */
-	ret=gnutls_set_default_priority(session);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	//ret=gnutls_set_default_priority(session);
+	ret=gnutls_priority_set_direct(session, "NORMAL:-VERS-TLS1.0:-VERS-TLS1.1", &err);
+	if(ret < 0){
+		//slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
+		slog(LOG_ERROR,"Error %s.\n", err);
 		deinitTLSSocket(session,0);
 		return NULL;
 	}
@@ -542,8 +419,8 @@ gnutls_session initSTLSSocket(int socketSafed, const char *SERVER) {
 	/* put the x509 credentials to the current session
 	 */
 	ret=gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, x509_cred);
-	if(ret){
-		slog(LOG_ERROR, "Error %s.\n", gnutls_strerror(ret));
+	if(ret < 0){
+		slog(LOG_ERROR,"Error %s.\n", gnutls_strerror(ret));
 		deinitTLSSocket(session,0);
 		return NULL;
 	}
@@ -560,7 +437,8 @@ gnutls_session initSTLSSocket(int socketSafed, const char *SERVER) {
 		gnutls_db_set_ptr (session, NULL);
 	}
 
-	gnutls_transport_set_ptr(session, (gnutls_transport_ptr) socketSafed);
+	gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
+	gnutls_transport_set_int(session, socketSafed);
 	/* Perform the TLS handshake
 	 */
 
@@ -569,21 +447,18 @@ gnutls_session initSTLSSocket(int socketSafed, const char *SERVER) {
 
 	//gnutls_handshake hangs up becausof rsyslog when the server is missconfigured
 	if (ret < 0) {
-		slog(LOG_ERROR, "*** Handshake failed %s\n",gnutls_strerror(ret));
+		slog(LOG_ERROR,"*** Handshake failed %s\n",gnutls_strerror(ret));
 		//gnutls_perror(ret);
 		deinitTLSSocket(session,0);
 		return NULL;
 	} else {
-		slog(LOG_DEBUG, "- Handshake was completed\n");
+		slog(LOG_ERROR,"- Handshake was completed\n");
 	}
 
 
-	slog(LOG_DEBUG, "initTLSSocket for %s done.\n",SERVER);
+	slog(LOG_NORMAL,"Web server initTLSSocket for %s done.\n",SERVER);
 	return session;
 }
-
-
-
 
 
 /* Functions and other stuff needed for session resuming.
@@ -600,7 +475,7 @@ static void wrap_db_deinit(void) {
 	cache_db = NULL;
 	return;
 }
-static int wrap_db_store(void *dbf, gnutls_datum key, gnutls_datum data) {
+static int wrap_db_store(void *dbf, gnutls_datum_t key, gnutls_datum_t data) {
 	if (cache_db == NULL)
 		return -1;
 	if (key.size > MAX_SESSION_ID_SIZE)
@@ -617,10 +492,10 @@ static int wrap_db_store(void *dbf, gnutls_datum key, gnutls_datum data) {
 }
 
 
-static gnutls_datum wrap_db_fetch(void *dbf, gnutls_datum key) {
+static gnutls_datum_t wrap_db_fetch(void *dbf, gnutls_datum_t key) {
 
 
-	gnutls_datum res = { NULL, 0 };
+	gnutls_datum_t res = { NULL, 0 };
 	int i;
 	if (cache_db == NULL)
 		return res;
@@ -639,7 +514,7 @@ static gnutls_datum wrap_db_fetch(void *dbf, gnutls_datum key) {
 	return res;
 }
 
-static int wrap_db_delete(void *dbf, gnutls_datum key) {
+static int wrap_db_delete(void *dbf, gnutls_datum_t key) {
 	int i;
 	if (cache_db == NULL)
 		return -1;

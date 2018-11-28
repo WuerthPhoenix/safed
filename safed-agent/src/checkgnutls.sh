@@ -21,7 +21,7 @@ then
 		echo "SafedTLS.o"
 	elif [ "$2" = "-l" ]
  	then
-		echo "-lgnutls -lgcrypt"
+		echo "-lgnutls"
 	else
 		echo ""
 	fi

@@ -158,7 +158,7 @@ int addLogWatch(char *string) {
 						sprintf(filenamepattern, "%s", pattern);
 					}
 				}else{
-					sprintf(filenamepattern, ".*%s.*.*", "[0-9]{6}" ,string);
+					sprintf(filenamepattern, "%s.*%s.*", string,"[0-9]{6}");
 				}
 
 				int ret = regcomp(&newLogFile->regexp, filenamepattern, REG_EXTENDED | REG_NOSUB);

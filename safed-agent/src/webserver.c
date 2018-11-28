@@ -32,7 +32,7 @@ int http_listen_socket;
 // the socket used to handle each client connection
 int http_message_socket;
 #ifdef TLSPROTOCOL
-	gnutls_session session_https = NULL;
+	gnutls_session_t session_https = NULL;
 #endif
 char fromServer[25] = "";
 
@@ -602,7 +602,7 @@ int nextConnect() {
 
 #ifdef TLSPROTOCOL
 	if(remoteControlHttps){
-		if(!TLSSERVERFAIL)session_https = initSTLSSocket(http_message_socket,getNameFromIP(remoteIPAddress));
+		if(!TLSSERVERFAIL)session_https = initSTLSSocket(http_message_socket,remoteIPAddress);
 		else session_https = NULL;
 		if (!session_https){
 			close(http_message_socket);

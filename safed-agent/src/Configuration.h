@@ -72,7 +72,7 @@ typedef struct _hostnode {
 	int protocol;
 	char protocolName[MAX_HOSTID];
 #ifdef TLSPROTOCOL
-	gnutls_session tlssession;
+	gnutls_session_t tlssession;
 #endif
 } HostNode;
 

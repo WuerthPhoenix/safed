@@ -26,8 +26,6 @@
 #include "Configuration.h"
 #ifdef TLSPROTOCOL
 	#include "SafedTLS.h"
-	#include <gcrypt.h>
-	GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
 #define VERSION "1.8.3"
@@ -78,7 +76,7 @@ int StatusImage(char *source, char *dest, int size);
 
 // Make sure we return the size, or zero (for strings).
 #ifdef TLSPROTOCOL
-int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, gnutls_session session_https, char* fromServer)
+int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, gnutls_session_t session_https, char* fromServer)
 #else
 int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, char* fromServer)
 #endif
@@ -4010,7 +4008,7 @@ int Daily_Events(char *source, char *dest, int size, int at)
 
 
 #ifdef TLSPROTOCOL
-int GetConfig(int http_socket, gnutls_session session_https, char* fromServer)
+int GetConfig(int http_socket, gnutls_session_t session_https, char* fromServer)
 #else
 int GetConfig(int http_socket, char* fromServer)
 #endif
@@ -4061,7 +4059,7 @@ int GetConfig(int http_socket, char* fromServer)
 		getConfigStatus[0]='\0';
 	}
 
-	return(0);
+	return retval;
 }
 
 

@@ -24,6 +24,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <time.h>
@@ -49,8 +50,6 @@
 
 #ifdef TLSPROTOCOL
 	#include "SafedTLS.h"
-	#include <gcrypt.h>
-	GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif
 
 #ifdef __hpux__
@@ -630,7 +629,7 @@ int main(int argc, char *argv[]) {
 
     slog(LOG_NORMAL, "safed agent is exiting!\n");
     if(auditFile)
-    	close(PIPEAUDIT);
+    	fclose(auditFile);
 
     killChildWebServer();
 
@@ -699,7 +698,7 @@ int fixLastError(HostNode *currentHost) {
 				if(TLSFAIL){
 					currentHost->tlssession = NULL;
 				}else{
-					currentHost->tlssession = initTLSSocket(currentHost->socket, getNameFromIP(currentHost->desthost));
+					currentHost->tlssession = initTLSSocket(currentHost->socket, inet_ntoa(currentHost->socketAddress.sin_addr));
 				}
 				if (!currentHost->tlssession){
 					if(!TLSFAIL)sperror("connect");
@@ -803,7 +802,7 @@ int connectToServer(){
 			if(TLSFAIL){
 				host.tlssession = NULL;
 			}else{
-				host.tlssession = initTLSSocket(host.socket, getNameFromIP(host.desthost));
+				host.tlssession = initTLSSocket(host.socket, inet_ntoa(host.socketAddress.sin_addr));
 			}
 			if (!host.tlssession){
 				if(!TLSFAIL)sperror("connect");
