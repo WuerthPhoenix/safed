@@ -21,7 +21,7 @@
 // Socket for our pseudo-httpd server
 SOCKET http_listen_socket = INVALID_SOCKET;
 SOCKET http_message_socket = INVALID_SOCKET;
-gnutls_session session_https = NULL;
+gnutls_session_t session_https = NULL;
 char fromServer[25] = "";
 
 

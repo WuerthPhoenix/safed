@@ -71,9 +71,9 @@ void setCurrentDir(){
 
 static void wrap_db_init (void);
 static void wrap_db_deinit (void);
-static int wrap_db_store (void *dbf, gnutls_datum key, gnutls_datum data);
-static gnutls_datum wrap_db_fetch (void *dbf, gnutls_datum key);
-static int wrap_db_delete (void *dbf, gnutls_datum key);
+static int wrap_db_store (void *dbf, gnutls_datum_t key, gnutls_datum_t data);
+static gnutls_datum_t wrap_db_fetch (void *dbf, gnutls_datum_t key);
+static int wrap_db_delete (void *dbf, gnutls_datum_t key);
 #define TLS_SESSION_CACHE 10
 #define MAX_SESSION_ID_SIZE 32
 #define MAX_SESSION_DATA_SIZE 512
@@ -90,14 +90,14 @@ static int cache_db_ptr = 0;
  * gnutls_certificate_client_set_retrieve_function( session, cert_callback),
  * before a handshake.
  */
-static int cert_callback(gnutls_session session,
+static int cert_callback(gnutls_session_t session,
 		const gnutls_datum_t * req_ca_rdn, int nreqs,
 		const gnutls_pk_algorithm_t * sign_algos, int sign_algos_length,
 		gnutls_pcert_st ** pcert, unsigned int *pcert_length, gnutls_privkey_t * pkey) {
 	char issuer_dn[256];
 	int i, ret;
 	size_t len;
-	gnutls_certificate_type type;
+	gnutls_certificate_type_t type;
 	/* Print the server's trusted CAs
 	 */
 	if (nreqs > 0){
@@ -203,13 +203,13 @@ const char* getTLSError(int ret){
 	return gnutls_strerror(ret);
 }
 
-long sendTLS(char* msg, gnutls_session session,  int size){
+long sendTLS(char* msg, gnutls_session_t session,  int size){
 	if(!size)size = strlen(msg);
 	return gnutls_record_send(session, msg, size);
 }
 
 
-long recvTLS(char* msg, int size, gnutls_session session){
+long recvTLS(char* msg, int size, gnutls_session_t session){
 	return gnutls_record_recv(session, msg, size);
 }
 
@@ -258,12 +258,11 @@ int initTLS() {
 	return 0;
 }
 //When rsyslog server is not available or missconfigured gnutls_handshake will hang up !!!
-gnutls_session initTLSSocket(SOCKET socketSafed, char *SERVER) {
+gnutls_session_t initTLSSocket(SOCKET socketSafed, char *SERVER) {
 	LogExtMsg(INFORMATION_LOG,"initTLSSocket for %s (%s) starting.",SERVER, getNameFromIP(SERVER));
 	int ret;
 	const char *err;
-	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
-	gnutls_session session;
+	gnutls_session_t session;
 
 	ret=gnutls_init(&session, GNUTLS_CLIENT);
 	if(ret){
@@ -291,11 +290,12 @@ gnutls_session initTLSSocket(SOCKET socketSafed, char *SERVER) {
 	}
 
 	gnutls_certificate_set_retrieve_function2(xcred, cert_callback);
-	//gnutls_certificate_set_verify_function (xcred, cert_verify_callback);
+	gnutls_certificate_set_verify_function (xcred, cert_verify_callback);
     gnutls_certificate_set_verify_flags (xcred, 0);
 
 	/* connect to the peer
 	 */
+	gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
 	gnutls_transport_set_int(session, socketSafed);
 	/* Perform the TLS handshake
 	 */
@@ -329,7 +329,7 @@ int deinitTLS() {
 }
 
 
-int deinitTLSSocket(gnutls_session session,BOOL bye) {
+int deinitTLSSocket(gnutls_session_t session,BOOL bye) {
 	if(bye)gnutls_bye(session, GNUTLS_SHUT_RDWR);
 	gnutls_deinit(session);
 	LogExtMsg(INFORMATION_LOG,"deinitTLSSocket done.");
@@ -406,11 +406,11 @@ int initSTLS() {
 	return 0;
 }
 
-gnutls_session initSTLSSocket(SOCKET socketSafed, char *SERVER) {
+gnutls_session_t initSTLSSocket(SOCKET socketSafed, char *SERVER) {
 	LogExtMsg(INFORMATION_LOG,"Web server initSTLSSocket for %s (%s) starting.",SERVER, getNameFromIP(SERVER));
 	int ret;
 	const char *err;
-	gnutls_session session;
+	gnutls_session_t session;
 	ret=gnutls_init(&session, GNUTLS_SERVER);
 
 	if(ret){
@@ -451,10 +451,10 @@ gnutls_session initSTLSSocket(SOCKET socketSafed, char *SERVER) {
 		gnutls_db_set_ptr (session, NULL);
 	}
 
-	gnutls_transport_set_ptr(session, (gnutls_transport_ptr) socketSafed);
+	gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
+	gnutls_transport_set_int(session, socketSafed);
 	/* Perform the TLS handshake
 	 */
-
 
 	ret = gnutls_handshake(session);
 
@@ -491,7 +491,7 @@ static void wrap_db_deinit(void) {
 	cache_db = NULL;
 	return;
 }
-static int wrap_db_store(void *dbf, gnutls_datum key, gnutls_datum data) {
+static int wrap_db_store(void *dbf, gnutls_datum_t key, gnutls_datum_t data) {
 	if (cache_db == NULL)
 		return -1;
 	if (key.size > MAX_SESSION_ID_SIZE)
@@ -507,19 +507,10 @@ static int wrap_db_store(void *dbf, gnutls_datum key, gnutls_datum data) {
 	return 0;
 }
 
-//COMMENT extern gnutls_alloc_function gnutls_malloc; in gnutls.h !!!
-
-/*extern "C"
-{
-	_declspec( dllimport ) gnutls_alloc_function gnutls_malloc;
-}
-*/
+static gnutls_datum_t wrap_db_fetch(void *dbf, gnutls_datum_t key) {
 
 
-static gnutls_datum wrap_db_fetch(void *dbf, gnutls_datum key) {
-
-
-	gnutls_datum res = { NULL, 0 };
+	gnutls_datum_t res = { NULL, 0 };
 	int i;
 	if (cache_db == NULL)
 		return res;
@@ -537,7 +528,7 @@ static gnutls_datum wrap_db_fetch(void *dbf, gnutls_datum key) {
 	}
 	return res;
 }
-static int wrap_db_delete(void *dbf, gnutls_datum key) {
+static int wrap_db_delete(void *dbf, gnutls_datum_t key) {
 	int i;
 	if (cache_db == NULL)
 		return -1;

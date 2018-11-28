@@ -131,7 +131,7 @@ BOOL InitWinsock( char *szError, int size )
 //////////////////////////////////////////////////////////////////////////////
 // TerminateWinsock
 //      call this function with the current socket or INVALID_SOCKET
-void TerminateWinsock( SOCKET hSocket, gnutls_session session )
+void TerminateWinsock( SOCKET hSocket, gnutls_session_t session )
 {
 	// cancel blocking calls, if any
 	WSACancelBlockingCall();
@@ -308,7 +308,7 @@ void  SendToAll(char *buf, int nSize){
 	}
 }
 
-int CloseSocket(SOCKET sock, gnutls_session session){
+int CloseSocket(SOCKET sock, gnutls_session_t session){
 	int ret = 0;
 	DWORD dwWaitSend = WaitForSingleObject(hMutexSend,500);
 	if(dwWaitSend == WAIT_OBJECT_0) {

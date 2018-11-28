@@ -6,7 +6,7 @@ struct _hostnode
 	struct sockaddr_in server;
 	char HostName[512];
 	DWORD SocketType;
-	gnutls_session tlssession;
+	gnutls_session_t tlssession;
 	struct _hostnode *next;
 };
 
@@ -18,11 +18,11 @@ void deinitSockets();
 BOOL initSocketMutex();
 void deinitSocketMutex();
 BOOL InitWinsock( char *szError, int size );
-void TerminateWinsock( SOCKET hSocket, gnutls_session session );
+void TerminateWinsock( SOCKET hSocket, gnutls_session_t session );
 void OpenSockets();
 SOCKET ConnectToServer(HostNode *hcn, char *szError, int size);
 void  SendToAll(char *buf, int nSize);
-int CloseSocket(SOCKET sock, gnutls_session session);
+int CloseSocket(SOCKET sock, gnutls_session_t session);
 BOOL  SendToSocket(HostNode *hcn, char *buf, int nSize, char *szError, int eSize);
 HostNode * getHostHead();
 void setHostHead(HostNode* h);
