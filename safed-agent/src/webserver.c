@@ -606,7 +606,7 @@ int nextConnect() {
 		else session_https = NULL;
 		if (!session_https){
 			close(http_message_socket);
-			perror("Web Server Error - TLS session failed");
+			perror("Web Server Error - TLS session failed.Closing...");
 			continue;
 		}
 	}
