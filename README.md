@@ -24,7 +24,7 @@ The existing open source basis was enhanced as follows:
 - includes: the header files for gnutls and regexp 
 - win/x32: the gnutls and regexp library compiled for windows (32 bit processors)
 - win/x64: the gnutls and regexp library compiled for windows (64 bit processors)
-- win/gnutls: the gnutls 3.6.4 
+- win/gnutls: the gnutls 3.6 
 - win/regexp: the regexp 2.7
 
 
@@ -43,7 +43,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
 
-Starting from version 1.9.0 for secure communications GnuTLS 3.6.4 is requested - supporting TLS 1.3 (https://gnutls.org/)
+Starting from version 1.9.0 for secure communications GnuTLS 3.6 is requested - supporting TLS 1.3 (https://gnutls.org/)
 
 ## License
 
