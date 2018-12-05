@@ -31,7 +31,7 @@ The existing open source basis was enhanced as follows:
 
 ## Installation And Configuration
 
-The installation and configuration guide can be downloaded [here](http://www.neteye-blog.com/wp-content/uploads/2014/07/Safed_installation.pdf).
+The installation and configuration guide can be downloaded [here](https://www.neteye-blog.com/wp-content/uploads/2018/12/Safed_installation.pdf).
 
 
 ## News
