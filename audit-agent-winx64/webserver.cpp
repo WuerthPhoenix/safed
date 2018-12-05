@@ -173,8 +173,8 @@ int HandleConnect(HANDLE event)
 			if(WEBSERVER_TLS){
 
 				tempval = recvTLS(HTTPBufferTemp,_countof (HTTPBufferTemp), session_https);
-
-				/*if (tempval == 0){
+                //MM
+				if (tempval == 0){
 					printf("- Peer has closed the TLS connection\n");
 					closesocket(http_message_socket);
 					deinitTLSSocket(session_https, TRUE);
@@ -184,7 +184,7 @@ int HandleConnect(HANDLE event)
 					closesocket(http_message_socket);
 					deinitTLSSocket(session_https, TRUE);
 					return(1);
-				}*/
+				}
 			}else{
 				tempval = recv(http_message_socket,HTTPBufferTemp,_countof (HTTPBufferTemp),0 );
 			}
@@ -308,11 +308,18 @@ int HandleConnect(HANDLE event)
 			}
 		}
 
-		
-		if(WEBSERVER_TLS){
-			retval = sendTLS(HTTPOutputBuffer,session_https,size);
-		}else{
-			retval = send(http_message_socket,HTTPOutputBuffer,size,0);
+		//MM
+		pos = HTTPOutputBuffer;
+		while ( retval > 0 && size > 0){
+		    if(WEBSERVER_TLS){
+			    retval = sendTLS(pos,session_https,size);
+		    }else{
+			    retval = send(http_message_socket,pos,size,0);
+		    }
+		    if(retval > 0){
+				pos = pos + retval;
+		        size -= retval;
+			}
 		}
 
 		if (retval < 0) {

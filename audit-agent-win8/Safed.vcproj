@@ -337,7 +337,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\gnutls-3.6.4&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\regexp-2.7&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\gnutls-3.6&quot;;&quot;C:\Documents and Settings\pr00088.WP\Desktop\includes\regexp-2.7&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ssize_t=long"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
