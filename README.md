@@ -43,7 +43,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
 
-Starting from version 1.9.1 for secure communications GnuTLS 3.6.5 is requested - supporting TLS 1.3 (https://gnutls.org/)
+Starting from version 1.9.1 for secure communications GnuTLS 3.6.5 is requested, supporting TLS 1.2 (minimum) and TLS 1.3 (https://gnutls.org/)
 
 ## License
 
