@@ -492,11 +492,22 @@ int handleConnect() {
 		if (select(http_message_socket + 1,&webread,NULL,NULL,&tv) > 0) {
 
 #ifdef TLSPROTOCOL
-			if(remoteControlHttps)
-				tempval = recvTLS (HTTPBufferTemp,sizeof (HTTPBufferTemp), session_https);
-			else
+			if(remoteControlHttps){
+			    tempval = recvTLS (HTTPBufferTemp,sizeof (HTTPBufferTemp), session_https);
+			    if (tempval == 0){
+				printf("- Peer has closed the TLS connection\n");
+				close(http_message_socket);
+				deinitTLSSocket(session_https, 1);
+				return(1);
+			    }else if (tempval < 0){
+				printf("*** Error: %s\n", gnutls_strerror(tempval));
+				close(http_message_socket);
+				deinitTLSSocket(session_https, 1);
+				return(1);
+			    }
+			}else
 #endif
-			tempval = recv(http_message_socket,HTTPBufferTemp,sizeof(HTTPBufferTemp),0 );
+			    tempval = recv(http_message_socket,HTTPBufferTemp,sizeof(HTTPBufferTemp),0 );
 			HTTPBufferTemp[tempval]='\0';
 			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer));
 		} else {
