@@ -28,7 +28,7 @@
 	#include "SafedTLS.h"
 #endif
 
-#define VERSION "1.9.0"
+#define VERSION "1.9.1"
 
 
 extern void trim(char *);
