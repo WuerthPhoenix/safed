@@ -1,0 +1,6 @@
+[submodule "safed-agent/external/gnutls"]
+	path = safed-agent/external/gnutls
+	url = https://gitlab.com/gnutls/gnutls.git
+[submodule "safed-agent/external/nettle"]
+	path = safed-agent/external/nettle
+	url = https://git.lysator.liu.se/nettle/nettle.git
