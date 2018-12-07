@@ -1,0 +1,29 @@
+GNUTLS=$(./src/checkgnutls.sh)
+if [ -n "$GNUTLS" ]
+then
+    echo "[+] Info: gnutls is already installed. Next steps: ./configure && make && ./install.sh"
+    exit 0
+fi
+
+cd ..
+git submodule update --init
+cd safed-agent/external/nettle
+autoheader && autoconf && ./configure --prefix=/usr CC=c99 && make && make install
+if [ "$?" -ne 0 ]
+then
+    echo "[-] Error: failed to build and install nettle. Exit ..."
+    cd ../../..
+    exit 1
+fi
+cd ../gnutls/
+./bootstrap && ./configure  --prefix=/usr  --without-p11-kit && make && make install
+if [ "$?" -ne 0 ]
+then
+    echo "[-] Error: failed to build and install gnutls. Exit ..."
+    cd ../../..
+    exit 1
+fi
+
+cd ../..
+echo "[+] Info: nettle and gnutls have been installed. Next steps: ./configure && make && ./install.sh" 
+exit 0

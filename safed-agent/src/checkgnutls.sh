@@ -1,13 +1,8 @@
 if [ $# -eq 0 ]
 then
         if [ -d "/usr/include/gnutls" ];then 
-		uname | grep "Linux" > /dev/null
-		if [ $? -lt 1 ]
-		then
-	        	/sbin/ldconfig -p|grep libgnutls.so > /dev/null|if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
-		else
-			ls -las "/usr/lib/libgnutls.so*" 2>&1|grep libgnutls.so > /dev/null|if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
-		fi
+                pkg-config --exists --print-errors "gnutls >= 3.6.4"
+                if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
         else
                 echo ""
         fi
