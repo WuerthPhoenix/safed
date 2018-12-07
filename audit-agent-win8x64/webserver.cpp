@@ -145,14 +145,14 @@ int HandleConnect(HANDLE event)
 	// HTTPBuffer also..
 
 	if (retval == 0){
-		if(WEBSERVER_TLS)printf("- Peer has closed the TLS connection\n");
-		else printf("recv() failed: error %d\n",WSAGetLastError());
+		if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"- Peer has closed the TLS connection");
+		else LogExtMsg(ERROR_LOG,"- recv() failed: error %d",WSAGetLastError());
 		closesocket(http_message_socket);
 		if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
 		return(1);
 	}else if (retval < 0){
-		if(WEBSERVER_TLS)printf("*** Error: %s\n", gnutls_strerror (retval));
-		else printf("recv() failed: socket error %d\n",WSAGetLastError());
+		if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"*** Error: %s",gnutls_strerror (retval));
+		else LogExtMsg(ERROR_LOG,"recv() failed: socket error %d",WSAGetLastError());
 		closesocket(http_message_socket);
 		if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
 		return(1);
@@ -175,12 +175,12 @@ int HandleConnect(HANDLE event)
 				tempval = recvTLS(HTTPBufferTemp,_countof (HTTPBufferTemp), session_https);
                 //MM
 				if (tempval == 0){
-					printf("- Peer has closed the TLS connection\n");
+					LogExtMsg(ERROR_LOG,"- Peer has closed the TLS connection");
 					closesocket(http_message_socket);
 					deinitTLSSocket(session_https, TRUE);
 					return(1);
 				}else if (tempval < 0){
-					printf("*** Error: %s\n", gnutls_strerror (tempval));
+					LogExtMsg(ERROR_LOG,"*** Error: %s",gnutls_strerror (tempval));
 					closesocket(http_message_socket);
 					deinitTLSSocket(session_https, TRUE);
 					return(1);
@@ -191,7 +191,7 @@ int HandleConnect(HANDLE event)
 			HTTPBufferTemp[tempval]='\0';
 			strncat_s(HTTPBuffer,_countof(HTTPBuffer),HTTPBufferTemp,_TRUNCATE);
 		} else {
-			printf("recv() failed: Incomplete message [%d]\n",WSAGetLastError());
+			LogExtMsg(ERROR_LOG,"-recv() failed: Incomplete message [%d]",WSAGetLastError());
 			closesocket(http_message_socket);
 			if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
 			return(1);
@@ -298,8 +298,8 @@ int HandleConnect(HANDLE event)
 			}
 
 			if (retval < 0) {
-				if(WEBSERVER_TLS)LogExtMsg(INFORMATION_LOG,"sendTLS() failed: %s", getTLSError(retval));
-				else  LogExtMsg(INFORMATION_LOG,"send() failed: SOCKET_ERROR");
+				if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"sendTLS() failed: %s", getTLSError(retval));
+				else  LogExtMsg(ERROR_LOG,"send() failed: SOCKET_ERROR");
 			
 				// force close and return
 				closesocket(http_message_socket);
@@ -322,8 +322,8 @@ int HandleConnect(HANDLE event)
 		}
 
 		if (retval < 0) {
-			if(WEBSERVER_TLS)LogExtMsg(INFORMATION_LOG,"send() failed: %s", getTLSError(retval));
-			else LogExtMsg(INFORMATION_LOG,"send() failed: SOCKET_ERROR"); 
+			if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"send() failed: %s", getTLSError(retval));
+			else LogExtMsg(ERROR_LOG,"send() failed: SOCKET_ERROR"); 
 		
 			closesocket(http_message_socket);
 			if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
@@ -348,7 +348,7 @@ int StartThread(HANDLE event)
 	LogExtMsg(INFORMATION_LOG,"DEBUG: Starting thread %d.. event is %d",threadid,event);
 	if(threadid==-1)
 	{
-		LogExtMsg(INFORMATION_LOG,"Error in HTTPD thread creation");
+		LogExtMsg(ERROR_LOG,"Error in HTTPD thread creation");
 		return(-1);
 	}
 
@@ -376,7 +376,7 @@ void ListenThread(HANDLE event)
 		if (http_message_socket == INVALID_SOCKET) {
 
 
-			LogExtMsg(INFORMATION_LOG,"Accept() Error - socket is invalid");
+			LogExtMsg(ERROR_LOG,"Accept() Error - socket is invalid");
 			Sleep(1000);
 			break;
 		}
@@ -388,7 +388,7 @@ void ListenThread(HANDLE event)
 			else session_https = NULL;
 			if (!session_https){
 				closesocket(http_message_socket);
-				LogExtMsg(INFORMATION_LOG,"Web Server Error - TLS session failed");
+				LogExtMsg(ERROR_LOG,"Web Server Error - TLS session failed");
 				continue;
 			}
 		}
