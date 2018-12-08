@@ -1,7 +1,7 @@
 if [ $# -eq 0 ]
 then
         if [ -d "/usr/include/gnutls" ];then 
-		export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/:/usr/lib64/"
+		export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig:/usr/lib64/pkgconfig
                 pkg-config --exists --print-errors "gnutls >= 3.6.4"
                 if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
         else
