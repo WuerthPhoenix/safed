@@ -24,6 +24,7 @@ then
     exit 1
 fi
 
+rm -f /etc/ld.so.cache && /sbin/ldconfig
 cd ../..
 echo "[+] Info: nettle and gnutls have been installed. Next steps: ./configure && make && ./install.sh" 
 exit 0
