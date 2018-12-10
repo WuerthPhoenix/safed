@@ -1,8 +1,14 @@
 if [ $# -eq 0 ]
 then
+        LIBGNUTLS="libgnutls.so.30"
         if [ -d "/usr/include/gnutls" ];then 
-		export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/pkgconfig:/usr/lib64/pkgconfig
-                pkg-config --exists --print-errors "gnutls >= 3.6.4"
+		uname | grep "Linux" > /dev/null
+		if [ $? -lt 1 ]
+		then
+	        	/sbin/ldconfig -p|grep "$LIBGNUTLS" > /dev/null
+		else
+                        ls -las /usr/lib64/libgnutls.so* || ls -las /usr/lib/libgnutls.so* 2>&1|grep "$LIBGNUTLS" > /dev/null
+		fi
                 if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
         else
                 echo ""
