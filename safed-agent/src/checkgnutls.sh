@@ -11,7 +11,7 @@ then
 		then
 	        	/sbin/ldconfig -p|grep "$LIBGNUTLS" > /dev/null
 		else
-                        ls -las /usr/lib64/libgnutls.so* || ls -las /usr/lib/libgnutls.so* 2>&1|grep "$LIBGNUTLS" > /dev/null
+                        ls -las /usr/lib64/ /usr/lib/ 2>&1|grep "$LIBGNUTLS" > /dev/null
 		fi
                 if [ $? -eq 0 ];then echo "gnutls";else echo "";fi
         else
