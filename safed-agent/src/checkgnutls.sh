@@ -1,7 +1,11 @@
 if [ $# -eq 0 ]
 then
-        LIBGNUTLS="libgnutls.so.30"
-        if [ -d "/usr/include/gnutls" ];then 
+        LIBGNUTLS="libgnutls.so.[3-9][0-9]"
+        # >= libgnutls.so.30 - 3.6.4
+        if [ -d "/usr/include/gnutls" ];then
+                # .pc are not available for all libs!!
+                #pkg-config --exists --print-errors "gnutls >= 3.6.4"
+                #if [ $? -eq 0 ];then exit 0;else exit 1;fi
 		uname | grep "Linux" > /dev/null
 		if [ $? -lt 1 ]
 		then
