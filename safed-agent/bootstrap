@@ -16,7 +16,7 @@ then
     exit 1
 fi
 cd ../gnutls/
-./bootstrap && ./configure  --prefix=/usr  --without-p11-kit && make && make install
+./bootstrap && ./configure  --prefix=/usr  --without-p11-kit --with-included-libtasn1 && make && make install
 if [ "$?" -ne 0 ]
 then
     echo "[-] Error: failed to build and install gnutls. Exit ..."
