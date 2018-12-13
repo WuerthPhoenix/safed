@@ -185,7 +185,7 @@ static int load_keys(void){
          return -1;
      }
  
-    gnutls_x509_crt_init(&crt);
+    ret = gnutls_x509_crt_init(&crt);
     if ( ret < 0) {
         slog(LOG_ERROR,"*** Error initializing cert file.\n");
         unload_file (data);
