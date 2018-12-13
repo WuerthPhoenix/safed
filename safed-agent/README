@@ -2,7 +2,7 @@ WuerthPhoenix Safed for Linux/Unix
 Version 1.9.1
 For secure communications GnuTLS >= 3.6.4 is requested (supporting TLS 1.2 (minimum) and TLS 1.3)
 
-GnuTLS >= 3.6.4 (only if TLS protocol is needed, and GnuTLS >= 3.6.4 is not distributed with your operating system)
+GnuTLS >= 3.6.4 (only if TLS protocol is needed, and GnuTLS >= 3.6.4 is not distributed with your operating system. Check both gnutls and gnutls-devel packages)
 ---------------
 Install all required tools as described at https://gitlab.com/gnutls/gnutls/blob/master/README.md
 The required software is typically distributed with your operating system.
