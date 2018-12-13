@@ -14,6 +14,7 @@ The existing open source basis was enhanced as follows:
 ## Repository Structure
 
 - safed-agent: the safed agent for Linux, Sun Solaris, IBM AIX, HP-UX platforms
+- safed-agent-legacy: the safed agent for legacy Linux, Sun Solaris, IBM AIX, HP-UX platforms
 - safed-audit-linux: the safed component that allows safed to interoperate with the linux auditd daemon
 - safed-audit-aix: the safed component that allows safed to interoperate with the IBM AIX audit component
 - audit-agent-win: the safed agent for Win2003
@@ -44,6 +45,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
 
 Starting from version 1.9.1 for secure communications GnuTLS >= 3.6.4 is requested, supporting TLS 1.2 (minimum) and TLS 1.3 (https://gnutls.org/)
+The legacy safed agent version 1.9.1 for secure communications uses GnuTLS >= 2.12.21, supporting TLS 1.2 
 
 ## License
 
