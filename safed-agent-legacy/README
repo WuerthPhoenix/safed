@@ -1,0 +1,13 @@
+WuerthPhoenix Safed for Linux/Unix
+Version 1.9.1
+This legacy version of safed for compatibility reasons uses for secure communications GnuTLS >= 2.12.21 (supporting TLS 1.2) 
+---------------
+
+HOW TO COMPILE
+---------------
+./configure
+make
+
+HOW TO INSTALL
+---------------
+./install.sh
