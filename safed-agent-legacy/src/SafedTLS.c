@@ -488,7 +488,7 @@ gnutls_session_t initSTLSSocket(int socketSafed, char *SERVER) {
 
 	/* request client certificate if any.
 	 */
-	//gnutls_certificate_server_set_request(session, GNUTLS_CERT_REQUEST);
+	gnutls_certificate_server_set_request(session, GNUTLS_CERT_REQUEST);
 
 	if (TLS_SESSION_CACHE != 0){
 		gnutls_db_set_retrieve_function (session, wrap_db_fetch);
@@ -504,7 +504,7 @@ gnutls_session_t initSTLSSocket(int socketSafed, char *SERVER) {
 
 	ret = gnutls_handshake(session);
 
-	gnutls_handshake hangs up becausof rsyslog when the server is missconfigured
+	//gnutls_handshake hangs up becausof rsyslog when the server is missconfigured
 	if (ret < 0) {
 		slog(LOG_ERROR,"*** Handshake failed %s\n",gnutls_strerror(ret));
 		//gnutls_perror(ret);
