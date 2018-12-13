@@ -197,6 +197,7 @@ char* getNameFromIP(char* ip){
 	struct in_addr addr;
 	addr.s_addr = inet_addr(ip);
 	he = gethostbyaddr((char *) &addr, 4, AF_INET);
+        if( he == NULL ) return ip;
 	return he->h_name;
 }
 
