@@ -8,14 +8,13 @@ GNUTLS_C = $(shell ./checkgnutls.sh $(GNUTLS) -c)
 GNUTLS_L = $(shell ./checkgnutls.sh $(GNUTLS) -l)
 
 
-CFLAGS =  -D TLSPROTOCOL -Wall -O2 $(BCFLAGS)
-#CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
+CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
 #CFLAGS = -D DEBUG $(GNUTLS_D) -g -O0 $(BCFLAGS)
 
 all: safed
 
-safed: safed.o Configuration.o MemoryCache.o Misc.o webserver.o WebPages.o WebPagesAudit.o webutilities.o MessageFile.o SafedTLS.o
-	$(CC) $(LDFLAGS) $^ -lpthread -lcrypt -lnsl -lrt -lwolfssl -o safed
+safed: safed.o Configuration.o MemoryCache.o Misc.o webserver.o WebPages.o WebPagesAudit.o webutilities.o MessageFile.o $(GNUTLS_C)
+	$(CC) $(LDFLAGS) $^ -lpthread -lcrypt -lnsl -lrt $(GNUTLS_L) -o safed
 	
 
 SafedTLS.o:	SafedTLS.c SafedTLS.h

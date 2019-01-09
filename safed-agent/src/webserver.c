@@ -495,12 +495,12 @@ int handleConnect() {
 			if(remoteControlHttps){
 			    tempval = recvTLS (HTTPBufferTemp,sizeof (HTTPBufferTemp), session_https);
 			    if (tempval == 0){
-				printf("- Peer has closed the TLS connection\n");
+                                slog(LOG_NORMAL, " - Peer has closed the TLS connection\n");
 				close(http_message_socket);
 				deinitTLSSocket(session_https, 1);
 				return(1);
 			    }else if (tempval < 0){
-				printf("*** Error: %d\n", getTLSError(session_https,tempval));
+                                slog(LOG_ERROR, " *** Error: %d\n",getTLSError(session_https,tempval));
 				close(http_message_socket);
 				deinitTLSSocket(session_https, 1);
 				return(1);
@@ -511,7 +511,7 @@ int handleConnect() {
 			HTTPBufferTemp[tempval]='\0';
 			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer));
 		} else {
-			printf("recv() failed: Incomplete message \n");
+                        slog(LOG_NORMAL, " recv() failed: Incomplete message \n");
 			close(http_message_socket);
 #ifdef TLSPROTOCOL
 			if(remoteControlHttps)deinitTLSSocket(session_https, 1);

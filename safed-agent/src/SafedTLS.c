@@ -66,13 +66,13 @@ int init_global(){
 
 	if(!TLSINIT){
                 ret = wolfSSL_Init();
-                //if(ret!=0) {
-                //       slog(LOG_ERROR, "Error init_global %d.\n", ret);
-                //       return -1;
-               // }
+                if(ret != WOLFSSL_SUCCESS) {
+                       slog(LOG_ERROR, "Error init_global %d.\n", ret);
+                       return -1;
+                }
         }
 	TLSINIT++;
-	return 0;
+	return ret;
 }
 
 char* getNameFromIP(char* ip){
@@ -88,12 +88,12 @@ char* getNameFromIP(char* ip){
 //TLS Client
 int initTLS() {
 	slog(LOG_NORMAL,"initTLS starting.\n");
-        const char *defaultCipherList;
 	int ret;
 	ret = init_global();
-	if(ret){
+	if(ret < 0){
 		return -1;
 	}
+
 
         //WOLFSSL_METHOD* method = wolfTLSv1_2_client_method(); /* use TLS v1.3 */
         WOLFSSL_METHOD* method = wolfSSLv23_client_method(); /* use TLS v1.3 */
@@ -104,11 +104,6 @@ int initTLS() {
             slog(LOG_ERROR,"Error: initTLS wolfSSL_CTX_new error\n");
             return -1;
         }
-        //defaultCipherList = "DHE-PSK-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256";
-        //if (wolfSSL_CTX_set_cipher_list(ctx,defaultCipherList) != WOLFSSL_SUCCESS) {
-        //        slog(LOG_ERROR,"Error: initTLS client can't set cipher list\n");
-        //    }
-
 
         /* Add cert to ctx */
         if (wolfSSL_CTX_load_verify_locations(ctx, CAFILE, 0) != SSL_SUCCESS) {
@@ -198,7 +193,7 @@ int initSTLS() {
 
         int ret;
         ret = init_global();
-        if(ret){
+        if(ret < 0){
                 return -1;
         }
 
