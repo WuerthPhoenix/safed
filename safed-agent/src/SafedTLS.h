@@ -1,15 +1,15 @@
 
 int initTLS();
 int initSTLS();
-gnutls_session_t initTLSSocket(int , char *);
-gnutls_session_t initSTLSSocket(int, char *);
+WOLFSSL* initTLSSocket(int , char *);
+WOLFSSL* initSTLSSocket(int, char *);
 int deinitTLS();
 int deinitSTLS();
-int deinitTLSSocket(gnutls_session_t, int);
-long sendTLS(char* , gnutls_session_t);
-long sendTLS2(char* , gnutls_session_t,  int);
-long recvTLS(char* , int , gnutls_session_t );
-const char* getTLSError(int);
+int deinitTLSSocket(WOLFSSL*, int);
+long sendTLS(char* , WOLFSSL*);
+long sendTLS2(char* , WOLFSSL*,  int);
+long recvTLS(char* , int , WOLFSSL* );
+int getTLSError(WOLFSSL*,int);
 char* getNameFromIP(char*);
 char* getCAFILE();
 char* getCERT_FILE();

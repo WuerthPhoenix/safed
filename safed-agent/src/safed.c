@@ -667,7 +667,7 @@ int fixLastError(HostNode *currentHost) {
 			close(currentHost->socket);
 			#ifdef TLSPROTOCOL
 			if(strcmp(TLS, currentHost->protocolName) == 0){
-				if(!TLSFAIL)deinitTLSSocket(currentHost->tlssession,1);
+				if(!TLSFAIL)deinitTLSSocket(currentHost->ssl,1);
 			}
 			#endif
 
@@ -696,11 +696,11 @@ int fixLastError(HostNode *currentHost) {
 			#ifdef TLSPROTOCOL
 			if(strcmp(TLS, currentHost->protocolName) == 0){
 				if(TLSFAIL){
-					currentHost->tlssession = NULL;
+					currentHost->ssl = NULL;
 				}else{
-					currentHost->tlssession = initTLSSocket(currentHost->socket, inet_ntoa(currentHost->socketAddress.sin_addr));
+					currentHost->ssl = initTLSSocket(currentHost->socket, inet_ntoa(currentHost->socketAddress.sin_addr));
 				}
-				if (!currentHost->tlssession){
+				if (!currentHost->ssl){
 					if(!TLSFAIL)sperror("connect");
 					else sperror("TLS initialization failed");
 					close(currentHost->socket);
@@ -800,11 +800,11 @@ int connectToServer(){
 		#ifdef TLSPROTOCOL
 		if(strcmp(TLS, host.protocolName) == 0){
 			if(TLSFAIL){
-				host.tlssession = NULL;
+				host.ssl = NULL;
 			}else{
-				host.tlssession = initTLSSocket(host.socket, inet_ntoa(host.socketAddress.sin_addr));
+				host.ssl = initTLSSocket(host.socket, inet_ntoa(host.socketAddress.sin_addr));
 			}
-			if (!host.tlssession){
+			if (!host.ssl){
 				if(!TLSFAIL)sperror("connect");
 				else sperror("TLS initialization failed");
 				close(host.socket);
@@ -854,9 +854,9 @@ int sendMessage(char *message) {
 #ifdef TLSPROTOCOL
 	if(strcmp(TLS, host.protocolName) == 0){
 		slog(LOG_NORMAL, "sending to SSL server. ....\n");
-		bytesSent = sendTLS(message,host.tlssession);
+		bytesSent = sendTLS(message,host.ssl);
 		if(bytesSent < 0) {
-			slog(LOG_NORMAL, "error sending to SSL server. WSA ERROR: %d",getTLSError(bytesSent));
+			slog(LOG_NORMAL, "error sending to SSL server. WSA ERROR: %d",getTLSError(host.ssl,bytesSent));
 			bytesSent = -1;
 		}
 	}else{
@@ -882,7 +882,7 @@ int sendMessage(char *message) {
 		host.last_error = time(&host.last_error);
 #ifdef TLSPROTOCOL
 		if(strcmp(TLS, host.protocolName) == 0){
-			deinitTLSSocket(host.tlssession,1);
+			deinitTLSSocket(host.ssl,1);
 		}
 #endif
 		unlink(SOCKETSTATUSFILE);
@@ -1292,7 +1292,7 @@ void deinitTLSsession() {
 	// closure of the TLS session to the syslog server
 	#ifdef TLSPROTOCOL
 			if(strcmp(TLS, host.protocolName) == 0){
-				if(!TLSFAIL)deinitTLSSocket(host.tlssession,1);
+				if(!TLSFAIL)deinitTLSSocket(host.ssl,1);
 			}
 	#endif
 

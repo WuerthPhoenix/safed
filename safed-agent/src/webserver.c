@@ -32,7 +32,7 @@ int http_listen_socket;
 // the socket used to handle each client connection
 int http_message_socket;
 #ifdef TLSPROTOCOL
-	gnutls_session_t session_https = NULL;
+	WOLFSSL* session_https = NULL;
 #endif
 char fromServer[25] = "";
 
@@ -500,7 +500,7 @@ int handleConnect() {
 				deinitTLSSocket(session_https, 1);
 				return(1);
 			    }else if (tempval < 0){
-				printf("*** Error: %s\n", gnutls_strerror(tempval));
+				printf("*** Error: %d\n", getTLSError(session_https,tempval));
 				close(http_message_socket);
 				deinitTLSSocket(session_https, 1);
 				return(1);

@@ -15,7 +15,7 @@
 #include "Misc.h"
 
 #ifdef TLSPROTOCOL
-	#include <gnutls/gnutls.h>
+	#include <wolfssl/ssl.h>
 #endif
 
 #define CONFIG_FILENAME "/etc/safed/safed.conf"
@@ -72,7 +72,7 @@ typedef struct _hostnode {
 	int protocol;
 	char protocolName[MAX_HOSTID];
 #ifdef TLSPROTOCOL
-	gnutls_session_t tlssession;
+	WOLFSSL* ssl;
 #endif
 } HostNode;
 

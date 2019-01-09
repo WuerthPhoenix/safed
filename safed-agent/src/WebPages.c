@@ -76,7 +76,7 @@ int StatusImage(char *source, char *dest, int size);
 
 // Make sure we return the size, or zero (for strings).
 #ifdef TLSPROTOCOL
-int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, gnutls_session_t session_https, char* fromServer)
+int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, WOLFSSL* session_https, char* fromServer)
 #else
 int HandleWebPages(char *HTTPBuffer, char *HTTPOutputBuffer, int size, int http_listen_socket, int http_message_socket, char* fromServer)
 #endif
@@ -4008,7 +4008,7 @@ int Daily_Events(char *source, char *dest, int size, int at)
 
 
 #ifdef TLSPROTOCOL
-int GetConfig(int http_socket, gnutls_session_t session_https, char* fromServer)
+int GetConfig(int http_socket, WOLFSSL* session_https, char* fromServer)
 #else
 int GetConfig(int http_socket, char* fromServer)
 #endif
