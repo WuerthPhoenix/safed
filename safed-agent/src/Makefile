@@ -8,7 +8,7 @@ GNUTLS_C = $(shell ./checkgnutls.sh $(GNUTLS) -c)
 GNUTLS_L = $(shell ./checkgnutls.sh $(GNUTLS) -l)
 
 
-CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
+CFLAGS = $(GNUTLS_D) -DWC_RSA_BLINDING -Wall -O2 $(BCFLAGS)
 #CFLAGS = -D DEBUG $(GNUTLS_D) -g -O0 $(BCFLAGS)
 
 all: safed
