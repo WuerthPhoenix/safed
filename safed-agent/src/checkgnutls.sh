@@ -19,7 +19,7 @@ elif [ "$1" = "wolfssl" ]
 then
         if [ "$2" = "-d" ] 
 	then
-	       echo "-D TLSPROTOCOL"
+	       echo "-D TLSPROTOCOL -DWC_RSA_BLINDING"
 	elif [ "$2" = "-c" ]
 	then
 		echo "SafedTLS.o"
