@@ -32,7 +32,6 @@
 #define KEY_FILE "/etc/safed/key.pem"
 #define CAFILE "/etc/safed/ca.pem"
 #define CRLFILE "/etc/safed/crl.pem"
-#define DH_BITS 1024
 
 
 WOLFSSL_CTX* ctx;
