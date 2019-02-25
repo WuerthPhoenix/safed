@@ -1,3 +1,4 @@
+#include  <wolfssl/ssl.h>
 
 int initTLS();
 int initSTLS();

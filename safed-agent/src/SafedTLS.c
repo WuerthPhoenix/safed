@@ -5,25 +5,13 @@
 #endif
 
 
+#include "SafedTLS.h"
+#include "Misc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <wolfssl/options.h>
-#include <wolfssl/ssl.h>
-#include <wolfssl/test.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <pthread.h>
-#include <errno.h>
-#include <netdb.h>
-#include "SafedTLS.h"
-#include "Misc.h"
 
 
 /* A TLS client that loads the certificate and key.
