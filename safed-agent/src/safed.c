@@ -856,7 +856,7 @@ int sendMessage(char *message) {
 		slog(LOG_NORMAL, "sending to SSL server. ....\n");
 		bytesSent = sendTLS(message,host.ssl);
 		if(bytesSent < 0) {
-			slog(LOG_NORMAL, "error sending to SSL server. WSA ERROR: %d",getTLSError(host.ssl,bytesSent));
+			slog(LOG_NORMAL, "error sending to SSL server. WSA ERROR: %s",getTLSError(host.ssl,bytesSent));
 			bytesSent = -1;
 		}
 	}else{

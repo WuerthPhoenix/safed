@@ -450,13 +450,26 @@ int handleConnect() {
 		retval = recv(http_message_socket, HTTPBuffer, sizeof(HTTPBuffer), 0);
 	// NOTE: Should probably do something about requests that are bigger than HTTPBuffer also..
 
-	if ((retval == -1) || (retval == 0)) {
+	if (retval == 0) {
+                slog(LOG_ERROR, " - Peer has closed the TLS connection\n");
 		close(http_message_socket);
 #ifdef TLSPROTOCOL
-		if(remoteControlHttps)deinitTLSSocket(session_https, 1);
+		if(remoteControlHttps){
+                    deinitTLSSocket(session_https, 1);
+                }
 #endif
 		return (1);
-	}
+	}else if(retval < 0){
+                slog(LOG_ERROR, " *** Error: %d\n",retval);
+                close(http_message_socket);
+#ifdef TLSPROTOCOL
+                if(remoteControlHttps){
+                    slog(LOG_ERROR, " *** Error: %s\n",getTLSError(session_https,retval));
+                    deinitTLSSocket(session_https, 1);
+                }
+#endif
+                return (1);
+        }
 
 	HTTPBuffer[retval] = '\0';
 	char* headerend=strstr(HTTPBuffer,"\r\n\r\n");
@@ -500,7 +513,7 @@ int handleConnect() {
 				deinitTLSSocket(session_https, 1);
 				return(1);
 			    }else if (tempval < 0){
-                                slog(LOG_ERROR, " *** Error: %d\n",getTLSError(session_https,tempval));
+                                slog(LOG_ERROR, " *** Error: %s\n",getTLSError(session_https,tempval));
 				close(http_message_socket);
 				deinitTLSSocket(session_https, 1);
 				return(1);

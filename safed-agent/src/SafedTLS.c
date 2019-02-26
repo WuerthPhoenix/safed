@@ -40,11 +40,12 @@ char* getKEY_FILE(){
 }
 
 
-int getTLSError(WOLFSSL* ssl,int ret){
+const char* getTLSError(WOLFSSL* ssl,int ret){
         int err = wolfSSL_get_error(ssl, ret);
         //char errorString[80];
         //wolfSSL_ERR_error_string(err, errorString);
-        return err;
+        //return err;
+        return wolfSSL_ERR_reason_error_string(err);
 }
 
 
