@@ -12,7 +12,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#include <wolfssl/wolfcrypt/error-crypt.h>
 
 /* A TLS client that loads the certificate and key.
  */
@@ -214,10 +214,20 @@ WOLFSSL* initSTLSSocket(int socketSafed, char *SERVER) {
 	slog(LOG_NORMAL,"Web server initSTLSSocket for %s (%s) starting.\n",SERVER, getNameFromIP(SERVER));
         /* Create wolfSSL object */
         WOLFSSL* ssl;
+        int err,ret;
         if ( (ssl = wolfSSL_new(ctx_server)) == NULL)
             slog(LOG_ERROR,"Error initSTLSSocket wolfSSL_new error");
 
         wolfSSL_set_fd(ssl, socketSafed);
+        do {
+            err = 0; /* reset error */
+            ret = wolfSSL_accept(ssl);
+            if (ret != WOLFSSL_SUCCESS) {
+                err = wolfSSL_get_error(ssl, ret);
+            }
+        } while (err == WC_PENDING_E);
+
+
 
 	slog(LOG_NORMAL,"Web server initTLSSocket for %s done.\n",SERVER);
 	return ssl;
