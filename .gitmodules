@@ -1,0 +1,3 @@
+[submodule "safed-agent/external/wolfssl"]
+	path = safed-agent/external/wolfssl
+	url = https://github.com/wolfSSL/wolfssl.git
