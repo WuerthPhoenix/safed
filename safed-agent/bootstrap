@@ -8,7 +8,7 @@ fi
 cd ..
 git submodule update --init
 cd safed-agent/external/wolfssl
-./autogen.sh && ./configure --libdir=/usr/lib64 --enable-tls13 --disable-oldtls && ../wolfsslfix && make && make install
+./autogen.sh && ./configure --prefix=/usr --enable-tls13 --disable-oldtls && ../wolfsslfix && make && make install
 if [ "$?" -ne 0 ]
 then
     echo "[-] Error: failed to build and install wolfssl. Exit ..."
