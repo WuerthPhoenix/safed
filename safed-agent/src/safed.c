@@ -541,7 +541,7 @@ int main(int argc, char *argv[]) {
     timeout.tv_nsec = waitTime;
     
     // init sockets to set SOCKETSTATUSFILE
-	connectToServer();
+    connectToServer();
 
     // create the thread that reads the messages from the cache, and sends them to the syslog server
     pthread_t send_thread_id;
@@ -874,8 +874,9 @@ int sendMessage(char *message) {
 		slog(LOG_ERROR, "...error! Sent to destination only %d bytes instead of %d!", bytesSent, bytesToSend);
 	}
 
-	// this is the real error situation
-	if (bytesSent == -1) {
+	// this is the real error situation . 0 means that the socket has been closed
+	// One message coud be lost because only the next tcp send call will fail
+	if (bytesSent <= 0) {
 		sperror("sendto");
 		close(host.socket);
 		host.socket = 0;
