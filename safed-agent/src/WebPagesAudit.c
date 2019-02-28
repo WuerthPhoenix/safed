@@ -47,7 +47,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 	if (configfile) {
 		strncat(dest,
 			"<br>The following audit filtering objectives of the SafedAgent unit are active:<br><br>"
-			"<table  width=100% border=1>", sizeof(dest) - strlen(dest) -1);
+			"<table  width=100% border=1>", size - strlen(dest) -1);
 
 		strncat(dest,
 			"<tr bgcolor=#F0F1F5><center><td><b>Action Required</b></td><td><b>Criticality</b></td>"
@@ -69,7 +69,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 			if ((i_objective_count) == 0)
 				strncat(dest,
 					"<tr bgcolor=#DEDBD2><td><input type=submit name=",
-					sizeof(dest) - strlen(dest) -1);
+					size - strlen(dest) -1);
 			else{
 				snprintf(strtmp, sizeof(strtmp), "<div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/safed/setobjective?%d=MoveDown\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9660;</a></div>",(i_objective_count-1));
 				strncat(dest,strtmp,size - strlen(dest) - 1);
@@ -106,7 +106,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				  SIZE_OF_A_GENERALMATCH * 2);
 
 			if (strlen(objective_audit_struct.str_eventid_match) == 0) {
-				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) -1);
+				strncat(dest, "&nbsp", size - strlen(dest) -1);
 			} else {
 				strncat(dest, str_eventid_match_metachar_remove,
 					size - strlen(dest) - 1);
@@ -119,41 +119,41 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				strncat(dest, "&nbsp", size - strlen(dest) - 1);
 			} else {
 				strncat(dest, str_user_match_metachar_remove,
-					sizeof(dest) - strlen(dest) -1);
+					size - strlen(dest) -1);
 			}
 			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
-			strncat(dest, objective_audit_struct.str_general_match_type, sizeof(dest) - strlen(dest) -1);
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
+			strncat(dest, objective_audit_struct.str_general_match_type, size - strlen(dest) -1);
+			strncat(dest, "</td><td>", size - strlen(dest) -1);
 			if (strlen(objective_audit_struct.str_general_match) == 0) {
-				strncat(dest,"&nbsp",sizeof(dest) - strlen(dest) -1);
+				strncat(dest,"&nbsp",size - strlen(dest) -1);
 			} else {
-				strncat(dest,str_general_match_metachar_remove,sizeof(dest) - strlen(dest) -1);
+				strncat(dest,str_general_match_metachar_remove,size - strlen(dest) -1);
 			}
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
+			strncat(dest, "</td><td>", size - strlen(dest) -1);
 
-			strncat(dest, objective_audit_struct.str_event_type, sizeof(dest) - strlen(dest) -1);
-			strncat(dest, "</td>", sizeof(dest) - strlen(dest) -1);
+			strncat(dest, objective_audit_struct.str_event_type, size - strlen(dest) -1);
+			strncat(dest, "</td>", size - strlen(dest) -1);
 			if (i_objective_count > 0){
 				snprintf(strtmp, sizeof(strtmp), "<td><div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/safed/setobjective?%d=MoveUp\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9650;</a></div>",i_objective_count);
-				strncat(dest,strtmp,sizeof(dest) - strlen(dest) -1);
+				strncat(dest,strtmp,size - strlen(dest) -1);
 
 
 
 			}else
-				strncat(dest,"<td>",sizeof(dest) - strlen(dest) -1);
+				strncat(dest,"<td>",size - strlen(dest) -1);
 			i_objective_count++;
 		}
-		strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) -1);
+		strncat(dest, "</td></tr>", size - strlen(dest) -1);
 		Close_File(configfile);
-		strncat(dest,"</table><br>",sizeof(dest) - strlen(dest) -1);
+		strncat(dest,"</table><br>",size - strlen(dest) -1);
 	} else {
-		strncat(dest,"<br>There are no current filtering objectives active.<br><br>",sizeof(dest) - strlen(dest) -1);
+		strncat(dest,"<br>There are no current filtering objectives active.<br><br>",size - strlen(dest) -1);
 	}
 
-	strncat(dest,"Select this button to add a new objective.  ",sizeof(dest) - strlen(dest) -1);
-	strncat(dest,"<input type=submit name=0",sizeof(dest) - strlen(dest) -1);
-	strncat(dest," value=Add>",sizeof(dest) - strlen(dest) -1);
+	strncat(dest,"Select this button to add a new objective.  ",size - strlen(dest) -1);
+	strncat(dest,"<input type=submit name=0",size - strlen(dest) -1);
+	strncat(dest," value=Add>",size - strlen(dest) -1);
 	return(0);
 }
 
@@ -209,7 +209,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 
  	//If the objective number could not be successfully extracted, return immediately.
  	if (i_objective_count == 0) {
- 		strncat(dest,"<br><b>NOTE: It appears the URL is encoded incorrectly.",sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,"<br><b>NOTE: It appears the URL is encoded incorrectly.",size - strlen(dest) -1);
  		return 0;
  	}
 
@@ -259,329 +259,329 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			strncat(dest,
  				"<br><b>NOTE: Some errors were encountered in reading the configuration file. Default values "
  				"may be used.<br> Report error: ",
- 				sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, str_objerr, sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
+ 			strncat(dest, str_objerr, size - strlen(dest) -1);
+ 			strncat(dest, "</b><br>", size - strlen(dest) -1);
  		}
 
  		strncat(dest,
  			"<br>The following parameters of the SafedAgent objective may be set:<br><br>"
- 			"<table  width=100% border=0>", sizeof(dest) - strlen(dest) -1);
+ 			"<table  width=100% border=0>", size - strlen(dest) -1);
 
  		// Identify the high level event. Note that there is a table within a table in these radio buttons.
  		i_set = 0;
  		isany = 0;
 
- 		strncat(dest,"<tr bgcolor=#E7E5DD><td>Identify the high level event</td><td><table  width=100% border=0><tr>",	sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,"<tr bgcolor=#E7E5DD><td>Identify the high level event</td><td><table  width=100% border=0><tr>",	size - strlen(dest) -1);
 
  #if defined(__linux__)
- 		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, LOGONOFF_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, LOGONOFF_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, LOGONOFF_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, OPEN_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, OPEN_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, OPEN_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Open a file/dir for reading/writing  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_REMOVE_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Open a file/dir for reading/writing  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, FILE_REMOVE_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_REMOVE_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Remove file or directory  </td><td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_ATTRIB_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Remove file or directory  </td><td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, FILE_ATTRIB_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_ATTRIB_TOKEN ) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Modify system, file or directory attributes  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, PROCESS_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Modify system, file or directory attributes  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, PROCESS_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, PROCESS_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Start or stop program execution  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, SOCKET_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Start or stop program execution  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, SOCKET_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, SOCKET_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Network socketcall events  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, USER_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Network socketcall events  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, USER_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, USER_TOKEN)  == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Account administration avents  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, ADMIN_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Account administration avents  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, ADMIN_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, ADMIN_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Administrative Events   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Administrative Events   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",size - strlen(dest) -1);
  #endif
  #if defined(__sun)
 
-		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, LOGONOFF_TOKEN, sizeof(dest) - strlen(dest) -1);
+		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, LOGONOFF_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, LOGONOFF_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_READ_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, FILE_READ_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_READ_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Open a file/dir for reading only  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_WRITE_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Open a file/dir for reading only  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, FILE_WRITE_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_WRITE_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Open a file/dir for writing only  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_REMOVE_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Open a file/dir for writing only  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, FILE_REMOVE_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_REMOVE_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Remove file or directory  </td></tr><tr><td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_ATTRIB_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Remove file or directory  </td></tr><tr><td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, FILE_ATTRIB_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_ATTRIB_TOKEN ) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Modify system, file or directory attributes  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, PROCESS_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Modify system, file or directory attributes  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, PROCESS_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, PROCESS_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Start or stop program execution  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, SOCKET_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Start or stop program execution  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, SOCKET_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, SOCKET_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Network socketcall events  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, USER_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Network socketcall events  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, USER_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, USER_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Account administration avents   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Account administration avents   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",size - strlen(dest) -1);
  #endif
  #if defined(_AIX)
 
 
-		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, LOGONOFF_TOKEN, sizeof(dest) - strlen(dest) -1);
+		strncat(dest,"<td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, LOGONOFF_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, LOGONOFF_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_READ_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">User Logon or Logoff  </td><td><input type=radio name=str_eventid_match value=",	size - strlen(dest) -1);
+ 		strncat(dest, FILE_READ_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_READ_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Open a file/dir for reading only  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_WRITE_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Open a file/dir for reading only  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, FILE_WRITE_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_WRITE_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Open a file/dir for writing only  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FILE_ATTRIB_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Open a file/dir for writing only  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, FILE_ATTRIB_TOKEN, size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, FILE_ATTRIB_TOKEN ) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Modify system, file or directory attributes  </td></tr><tr><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, PROCESS_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Modify system, file or directory attributes  </td></tr><tr><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+ 		strncat(dest, PROCESS_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, PROCESS_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Start or stop program execution  </td><td><input type=radio name=str_eventid_match value=",sizeof(dest) - strlen(dest) -1);
-  		strncat(dest, ADMIN_TOKEN , sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Start or stop program execution  </td><td><input type=radio name=str_eventid_match value=",size - strlen(dest) -1);
+  		strncat(dest, ADMIN_TOKEN , size - strlen(dest) -1);
  		if (strcmp(objective_audit_struct.str_eventid_match, ADMIN_TOKEN) == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
- 		strncat(dest,">Administrative Events   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest,">Administrative Events   </td></tr><tr><td>&nbsp;</td><td><input type=radio name=str_eventid_match value=Any_Event",size - strlen(dest) -1);
  #endif
 
  		if (i_set == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  			isany = 1;
  		}
  		strncat(dest,
  			">Any event(s) </td></tr></table></td></tr>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD><td>Event ID Search Term<br><i>Optional, Comma separated: only used by the 'Any Event' setting above </i></td><td><input type=text name=str_eventid_text size=50 value=\"",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		if(isany)
- 			strncat(dest, objective_audit_struct.str_eventid_match,	sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, objective_audit_struct.str_eventid_match,	size - strlen(dest) -1);
+ 		strncat(dest, "\"></td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#E7E5DD><td>Select the General Match Type</td><td>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest,
  			"<input type=radio name=str_general_match_type value=Any",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		if (strcmp(objective_audit_struct.str_general_match_type, "Any") == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			strncpy(objective_audit_struct.str_general_match_type, "Any", sizeof(objective_audit_struct.str_general_match_type));
  		}
- 		strncat(dest, ">Match Any Event    ", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, ">Match Any Event    ", size - strlen(dest) -1);
  		strncat(dest,
  			"<input type=radio name=str_general_match_type value=Include",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_general_match_type, "Include") !=
  		    NULL) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		}
  		strncat(dest,
  			">Include    <input type=radio name=str_general_match_type value=Exclude",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		if (strstr(objective_audit_struct.str_general_match_type, "Exclude") !=
  		    NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, ">Exclude    </td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
+ 		strncat(dest, ">Exclude    </td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD><td>General Search Term<br><a href=\"http://en.wikipedia.org/wiki/Regular_expression\"><i>Regular expressions accepted</i></a></td><td><input type=text name=str_general_match size=50 value=\"",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest, objective_audit_struct.str_general_match,
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, "\"></td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#E7E5DD><td>Select the User Match Type</td><td>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest,
  			"<input type=radio name=str_user_match_type value=Any",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		if (strcmp(objective_audit_struct.str_user_match_type, "Any") == 0) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			strncpy(objective_audit_struct.str_user_match_type, "Any", sizeof(objective_audit_struct.str_user_match_type));
  		}
- 		strncat(dest, ">Match Any User    ", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, ">Match Any User    ", size - strlen(dest) -1);
  		strncat(dest,
  			"<input type=radio name=str_user_match_type value=Include",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_user_match_type, "Include") !=
  		    NULL) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		}
  		strncat(dest,
  			">Include    <input type=radio name=str_user_match_type value=Exclude",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		if (strstr(objective_audit_struct.str_user_match_type, "Exclude") !=
  		    NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, ">Exclude    </td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
+ 		strncat(dest, ">Exclude    </td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD><td>User Search Term<br><i>(comma separated user list)</i> </td><td><input type=text name=str_user_match size=50 value=\"",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest, objective_audit_struct.str_user_match,
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, "\"></td></tr>", size - strlen(dest) -1);
 
  		// Identify the event type to capture. Note that there is a table within a table in these radio buttons.
  		i_set = 0;
 
  		strncat(dest,
  			"<tr bgcolor=#E7E5DD><td>Identify the event types to be captured</td><td><table  width=100% border=0><tr>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest,
  			"<td><input type=checkbox name=str_event_type_succ value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, SUCCESS_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, SUCCESS_TOKEN, size - strlen(dest) -1);
 
  		if (!strcmp(objective_audit_struct.str_event_type, SUCCESS_TOKEN)
  		    || !strcmp(objective_audit_struct.str_event_type, ALL_TOKEN)) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
  		strncat(dest,
  			">Success Audit  </td><td><input type=checkbox name=str_event_type_fail value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, FAILURE_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, FAILURE_TOKEN, size - strlen(dest) -1);
  		if (!strcmp(objective_audit_struct.str_event_type, FAILURE_TOKEN)
  		    || !strcmp(objective_audit_struct.str_event_type, ALL_TOKEN)) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  			i_set = 1;
  		}
  		strncat(dest, ">Failure Audit  </td></tr>",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, "</table></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, "</table></td></tr>", size - strlen(dest) -1);
 
  		// Identify the log type to capture. Note that there is a table within a table in these radio buttons.
  		i_set = 0;
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD><td>Select the Alert Level</td><td>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		// Determine the criticality level
  		strncat(dest, "<input type=radio name=str_critic value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, CRITICAL_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, CRITICAL_TOKEN, size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_critic, CRITICAL_TOKEN) != NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		strncat(dest,
  			">Critical    <input type=radio name=str_critic value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, PRIORITY_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, PRIORITY_TOKEN, size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_critic, PRIORITY_TOKEN) != NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		strncat(dest,
  			">Priority    <input type=radio name=str_critic value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, WARNING_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, WARNING_TOKEN, size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_critic, WARNING_TOKEN) != NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		strncat(dest,
  			">Warning    <input type=radio name=str_critic value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, INFORMATION_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, INFORMATION_TOKEN, size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_critic, INFORMATION_TOKEN) != NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		strncat(dest,
  			">Information    <input type=radio name=str_critic value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, CLEAR_TOKEN, sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, CLEAR_TOKEN, size - strlen(dest) -1);
  		if (strstr(objective_audit_struct.str_critic, CLEAR_TOKEN) != NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, ">Clear    </td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
+ 		strncat(dest, ">Clear    </td></tr>", size - strlen(dest) -1);
 
- 		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, "</table><br>", size - strlen(dest) -1);
  		strncat(dest, "<input type=hidden name=objnumber value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, str_temp_objective, sizeof(dest) - strlen(dest) -1);	// Objective number goes here
+ 			size - strlen(dest) -1);
+ 		strncat(dest, str_temp_objective, size - strlen(dest) -1);	// Objective number goes here
  		strncat(dest,
  			"><input type=submit value=\"Change Configuration\">    ",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  	} else {
 
  		dw_objective_delete_error = Clear_Audit_Objectives_From_File(i_objective_count,i_type,dest, size);
@@ -592,7 +592,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 		}else
 			strncat(dest,
 				"<br>The objective was unable to be deleted.",
-				sizeof(dest) - strlen(dest) -1);
+				size - strlen(dest) -1);
 
  	}
 
@@ -687,7 +687,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			strlen(objective_admin_struct.str_event_type));
  		strncat(dest,
  			"<br>Either Success or Failure (or both) must be specified. I have defaulted this objective to BOTH.<p>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  	}
 
  	if (strstr(str_eventid_radio, "Any_Event") != NULL) {
@@ -834,9 +834,9 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 	}else{
 		strncat(dest,
 			"<br>The objective was unable to be modified/added.",
-			sizeof(dest) - strlen(dest) -1);
+			size - strlen(dest) -1);
 		if(strlen(emsg))
-			strncat(dest,emsg,sizeof(dest) - strlen(dest) -1);
+			strncat(dest,emsg,size - strlen(dest) -1);
 	}
  	return(0);
  }
@@ -865,7 +865,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 			if (!configfile) {
 				strncat(dest,
 					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-					sizeof(dest) - strlen(dest) -1);
+					size - strlen(dest) -1);
 				Clear_Config_File(rampointer);
 				return (dw_objective_delete_error);
 			}
@@ -935,7 +935,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				dw_objective_delete_error = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-					sizeof(dest) - strlen(dest) -1);
+					size - strlen(dest) -1);
 				Clear_Config_File(rampointer);
 				return (dw_objective_delete_error);
 			}
@@ -969,7 +969,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			dw_objective_error = 1;
  			strncat(dest,
  				"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
  			Clear_Config_File(rampointer);
  			return (dw_objective_error);
  		}
@@ -1096,7 +1096,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			dw_objective_error = 1;
  			strncat(dest,
  				"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
  			Clear_Config_File(rampointer);
  			return (dw_objective_error);
  		}
@@ -1129,7 +1129,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			dw_objective_error = 1;
  			strncat(dest,
  				"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
  			Clear_Config_File(rampointer);
  			return (dw_objective_error);
  		}
@@ -1282,7 +1282,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			dw_objective_error = 1;
  			strncat(dest,
  				"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
  			Clear_Config_File(rampointer);
  			return (dw_objective_error);
  		}
@@ -1584,7 +1584,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  	if (configfile) {
  		strncat(dest,
  			"<br>The following watches of the SafedAgent unit are active:<br><br>"
- 			"<table  width=100% border=1>", sizeof(dest) - strlen(dest) -1);
+ 			"<table  width=100% border=1>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#F0F1F5><center><td width=\"10%\"><b>Action Required</b></td>"
@@ -1592,7 +1592,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  	 		"<td width=\"75%\"><b>Path</b></td>"
  	 		"<td width=\"75%\"><b>New File</b></td>"
  			"<td width=\"5%\"><b>Order</b></td>"
- 			"</center></tr>", sizeof(dest) - strlen(dest) -1);
+ 			"</center></tr>", size - strlen(dest) -1);
 
  		while (Get_Next_Watch(configfile, &reg_watch)) {
  			snprintf(str_watch_count, 15, "%d", i_watch_count);
@@ -1600,33 +1600,33 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			if ((i_watch_count) == 0)
  				strncat(dest,
  					"<tr bgcolor=#DEDBD2><td><input type=submit name=",
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  			else{
  				snprintf(strtmp, sizeof(strtmp), "<div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/safed/setwatch?%d=MoveDown\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9660;</a></div>",(i_watch_count-1));
- 				strncat(dest,strtmp,sizeof(dest) - strlen(dest) -1);
- 				strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest,strtmp,size - strlen(dest) -1);
+ 				strncat(dest, "</td></tr>", size - strlen(dest) -1);
  				strncat(dest,
  					"<tr bgcolor=#E7E5DD><td><input type=submit name=",
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  			}
 
- 			strncat(dest, str_watch_count, sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, str_watch_count, size - strlen(dest) -1);
  			strncat(dest, " value=Delete>     ",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
 
  			strncat(dest, "<input type=submit name=",
- 				sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, str_watch_count, sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, " value=Modify>", sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
+ 			strncat(dest, str_watch_count, size - strlen(dest) -1);
+ 			strncat(dest, " value=Modify>", size - strlen(dest) -1);
+ 			strncat(dest, "</td><td>", size - strlen(dest) -1);
 
  			if (strlen(reg_watch.str_general_match_type) == 0) {
- 				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest, "&nbsp", size - strlen(dest) -1);
  			} else {
  				strncat(dest, reg_watch.str_general_match_type,
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  			}
- 			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, "</td><td>", size - strlen(dest) -1);
 
  			// Debracket the strings in here. For HTML display purposes, the HTML metacharacters
  			// need to be replaced. This is done with the "debracket" routine.
@@ -1636,45 +1636,45 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  				  SIZE_OF_GENERALMATCH * 2);
 
  			if (strlen(reg_watch.str_general_match) == 0) {
- 				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest, "&nbsp", size - strlen(dest) -1);
  			} else {
  				strncat(dest, str_general_match_metachar_remove,
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  			}
- 			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, "</td><td>", size - strlen(dest) -1);
 
  			if (strlen(reg_watch.str_new) == 0) {
- 				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest, "&nbsp", size - strlen(dest) -1);
  			} else {
  				strncat(dest, reg_watch.str_new,
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  			}
- 			strncat(dest, "</td>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, "</td>", size - strlen(dest) -1);
 
  			if (i_watch_count > 0){
  				snprintf(strtmp, sizeof(strtmp), "<td><div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/safed/setwatch?%d=MoveUp\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9650;</a></div>",i_watch_count);
- 				strncat(dest,strtmp,sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest,strtmp,size - strlen(dest) -1);
 
 
 
  			}else
- 				strncat(dest,"<td>",sizeof(dest) - strlen(dest) -1);
+ 				strncat(dest,"<td>",size - strlen(dest) -1);
  			i_watch_count++;
  		}
 
- 		strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, "</td></tr>", size - strlen(dest) -1);
  		Close_File(configfile);
- 		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, "</table><br>", size - strlen(dest) -1);
  	} else {
  		strncat(dest,
  			"<br>There are no current watches active.<br><br>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  	}
 
  	strncat(dest, "Select this button to add a new watch.  ",
- 		sizeof(dest) - strlen(dest) -1);
- 	strncat(dest, "<input type=submit name=0", sizeof(dest) - strlen(dest) -1);
- 	strncat(dest, " value=Add>", sizeof(dest) - strlen(dest) -1);
+ 		size - strlen(dest) -1);
+ 	strncat(dest, "<input type=submit name=0", size - strlen(dest) -1);
+ 	strncat(dest, " value=Add>", size - strlen(dest) -1);
 
  	return (0);
  }
@@ -1757,7 +1757,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  	if (i_watch_count == 0) {
  		strncat(dest,
  			"<br><b>NOTE: It appears the URL is encoded incorrectly.",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		return 0;
  	}
 
@@ -1802,60 +1802,60 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			strncat(dest,
  				"<br><b>NOTE: Some errors were encountered in reading the configuration file. Default values "
  				"may be used.<br> Report error: ",
- 				sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, str_objerr, sizeof(dest) - strlen(dest) -1);
- 			strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
+ 			strncat(dest, str_objerr, size - strlen(dest) -1);
+ 			strncat(dest, "</b><br>", size - strlen(dest) -1);
  		}
 
  		strncat(dest,
  			"<br>The following parameters of the SafedAgent watch may be set:<br><br>"
- 			"<table  width=100% border=0>", sizeof(dest) - strlen(dest) -1);
+ 			"<table  width=100% border=0>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD2><td>Select the General Match Type</td><td>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest,
  			"<input type=radio name=str_general_match_type value=Include",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		if (strstr(reg_watch.str_general_match_type, "Include") != NULL) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		}
  		strncat(dest,
  			">Include    <input type=radio name=str_general_match_type value=Exclude",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
 
  		if (strstr(reg_watch.str_general_match_type, "Exclude") !=
  		    NULL)
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, ">Exclude    </td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
+ 		strncat(dest, ">Exclude    </td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#E7E5DD><td>Path</td><td><input type=text name=str_general_match size=50 value=\"",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest, reg_watch.str_general_match,
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
+ 		strncat(dest, "\"></td></tr>", size - strlen(dest) -1);
 
  		strncat(dest,
  			"<tr bgcolor=#DEDBD2><td>New File</td><td><input type=checkbox name=dw_newfile",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		if (strstr(reg_watch.str_new, "Yes") != NULL) {
- 			strncat(dest, " checked", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " checked", size - strlen(dest) -1);
  		}else if((isdir(reg_watch.str_general_match) <= 0) || (strstr(reg_watch.str_general_match_type, "Exclude") != NULL)){
- 			strncat(dest, " disabled", sizeof(dest) - strlen(dest) -1);
+ 			strncat(dest, " disabled", size - strlen(dest) -1);
  		}
- 		strncat(dest, "></td></tr>", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, "></td></tr>", size - strlen(dest) -1);
 
 
- 		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) -1);
+ 		strncat(dest, "</table><br>", size - strlen(dest) -1);
  		strncat(dest, "<input type=hidden name=watchnumber value=",
- 			sizeof(dest) - strlen(dest) -1);
- 		strncat(dest, str_temp_watch, sizeof(dest) - strlen(dest) -1);	// Watch number goes here
+ 			size - strlen(dest) -1);
+ 		strncat(dest, str_temp_watch, size - strlen(dest) -1);	// Watch number goes here
  		strncat(dest,
  			"><input type=submit value=\"Change Configuration\">    ",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  		strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  	} else {
  		void *rampointer = (void *) NULL;
  		char *position;
@@ -1878,7 +1878,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			if (!configfile) {
  				strncat(dest,
  					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  				Clear_Config_File(rampointer);
  				return (0);
  			}
@@ -1947,7 +1947,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  				dw_watch_delete_error = 1;
  				strncat(dest,
  					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
- 					sizeof(dest) - strlen(dest) -1);
+ 					size - strlen(dest) -1);
  				Clear_Config_File(rampointer);
  				return (0);
  			}
@@ -1962,7 +1962,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  		}else
  			strncat(dest,
  				"<br>The watch was unable to be deleted.",
- 				sizeof(dest) - strlen(dest) -1);
+ 				size - strlen(dest) -1);
  	}
 
  	return (0);
@@ -2035,7 +2035,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					dw_watch_error = 1;
  					strncat(dest,
  						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
- 						sizeof(dest) - strlen(dest) -1);
+ 						size - strlen(dest) -1);
  					Clear_Config_File(rampointer);
  					return (0);
  				}
@@ -2129,7 +2129,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					dw_watch_error = 1;
  					strncat(dest,
  						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
- 						sizeof(dest) - strlen(dest) -1);
+ 						size - strlen(dest) -1);
  					Clear_Config_File(rampointer);
  					return (0);
  				}
@@ -2158,7 +2158,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					dw_watch_error = 1;
  					strncat(dest,
  						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
- 						sizeof(dest) - strlen(dest) -1);
+ 						size - strlen(dest) -1);
  					Clear_Config_File(rampointer);
  					return (0);
  				}
@@ -2226,7 +2226,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					dw_watch_error = 1;
  					strncat(dest,
  						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
- 						sizeof(dest) - strlen(dest) -1);
+ 						size - strlen(dest) -1);
  					Clear_Config_File(rampointer);
  					return (0);
  				}
@@ -2243,7 +2243,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  	}else{
  		strncat(dest,
  			"<br>The watch was unable to be modified/added.",
- 			sizeof(dest) - strlen(dest) -1);
+ 			size - strlen(dest) -1);
  	}
  	return (0);
  }
