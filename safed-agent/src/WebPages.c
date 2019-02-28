@@ -575,131 +575,131 @@ int Network_Config(char *source, char *dest, int size) {
 
 		strncat(dest,
 			"<br><b>NOTE: Some errors were encountered in reading the file. Default values "
-			"may be used.<br> Report error: ", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_neterr, sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, ".", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_conferr, sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) - 1);
+			"may be used.<br> Report error: ", size - strlen(dest) - 1);
+		strncat(dest, str_neterr, size - strlen(dest) - 1);
+		strncat(dest, ".", size - strlen(dest) - 1);
+		strncat(dest, str_conferr, size - strlen(dest) - 1);
+		strncat(dest, "</b><br>", size - strlen(dest) - 1);
 	}
 
 	strncat(dest,
 		"<br>The following network configuration parameters of the SafedAgent unit are set to the following values (blank entries are not used):<br><br>\n"
 		"<table  width=70% border=0>"
 		"<tr bgcolor=#DEDBD2><td>Override detected DNS Name with:</td><td><input type=text name=str_ClientName size=25 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
-	strncat(dest, config_struct.str_ClientName, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, config_struct.str_ClientName, size - strlen(dest) - 1);
+	strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 	configfile = Find_First(CONFIG_OUTPUT);
 	if (configfile) {
 		Get_Next_Network(configfile, &host_struct);
 		snprintf(str_net_count, 10, "%d", i_network_count);
 		strncat(dest,
-			"<tr bgcolor=#DEDBD2><td colspan=2><strong>Destination</strong></td></tr>", sizeof(dest) - strlen(dest) - 1);
+			"<tr bgcolor=#DEDBD2><td colspan=2><strong>Destination</strong></td></tr>", size - strlen(dest) - 1);
 		strncat(dest,
 			"<tr bgcolor=#E7E5DD><td>Destination Server address </td><td><input type=text name=str_NetworkDestination size=25 value=\"",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest, host_struct.str_NetworkDestination,
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
+		strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 		strncat(dest,
 			"<tr bgcolor=#DEDBD2><td>Destination Port (514 to enable syslog)</td><td><input type=text name=dw_DestPort size=8 value=\"",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		if (host_struct.dw_DestPort) {
 			snprintf(str_DestPort, 10, "%d", host_struct.dw_DestPort);
 		} else {
 			str_DestPort[0] = '\0';
 		}
 
-		strncat(dest, str_DestPort, sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "\" onMouseover=\"ddrivetip(\'514 is the default rsyslog port  \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
-		//strncat(dest, "<tr bgcolor=#888888><td>Protocol </td><td><input type=checkbox name=str_Protocol disabled> Available in supported version</td></tr>", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "<tr bgcolor=#E7E5DD><td>Protocol </td><td><select name=str_Protocol>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, str_DestPort, size - strlen(dest) - 1);
+		strncat(dest, "\" onMouseover=\"ddrivetip(\'514 is the default rsyslog port  \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
+		//strncat(dest, "<tr bgcolor=#888888><td>Protocol </td><td><input type=checkbox name=str_Protocol disabled> Available in supported version</td></tr>", size - strlen(dest) - 1);
+		strncat(dest, "<tr bgcolor=#E7E5DD><td>Protocol </td><td><select name=str_Protocol>", size - strlen(dest) - 1);
 #ifdef TLSPROTOCOL
 		for (i = 0; i < 3; i++) {
 #else
 		for (i = 0; i < 2; i++) {
 #endif
-			strncat(dest, "<option", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "<option", size - strlen(dest) - 1);
 			if (!strcmp(str_protocol[i],host_struct.str_Protocol))
-				strncat(dest, " selected>", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, " selected>", size - strlen(dest) - 1);
 			else
-				strncat(dest, ">", sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, str_protocol[i], sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, ">", size - strlen(dest) - 1);
+			strncat(dest, str_protocol[i], size - strlen(dest) - 1);
 		}
-		strncat(dest, "</select></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</select></td></tr>", size - strlen(dest) - 1);
 
 		i_network_count++;
 		Close_File(configfile);
 	} else {
 		strncat(dest,
 			"<tr bgcolor=#DEDBD2><td colspan=2>ERROR</td></tr>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	}
 
 
 	//Number of Cache files
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Number of Cache files </td><td><input type=text name=dw_NumberOfFiles size=10 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	snprintf(str_NumberOfFiles, 10, "%d", config_struct.dw_NumberOfFiles);
-	strncat(dest, str_NumberOfFiles, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\" onMouseover=\"ddrivetip(\' Number of days with cached data. The default is 2 \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, str_NumberOfFiles, size - strlen(dest) - 1);
+	strncat(dest, "\" onMouseover=\"ddrivetip(\' Number of days with cached data. The default is 2 \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",sizeof(dest) - strlen(dest) - 1);
+	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",size - strlen(dest) - 1);
 
 	//Number of Log files
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Number of Safed Log files </td><td><input type=text name=dw_NumberOfLogFiles size=10 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	snprintf(str_NumberOfLogFiles, 10, "%d", config_struct.dw_NumberOfLogFiles);
-	strncat(dest, str_NumberOfLogFiles, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\" onMouseover=\"ddrivetip(\' Number of logs. The default is 4 \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, str_NumberOfLogFiles, size - strlen(dest) - 1);
+	strncat(dest, "\" onMouseover=\"ddrivetip(\' Number of logs. The default is 4 \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
 
 	//LogLevel
-	strncat(dest,"<tr bgcolor=#E7E5DD><td>Log level </td><td><select name=dw_LogLevel>",	sizeof(dest) - strlen(dest) - 1);
+	strncat(dest,"<tr bgcolor=#E7E5DD><td>Log level </td><td><select name=dw_LogLevel>",	size - strlen(dest) - 1);
 	for (i = 0; i < 5; i++) {
-		strncat(dest, "<option", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "<option", size - strlen(dest) - 1);
 		if (i == config_struct.dw_LogLevel)
-			strncat(dest, " selected>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " selected>", size - strlen(dest) - 1);
 		else
-			strncat(dest, ">", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_log[i], sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, ">", size - strlen(dest) - 1);
+		strncat(dest, str_log[i], size - strlen(dest) - 1);
 	}
-	strncat(dest, "</select></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "</select></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",sizeof(dest) - strlen(dest) - 1);
+	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",size - strlen(dest) - 1);
 
 	//Wait Time
 	strncat(dest,
 		"<tr bgcolor=#DEDBD2><td>Wait Time </td><td><input type=text name=dw_WaitTime size=10 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	snprintf(str_WaitTime, 10, "%d", config_struct.dw_waitTime);
-	strncat(dest, str_WaitTime, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\" onMouseover=\"ddrivetip(\' Time, in nanoseconds, to wait between reads \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, str_WaitTime, size - strlen(dest) - 1);
+	strncat(dest, "\" onMouseover=\"ddrivetip(\' Time, in nanoseconds, to wait between reads \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
 
 	//Max Message Size
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Max Message Size </td><td><input type=text name=dw_MaxMsgSize size=10 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	snprintf(str_MaxMsgSize, 10, "%d", config_struct.dw_MaxMsgSize);
-	strncat(dest, str_MaxMsgSize, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\" onMouseover=\"ddrivetip(\' Max Message Size in characters \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, str_MaxMsgSize, size - strlen(dest) - 1);
+	strncat(dest, "\" onMouseover=\"ddrivetip(\' Max Message Size in characters \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",sizeof(dest) - strlen(dest) - 1);
+	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",size - strlen(dest) - 1);
 #if defined(__linux__)
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Allow SafedAgent to automatically set audit configuration? </td><td><input type=checkbox name=dw_SetAudit",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	// Need to convert this next section to YES or NO
 	if (config_struct.dw_SetAudit != 0)
-		strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, " checked", size - strlen(dest) - 1);
+	strncat(dest, "></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",sizeof(dest) - strlen(dest) - 1);
+	strncat(dest,"<tr bgcolor=#FFFFFF><td><br/></td><td><br/></td></tr>",size - strlen(dest) - 1);
 #endif
 
 	SyslogPriority = config_struct.dw_Syslog & 7;
@@ -710,33 +710,33 @@ int Network_Config(char *source, char *dest, int size) {
 
 
 
-	strncat(dest, "<tr bgcolor=#DEDBD2><td>SYSLOG Facility (optional) </td><td><select name=SyslogFacility>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "<tr bgcolor=#DEDBD2><td>SYSLOG Facility (optional) </td><td><select name=SyslogFacility>", size - strlen(dest) - 1);
 	for (i = 0; i < 19; i++) {
-		strncat(dest, "<option", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "<option", size - strlen(dest) - 1);
 		if (i == SyslogFacility)
-			strncat(dest, " selected>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " selected>", size - strlen(dest) - 1);
 		else
-			strncat(dest, ">", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_facility[i], sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, ">", size - strlen(dest) - 1);
+		strncat(dest, str_facility[i], size - strlen(dest) - 1);
 	}
-	strncat(dest, "</select></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "</select></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest, "<tr bgcolor=#E7E5DD><td>SYSLOG Priority (optional) </td><td><select name=SyslogPriority>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "<tr bgcolor=#E7E5DD><td>SYSLOG Priority (optional) </td><td><select name=SyslogPriority>", size - strlen(dest) - 1);
 	for (i = 0; i < 8; i++) {
-		strncat(dest, "<option", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "<option", size - strlen(dest) - 1);
 		if (i == SyslogPriority)
-			strncat(dest, " selected>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " selected>", size - strlen(dest) - 1);
 		else
-			strncat(dest, ">", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_priority[i], sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, ">", size - strlen(dest) - 1);
+		strncat(dest, str_priority[i], size - strlen(dest) - 1);
 	}
-	strncat(dest, "</select></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "</select></td></tr>", size - strlen(dest) - 1);
 
-	strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "</table><br>", size - strlen(dest) - 1);
 	strncat(dest, "<input type=submit value=\"Change Configuration\">    ",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	return (0);
 }
@@ -890,7 +890,7 @@ int Network_Set(char *source, char *dest, int size)
 		    || (RCurrent->dw_DestPort > 65535))) {
 			strncat(dest,
 				"The Destination Port value must be between 1 and 65535. Use the 'back' button to change the value.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 			dw_error_port++;
 			break;
 		}
@@ -908,7 +908,7 @@ int Network_Set(char *source, char *dest, int size)
 		if (!rampointer) {
 			dw_error_config = 1;
 		} else {
-			int size = 0;
+			int currentsize = 0;
 			int wroteconfig = 0;
 			int wrotelog = 0;
 			int skip = 0;
@@ -920,12 +920,12 @@ int Network_Set(char *source, char *dest, int size)
 				dw_error_config = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
 
-			while ((size =
+			while ((currentsize =
 				Grab_RAMConfig_Line(position, inputbuffer,
 						    MAX_AUDIT_CONFIG_LINE))) {
 				trim(inputbuffer);
@@ -934,7 +934,7 @@ int Network_Set(char *source, char *dest, int size)
 				if (isheader(inputbuffer) || skip) {
 					// Jump over any lines in the headers that we're writing out.
 					if (!isheader(inputbuffer)) {
-						position += size;
+						position += currentsize;
 						continue;
 					}
 					fprintf(configfile, "%s\n",
@@ -1015,7 +1015,7 @@ int Network_Set(char *source, char *dest, int size)
 							inputbuffer);
 					}
 				}
-				position += size;
+				position += currentsize;
 			}
 
 			if (!wroteconfig || wroteconfig == 2) {
@@ -1071,7 +1071,7 @@ int Network_Set(char *source, char *dest, int size)
 				dw_error_config = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
@@ -1081,10 +1081,10 @@ int Network_Set(char *source, char *dest, int size)
 
 		if (dw_error_config != 0) {
 			strncat(dest, "Values have NOT been changed.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 		} else {
 			strncat(dest, "Values have been changed.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 		}
 	}
 
@@ -1119,76 +1119,76 @@ int Remote_Config(char *source, char *dest, int size)
 
 		strncat(dest,
 			"<br><b>NOTE: Some errors were encountered in reading the registry. Default values "
-			"may be used.<br> Report error: ", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_remerr, sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) - 1);
+			"may be used.<br> Report error: ", size - strlen(dest) - 1);
+		strncat(dest, str_remerr, size - strlen(dest) - 1);
+		strncat(dest, "</b><br>", size - strlen(dest) - 1);
 	}
 	strncat(dest,
 		"<br>The following remote control configuration parameters of the SafedAgent unit is set to the following values:<br><br>"
 		"<table  width=70% border=0>"
 		"<tr bgcolor=#DEDBD2><td>Allow remote control of SafedAgent</td><td><input type=checkbox name=dw_Allow",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	// Need to convert this next section to YES or NO
 	if (remote_struct.dw_Allow != 0) {
-		strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, " checked", size - strlen(dest) - 1);
 	}
 
 	strncat(dest, "></td></tr><tr bgcolor=#FFFFFF><td><br></td><td><br></td></tr>",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Restrict remote control of SafedAgent to certain host </td><td><input type=checkbox name=dw_Restrict",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	// Need to convert this next section to YES or NO
 	if (remote_struct.dw_Restrict != 0)
-		strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, " checked", size - strlen(dest) - 1);
+	strncat(dest, "></td></tr>", size - strlen(dest) - 1);
 
 	strncat(dest,
 		"<tr bgcolor=#DEDBD2><td>IP Addresses allowed to remote control SafedAgent <br><i>(max 10 hosts ; separated) </i></td><td><input type=text name=str_RestrictIP size=12 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, remote_struct.str_RestrictIP, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
+	strncat(dest, remote_struct.str_RestrictIP, size - strlen(dest) - 1);
+	strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>Require a password for remote control? </td><td><input type=checkbox name=dw_Password",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	// Need to convert this next section to YES or NO
 	if (remote_struct.dw_Password != 0)
-		strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, " checked", size - strlen(dest) - 1);
+	strncat(dest, "></td></tr>", size - strlen(dest) - 1);
 
 	strncat(dest,
 		"<tr bgcolor=#DEDBD2><td>Password to allow remote control of SafedAgent </td><td><input type=password name=str_Password size=12 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, remote_struct.str_Password, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\"><input type=hidden name=str_OldPassword value=\"", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, remote_struct.str_Password, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
+	strncat(dest, remote_struct.str_Password, size - strlen(dest) - 1);
+	strncat(dest, "\"><input type=hidden name=str_OldPassword value=\"", size - strlen(dest) - 1);
+	strncat(dest, remote_struct.str_Password, size - strlen(dest) - 1);
+	strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 	strncat(dest,
 		"<tr bgcolor=#DEDBD2><td>Web Server Port </td><td><input type=text name=dw_WebPort size=8 value=\"",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	snprintf(str_WebPort, 10, "%d", remote_struct.dw_WebPort);
-	strncat(dest, str_WebPort, sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, str_WebPort, size - strlen(dest) - 1);
+	strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 #ifdef TLSPROTOCOL
 	strncat(dest,
 		"<tr bgcolor=#E7E5DD><td>HTTPS protocol</td><td><input type=checkbox name=dw_TLS",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	// Need to convert this next section to YES or NO
 	if (remote_struct.dw_TLS != 0)
-		strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "></td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, " checked", size - strlen(dest) - 1);
+	strncat(dest, "></td></tr>", size - strlen(dest) - 1);
 #endif
-	strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+	strncat(dest, "</table><br>", size - strlen(dest) - 1);
 	strncat(dest, "<input type=submit value=\"Change Configuration\">    ",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 	strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
-		sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
 
 	return (0);
 }
@@ -1276,7 +1276,7 @@ int Remote_Set(char *source, char *dest, int size)
 	    || (remote_struct.dw_WebPort > 65535)) {
 		strncat(dest,
 			"The Web Port value must be between 1 and 65535. Use the 'back' button to change the value.",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	} else {
 		void *rampointer = (void *) NULL;
 		char *position;
@@ -1289,7 +1289,7 @@ int Remote_Set(char *source, char *dest, int size)
 		if (!rampointer) {
 			dw_error = 1;
 		} else {
-			int size = 0;
+			int currentsize = 0;
 			int wroteconfig = 0;
 			int skip = 0;
 
@@ -1300,12 +1300,12 @@ int Remote_Set(char *source, char *dest, int size)
 				dw_error = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
 
-			while ((size =
+			while ((currentsize =
 				Grab_RAMConfig_Line(position, inputbuffer,
 						    MAX_AUDIT_CONFIG_LINE))) {
 
@@ -1315,7 +1315,7 @@ int Remote_Set(char *source, char *dest, int size)
 				if (isheader(inputbuffer) || skip) {
 					// Jump over any lines in the headers that we're writing out.
 					if (!isheader(inputbuffer)) {
-						position += size;
+						position += currentsize;
 						continue;
 					}
 
@@ -1359,7 +1359,7 @@ int Remote_Set(char *source, char *dest, int size)
 							if (strstr(remote_struct.str_Password, "\\")) {
 								strncat(dest,
 									"Sorry, passwords with the backslash character are not allowed.<br>Please use the Back Button, and try another password.<br> The other ",
-									sizeof(dest) - strlen(dest) - 1);
+									size - strlen(dest) - 1);
 								fprintf(configfile,
 									"	accesskey=%s\n",
 									OldPassword);
@@ -1402,7 +1402,7 @@ int Remote_Set(char *source, char *dest, int size)
 							inputbuffer);
 					}
 				}
-				position += size;
+				position += currentsize;
 			}
 
 			if (!wroteconfig) {
@@ -1438,7 +1438,7 @@ int Remote_Set(char *source, char *dest, int size)
 				dw_error = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
@@ -1449,11 +1449,11 @@ int Remote_Set(char *source, char *dest, int size)
 		if (dw_error != 0) {
 			strncat(dest,
 				"Remote Control Values have NOT been changed. Report an error.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 		} else {
 			strncat(dest,
 				"Remote Control Values have been changed.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 		}
 	}
 
@@ -1484,14 +1484,14 @@ int Objective_Config(char *source, char *dest, int size)
 	if (configfile) {
 		strncat(dest,
 			"<br>The following filtering objectives of the SafedAgent unit are active:<br><br>"
-			"<table  width=100% border=1>", sizeof(dest) - strlen(dest) - 1);
+			"<table  width=100% border=1>", size - strlen(dest) - 1);
 
 		strncat(dest,
 			"<tr bgcolor=#F0F1F5><center><td width=\"10%\"><b>Action Required</b></td>"
 			"<td width=\"10%\"><b>Include/Exclude</b></td>"
 			"<td width=\"75%\"><b>Search Term</b></td>"
 			"<td width=\"5%\"><b>Order</b></td>"
-			"</center></tr>", sizeof(dest) - strlen(dest) - 1);
+			"</center></tr>", size - strlen(dest) - 1);
 
 		while (Get_Next_Objective(configfile, &reg_objective)) {
 			snprintf(str_obj_count, 15, "%d", i_objective_count);
@@ -1499,33 +1499,33 @@ int Objective_Config(char *source, char *dest, int size)
 			if ((i_objective_count) == 0)
 				strncat(dest,
 					"<tr bgcolor=#DEDBD2><td><input type=submit name=",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			else{
 				snprintf(strtmp, sizeof(strtmp), "<div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/log/setobjective?%d=MoveDown\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9660;</a></div>",(i_objective_count-1));
-				strncat(dest,strtmp,sizeof(dest) - strlen(dest) - 1);
-				strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest,strtmp,size - strlen(dest) - 1);
+				strncat(dest, "</td></tr>", size - strlen(dest) - 1);
 				strncat(dest,
 					"<tr bgcolor=#E7E5DD><td><input type=submit name=",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			}
 
-			strncat(dest, str_obj_count, sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, str_obj_count, size - strlen(dest) - 1);
 			strncat(dest, " value=Delete>     ",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 
 			strncat(dest, "<input type=submit name=",
-				sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, str_obj_count, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, " value=Modify>", sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
+			strncat(dest, str_obj_count, size - strlen(dest) - 1);
+			strncat(dest, " value=Modify>", size - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
 			if (strlen(reg_objective.str_general_match_type) == 0) {
-				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, "&nbsp", size - strlen(dest) - 1);
 			} else {
 				strncat(dest, reg_objective.str_general_match_type,
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			}
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
 			// Debracket the strings in here. For HTML display purposes, the HTML metacharacters
 			// need to be replaced. This is done with the "debracket" routine.
@@ -1535,36 +1535,36 @@ int Objective_Config(char *source, char *dest, int size)
 				  SIZE_OF_GENERALMATCH * 2);
 
 			if (strlen(reg_objective.str_general_match) == 0) {
-				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, "&nbsp", size - strlen(dest) - 1);
 			} else {
 				strncat(dest, str_general_match_metachar_remove,
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			}
-			strncat(dest, "</td>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "</td>", size - strlen(dest) - 1);
 			if (i_objective_count > 0){
 				snprintf(strtmp, sizeof(strtmp), "<td><div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/log/setobjective?%d=MoveUp\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9650;</a></div>",i_objective_count);
-				strncat(dest,strtmp,sizeof(dest) - strlen(dest) - 1);
+				strncat(dest,strtmp,size - strlen(dest) - 1);
 
 
 
 			}else
-				strncat(dest,"<td>",sizeof(dest) - strlen(dest) - 1);
+				strncat(dest,"<td>",size - strlen(dest) - 1);
 			i_objective_count++;
 		}
 
-		strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</td></tr>", size - strlen(dest) - 1);
 		Close_File(configfile);
-		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</table><br>", size - strlen(dest) - 1);
 	} else {
 		strncat(dest,
 			"<br>There are no current filtering objectives active.<br><br>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	}
 
 	strncat(dest, "Select this button to add a new objective.  ",
-		sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "<input type=submit name=0", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, " value=Add>", sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
+	strncat(dest, "<input type=submit name=0", size - strlen(dest) - 1);
+	strncat(dest, " value=Add>", size - strlen(dest) - 1);
 
 	return (0);
 }
@@ -1632,7 +1632,7 @@ int Objective_Display(char *source, char *dest, int size)
 	if (i_objective_count == 0) {
 		strncat(dest,
 			"<br><b>NOTE: It appears the URL is encoded incorrectly.",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		return 0;
 	}
 
@@ -1674,59 +1674,59 @@ int Objective_Display(char *source, char *dest, int size)
 			strncat(dest,
 				"<br><b>NOTE: Some errors were encountered in reading the configuration file. Default values "
 				"may be used.<br> Report error: ",
-				sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, str_objerr, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
+			strncat(dest, str_objerr, size - strlen(dest) - 1);
+			strncat(dest, "</b><br>", size - strlen(dest) - 1);
 		}
 
 		strncat(dest,
 			"<br>The following parameters of the SafedAgent objective may be set:<br><br>"
-			"<table  width=100% border=0>", sizeof(dest) - strlen(dest) - 1);
+			"<table  width=100% border=0>", size - strlen(dest) - 1);
 
 		strncat(dest,
 			"<tr bgcolor=#DEDBD2><td>Select the General Match Type</td><td>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest,
 			"<input type=radio name=str_general_match_type value=Any",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 
 		if (strcmp(reg_objective.str_general_match, ".*") == 0) {
-			strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " checked", size - strlen(dest) - 1);
 			strncpy(reg_objective.str_general_match_type, "Any", sizeof(reg_objective.str_general_match_type));
 		}
-		strncat(dest, ">Match Any String    ", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, ">Match Any String    ", size - strlen(dest) - 1);
 		strncat(dest,
 			"<input type=radio name=str_general_match_type value=Include",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		if (strstr(reg_objective.str_general_match_type, "Include") !=
 		    NULL) {
-			strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " checked", size - strlen(dest) - 1);
 		}
 		strncat(dest,
 			">Include    <input type=radio name=str_general_match_type value=Exclude",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 
 		if (strstr(reg_objective.str_general_match_type, "Exclude") !=
 		    NULL)
-			strncat(dest, " checked", sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, ">Exclude    </td></tr>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, " checked", size - strlen(dest) - 1);
+		strncat(dest, ">Exclude    </td></tr>", size - strlen(dest) - 1);
 
 		strncat(dest,
 			"<tr bgcolor=#E7E5DD><td>Search Term<br><i>(regular expression)</i></td><td><input type=text name=str_general_match size=50 value=\"",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest, reg_objective.str_general_match,
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "\" onMouseover=\"ddrivetip(\'A filter expression, defined in extended regular expression format: .*session opened for user root.*  \')\" onMouseout=\"hideddrivetip()\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
+		strncat(dest, "\" onMouseover=\"ddrivetip(\'A filter expression, defined in extended regular expression format: .*session opened for user root.*  \')\" onMouseout=\"hideddrivetip()\"></td></tr>", size - strlen(dest) - 1);
 
-		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</table><br>", size - strlen(dest) - 1);
 		strncat(dest, "<input type=hidden name=objnumber value=",
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_temp_objective, sizeof(dest) - strlen(dest) - 1);	// Objective number goes here
+			size - strlen(dest) - 1);
+		strncat(dest, str_temp_objective, size - strlen(dest) - 1);	// Objective number goes here
 		strncat(dest,
 			"><input type=submit value=\"Change Configuration\">    ",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	} else {
 		void *rampointer = (void *) NULL;
 		char *position;
@@ -1741,7 +1741,7 @@ int Objective_Display(char *source, char *dest, int size)
 			dw_objective_delete_error = 1;
 		} else {
 			int objectivecounter = 0;
-			int size = 0;
+			int currentsize = 0;
 
 			position = (char *) rampointer;
 
@@ -1749,12 +1749,12 @@ int Objective_Display(char *source, char *dest, int size)
 			if (!configfile) {
 				strncat(dest,
 					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
 
-			while ((size =
+			while ((currentsize =
 				Grab_RAMConfig_Line(position, inputbuffer,
 						    MAX_AUDIT_CONFIG_LINE))) {
 				trim(inputbuffer);
@@ -1762,7 +1762,7 @@ int Objective_Display(char *source, char *dest, int size)
 					if(i_type == -2){
 						if (objectivecounter ==  (i_objective_count - 1)){
 							strcpy(inputbuffer_swap,inputbuffer);
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}else if (objectivecounter ==  i_objective_count){
@@ -1773,7 +1773,7 @@ int Objective_Display(char *source, char *dest, int size)
 					if(i_type == -1){
 						if (objectivecounter ==  i_objective_count){
 							strcpy(inputbuffer_swap,inputbuffer);
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}else if (objectivecounter ==  (i_objective_count + 1)){
@@ -1785,7 +1785,7 @@ int Objective_Display(char *source, char *dest, int size)
 						if (objectivecounter ==
 							i_objective_count) {
 							// Do not add this line back into the original file.
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}
@@ -1812,13 +1812,13 @@ int Objective_Display(char *source, char *dest, int size)
 				}
 
 				// position+=strlen(inputbuffer)+1;
-				position += size;
+				position += currentsize;
 			}
 			if (fclose(configfile)) {
 				dw_objective_delete_error = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
@@ -1833,7 +1833,7 @@ int Objective_Display(char *source, char *dest, int size)
 		}else
 			strncat(dest,
 				"<br>The objective was unable to be deleted.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 	}
 
 	return (0);
@@ -1990,7 +1990,7 @@ int Objective_Result(char *source, char *dest, int size)
 			if (!rampointer) {
 				dw_objective_error = WEB_READ_CONFIG_ERROR_CODE;
 			} else {
-				int size = 0;
+				int currentsize = 0;
 				int wroteconfig = 0;
 
 				position = (char *) rampointer;
@@ -2000,12 +2000,12 @@ int Objective_Result(char *source, char *dest, int size)
 					dw_objective_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
 
-				while ((size =
+				while ((currentsize =
 					Grab_RAMConfig_Line(position,
 							    inputbuffer,
 							    MAX_AUDIT_CONFIG_LINE)))
@@ -2058,7 +2058,7 @@ int Objective_Result(char *source, char *dest, int size)
 								inputbuffer);
 						}
 					}
-					position += size;
+					position += currentsize;
 				}
 
 				if (wroteconfig < 2) {
@@ -2096,7 +2096,7 @@ int Objective_Result(char *source, char *dest, int size)
 					dw_objective_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
@@ -2116,7 +2116,7 @@ int Objective_Result(char *source, char *dest, int size)
 				dw_objective_error = WEB_READ_CONFIG_ERROR_CODE;
 			} else {
 				int objectivecounter = 0;
-				int size = 0;
+				int currentsize = 0;
 
 				position = (char *) rampointer;
 
@@ -2125,12 +2125,12 @@ int Objective_Result(char *source, char *dest, int size)
 					dw_objective_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
 
-				while ((size =
+				while ((currentsize =
 					Grab_RAMConfig_Line(position,
 							    inputbuffer,
 							    MAX_AUDIT_CONFIG_LINE)))
@@ -2160,7 +2160,7 @@ int Objective_Result(char *source, char *dest, int size)
 								generalstring,
 								reg_objective.str_general_match);
 
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}
@@ -2187,14 +2187,14 @@ int Objective_Result(char *source, char *dest, int size)
 					}
 
 					// position+=strlen(inputbuffer)+1;
-					position += size;
+					position += currentsize;
 				}
 
 				if (fclose(configfile)) {
 					dw_objective_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
@@ -2211,9 +2211,9 @@ int Objective_Result(char *source, char *dest, int size)
 	}else{
 		strncat(dest,
 			"<br>The objective was unable to be modified/added.",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		if(strlen(emsg))
-			strncat(dest,emsg,sizeof(dest) - strlen(dest) - 1);
+			strncat(dest,emsg,size - strlen(dest) - 1);
 	}
 	return (0);
 }
@@ -3314,12 +3314,12 @@ int Log_Config(char *source, char *dest, int size)
 	if (configfile) {
 		strncat(dest,
 			"<br>The following log files are being monitored by SafedAgent:<br><br>"
-			"<table  width=100% border=1>", sizeof(dest) - strlen(dest) - 1);
+			"<table  width=100% border=1>", size - strlen(dest) - 1);
 
 		strncat(dest,
 			"<tr bgcolor=#F0F1F5><center><td width=\"10%\"><b>Action Required</b></td>"
 			"<td width=\"90%\"><b>Log File</b>"
-			"</td></center></tr>", sizeof(dest) - strlen(dest) - 1);
+			"</td></center></tr>", size - strlen(dest) - 1);
 
 		while (Get_Next_Log(configfile, &log_struct)) {
 			snprintf(str_log_count, 15, "%d", i_log_count);
@@ -3327,21 +3327,21 @@ int Log_Config(char *source, char *dest, int size)
 			if ((i_log_count) == 0)
 				strncat(dest,
 					"<tr bgcolor=#DEDBD2><td><input type=submit name=",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			else
 				strncat(dest,
 					"<tr bgcolor=#E7E5DD><td><input type=submit name=",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 
-			strncat(dest, str_log_count, sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, str_log_count, size - strlen(dest) - 1);
 			strncat(dest, " value=Delete>     ",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 
 			strncat(dest, "<input type=submit name=",
-				sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, str_log_count, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, " value=Modify>", sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
+			strncat(dest, str_log_count, size - strlen(dest) - 1);
+			strncat(dest, " value=Modify>", size - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
 
 			// Debracket the strings in here. For HTML display purposes, the HTML metacharacters
@@ -3353,31 +3353,31 @@ int Log_Config(char *source, char *dest, int size)
 
 
 			if (strlen(log_struct.name) == 0) {
-				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, "&nbsp", size - strlen(dest) - 1);
 			} else {
 				char *pos = strstr(str_name_metachar_remove, "|");
 				if(pos){
 					*pos = '\0';
 				}
 				strncat(dest, str_name_metachar_remove,
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			}
-			strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "</td></tr>", size - strlen(dest) - 1);
 
 			i_log_count++;
 		}
 		Close_File(configfile);
-		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</table><br>", size - strlen(dest) - 1);
 	} else {
 		strncat(dest,
 			"<br>There are no current log monitors active.<br><br>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	}
 
 	strncat(dest, "Select this button to add a new log monitor.  ",
-		sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, "<input type=submit name=0", sizeof(dest) - strlen(dest) - 1);
-	strncat(dest, " value=Add>", sizeof(dest) - strlen(dest) - 1);
+		size - strlen(dest) - 1);
+	strncat(dest, "<input type=submit name=0", size - strlen(dest) - 1);
+	strncat(dest, " value=Add>", size - strlen(dest) - 1);
 
 	return (0);
 }
@@ -3430,7 +3430,7 @@ int Log_Display(char *source, char *dest, int size)
 	if (i_log_count == 0) {
 		strncat(dest,
 			"<br><b>NOTE: It appears the URL is encoded incorrectly.",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		return 0;
 	}
 
@@ -3469,22 +3469,22 @@ int Log_Display(char *source, char *dest, int size)
 			strncat(dest,
 				"<br><b>NOTE: Some errors were encountered in reading the configuration file. Default values "
 				"may be used.<br> Report error: ",
-				sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, str_logerr, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</b><br>", sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
+			strncat(dest, str_logerr, size - strlen(dest) - 1);
+			strncat(dest, "</b><br>", size - strlen(dest) - 1);
 		}
 
 		strncat(dest,
 			"<br>The following parameters of the SafedAgent log inputs may be set:<br><br>"
-			"<table  width=100% border=0>", sizeof(dest) - strlen(dest) - 1);
+			"<table  width=100% border=0>", size - strlen(dest) - 1);
 
 
 		strncat(dest,
 			"<tr bgcolor=#E7E5DD><td>Log File or Directory<br></td><td><input type=text name=str_log_name size=50 value=\"",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest, log_struct.name,
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
+		strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 		strncat(dest,
 				"<tr bgcolor=#DEDBD2><td>Log Name Format:<br />(optional)"
@@ -3495,21 +3495,21 @@ int Log_Display(char *source, char *dest, int size)
 					"myWindow.document.close();"
 					"\">Help</a></td>"
 					"<td><input type=text name=str_log_format size=50 value=\"",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 		strncat(dest, log_struct.format,
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, "\"></td></tr>", sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
+		strncat(dest, "\"></td></tr>", size - strlen(dest) - 1);
 
 
-		strncat(dest, "</table><br>", sizeof(dest) - strlen(dest) - 1);
+		strncat(dest, "</table><br>", size - strlen(dest) - 1);
 		strncat(dest, "<input type=hidden name=lognumber value=",
-			sizeof(dest) - strlen(dest) - 1);
-		strncat(dest, str_temp_log, sizeof(dest) - strlen(dest) - 1);	// Log number goes here
+			size - strlen(dest) - 1);
+		strncat(dest, str_temp_log, size - strlen(dest) - 1);	// Log number goes here
 		strncat(dest,
 			"><input type=submit value=\"Change Configuration\">    ",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 		strncat(dest, "<input type=reset value=\"Reset Form\"></form>",
-			sizeof(dest) - strlen(dest) - 1);
+			size - strlen(dest) - 1);
 	} else {
 		void *rampointer = (void *) NULL;
 		char *position;
@@ -3523,7 +3523,7 @@ int Log_Display(char *source, char *dest, int size)
 			dw_log_delete_error = 1;
 		} else {
 			int logcounter = 0;
-			int size = 0;
+			int currentsize = 0;
 
 			position = (char *) rampointer;
 
@@ -3531,12 +3531,12 @@ int Log_Display(char *source, char *dest, int size)
 			if (!configfile) {
 				strncat(dest,
 					"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
 
-			while ((size =
+			while ((currentsize =
 				Grab_RAMConfig_Line(position, inputbuffer,
 						    MAX_AUDIT_CONFIG_LINE))) {
 				trim(inputbuffer);
@@ -3545,7 +3545,7 @@ int Log_Display(char *source, char *dest, int size)
 					if (logcounter ==
 					    i_log_count) {
 						// Do not add this line back into the original file.
-						position += size;
+						position += currentsize;
 						logcounter++;
 						continue;
 					}
@@ -3571,13 +3571,13 @@ int Log_Display(char *source, char *dest, int size)
 				}
 
 				// position+=strlen(inputbuffer)+1;
-				position += size;
+				position += currentsize;
 			}
 			if (fclose(configfile)) {
 				dw_log_delete_error = 1;
 				strncat(dest,
 					"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 				Clear_Config_File(rampointer);
 				return (0);
 			}
@@ -3592,7 +3592,7 @@ int Log_Display(char *source, char *dest, int size)
 		}else
 			strncat(dest,
 				"<br>The log monitor was unable to be deleted.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 	}
 
 	return (0);
@@ -3648,7 +3648,7 @@ int Log_Result(char *source, char *dest, int size)
 			if (!rampointer) {
 				dw_log_error = WEB_READ_CONFIG_ERROR_CODE;
 			} else {
-				int size = 0;
+				int currentsize = 0;
 				int wroteconfig = 0;
 
 				position = (char *) rampointer;
@@ -3658,12 +3658,12 @@ int Log_Result(char *source, char *dest, int size)
 					dw_log_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
 
-				while ((size =
+				while ((currentsize =
 					Grab_RAMConfig_Line(position,
 							    inputbuffer,
 							    MAX_AUDIT_CONFIG_LINE)))
@@ -3704,7 +3704,7 @@ int Log_Result(char *source, char *dest, int size)
 								inputbuffer);
 						}
 					}
-					position += size;
+					position += currentsize;
 				}
 
 				if (!wroteconfig) {
@@ -3725,7 +3725,7 @@ int Log_Result(char *source, char *dest, int size)
 					dw_log_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
@@ -3745,7 +3745,7 @@ int Log_Result(char *source, char *dest, int size)
 				dw_log_error = WEB_READ_CONFIG_ERROR_CODE;
 			} else {
 				int logcounter = 0;
-				int size = 0;
+				int currentsize = 0;
 
 				position = (char *) rampointer;
 
@@ -3754,12 +3754,12 @@ int Log_Result(char *source, char *dest, int size)
 					dw_log_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not open the configuration file for writing. Please verify the permissions set on the audit config file.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
 
-				while ((size =
+				while ((currentsize =
 					Grab_RAMConfig_Line(position,
 							    inputbuffer,
 							    MAX_AUDIT_CONFIG_LINE)))
@@ -3780,7 +3780,7 @@ int Log_Result(char *source, char *dest, int size)
                                                                 "       log=GenericLog:%s\n",
                                                                 log_struct.name);
 							}
-							position += size;
+							position += currentsize;
 							logcounter++;
 							continue;
 						}
@@ -3807,14 +3807,14 @@ int Log_Result(char *source, char *dest, int size)
 					}
 
 					// position+=strlen(inputbuffer)+1;
-					position += size;
+					position += currentsize;
 				}
 
 				if (fclose(configfile)) {
 					dw_log_error = 1;
 					strncat(dest,
 						"<br><b>NOTE: Could not write to the configuration file. Does the system have enough free disk space?.",
-						sizeof(dest) - strlen(dest) - 1);
+						size - strlen(dest) - 1);
 					Clear_Config_File(rampointer);
 					return (0);
 				}
@@ -3826,14 +3826,14 @@ int Log_Result(char *source, char *dest, int size)
 		if (dw_log_error == 0){
 //			strncat(dest,
 //				"<br>The log monitor has been modified/added.",
-//				sizeof(dest) - strlen(dest) - 1);
+//				size - strlen(dest) - 1);
 			strncpy(source,"/log", 4);
 			Log_Config(source,dest,size);
 
 		}else
 			strncat(dest,
 				"<br>The log monitor was unable to be modified/added.",
-				sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
 	}
 
 	return (0);
@@ -3865,7 +3865,7 @@ int ShowLicense(char *dest, int size)
 	 "GNU Library General Public License for more details.<br>"
 	 "You should have received a copy of the GNU General Public License<br>"
 	 "along with this program; if not, write to the Free Software<br>"
-	 "Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.<br>", sizeof(dest) - strlen(dest) - 1);
+	 "Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.<br>", size - strlen(dest) - 1);
 	return(0);
 
 }

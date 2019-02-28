@@ -58,7 +58,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 			"<td><b>General Match</b></td>"
 			"<td><b>Return</b></td>"
 			"<td><b>Order</b></td>"
-			"</center></tr>", sizeof(dest) - strlen(dest) - 1);
+			"</center></tr>", size - strlen(dest) - 1);
 		while (Get_Next_Audit_Objective(configfile, &objective_audit_struct)) {
 
 
@@ -72,25 +72,25 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 					sizeof(dest) - strlen(dest) -1);
 			else{
 				snprintf(strtmp, sizeof(strtmp), "<div align=center style=\"margin-bottom: 5px; border-left: 2px solid #eeeeee; border-top: 2px solid #eeeeee; border-right: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background-color: #dddddd\"><a href=\"/safed/setobjective?%d=MoveDown\" style=\"font-size: 9px; color: #33aa33; text-decoration: none; display: block;\">&#9660;</a></div>",(i_objective_count-1));
-				strncat(dest,strtmp,sizeof(dest) - strlen(dest) - 1);
-				strncat(dest, "</td></tr>", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest,strtmp,size - strlen(dest) - 1);
+				strncat(dest, "</td></tr>", size - strlen(dest) - 1);
 				if ((i_objective_count%2) == 0)
-					strncat(dest,"<tr bgcolor=#E7E5DD><td><input type=submit name=",sizeof(dest) - strlen(dest) - 1);
+					strncat(dest,"<tr bgcolor=#E7E5DD><td><input type=submit name=",size - strlen(dest) - 1);
 				else
-					strncat(dest,"<tr bgcolor=#DEDBD2><td><input type=submit name=",sizeof(dest) - strlen(dest) - 1);
+					strncat(dest,"<tr bgcolor=#DEDBD2><td><input type=submit name=",size - strlen(dest) - 1);
 			}
 
-			strncat(dest,str_obj_count, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest," value=Delete>     ",sizeof(dest) - strlen(dest) - 1);
+			strncat(dest,str_obj_count, size - strlen(dest) - 1);
+			strncat(dest," value=Delete>     ",size - strlen(dest) - 1);
 
-			strncat(dest,"<input type=submit name=",sizeof(dest) - strlen(dest) - 1);
-			strncat(dest,str_obj_count, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest," value=Modify>", sizeof(dest) - strlen(dest) - 1);
-			strncat(dest,"</td><td>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest,"<input type=submit name=",size - strlen(dest) - 1);
+			strncat(dest,str_obj_count, size - strlen(dest) - 1);
+			strncat(dest," value=Modify>", size - strlen(dest) - 1);
+			strncat(dest,"</td><td>", size - strlen(dest) - 1);
 
 			strncat(dest, objective_audit_struct.str_critic,
-				sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+				size - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
 			// Debracket the strings in here. For HTML display purposes, the HTML metacharacters
 			// need to be replaced. This is done with the "debracket" routine.
@@ -109,19 +109,19 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) -1);
 			} else {
 				strncat(dest, str_eventid_match_metachar_remove,
-					sizeof(dest) - strlen(dest) - 1);
+					size - strlen(dest) - 1);
 			}
-			strncat(dest, "</td><td>      ", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "</td><td>      ", size - strlen(dest) - 1);
 
-			strncat(dest, objective_audit_struct.str_user_match_type, sizeof(dest) - strlen(dest) - 1);
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, objective_audit_struct.str_user_match_type, size - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 			if (strlen(objective_audit_struct.str_user_match) == 0) {
-				strncat(dest, "&nbsp", sizeof(dest) - strlen(dest) - 1);
+				strncat(dest, "&nbsp", size - strlen(dest) - 1);
 			} else {
 				strncat(dest, str_user_match_metachar_remove,
 					sizeof(dest) - strlen(dest) -1);
 			}
-			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) - 1);
+			strncat(dest, "</td><td>", size - strlen(dest) - 1);
 
 			strncat(dest, objective_audit_struct.str_general_match_type, sizeof(dest) - strlen(dest) -1);
 			strncat(dest, "</td><td>", sizeof(dest) - strlen(dest) -1);
@@ -857,7 +857,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 			dw_objective_delete_error = 1;
 		} else {
 			int objectivecounter = 0;
-			int size = 0;
+			int currentsize = 0;
 
 			position = (char *) rampointer;
 
@@ -870,7 +870,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				return (dw_objective_delete_error);
 			}
 
-			while ((size =
+			while ((currentsize =
 				Grab_RAMConfig_Line(position, inputbuffer,
 						    MAX_AUDIT_CONFIG_LINE))) {
 				trim(inputbuffer);
@@ -879,7 +879,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 					if(i_type == -2){
 						if (objectivecounter ==  (i_objective_count - 1)){
 							strcpy(inputbuffer_swap,inputbuffer);
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}else if (objectivecounter ==  i_objective_count){
@@ -890,7 +890,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 					if(i_type == -1){
 						if (objectivecounter ==  i_objective_count){
 							strcpy(inputbuffer_swap,inputbuffer);
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}else if (objectivecounter ==  (i_objective_count + 1)){
@@ -902,7 +902,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 						if (objectivecounter ==
 							i_objective_count) {
 							// Do not add this line back into the original file.
-							position += size;
+							position += currentsize;
 							objectivecounter++;
 							continue;
 						}
@@ -929,7 +929,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
 				}
 
 				// position+=strlen(inputbuffer)+1;
-				position += size;
+				position += currentsize;
 			}
 			if (fclose(configfile)) {
 				dw_objective_delete_error = 1;
@@ -960,7 +960,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  		dw_objective_error = WEB_READ_CONFIG_ERROR_CODE;
  	} else {
  		int objectivecounter = 0;
- 		int size = 0;
+ 		int currentsize = 0;
 
  		position = (char *) rampointer;
 
@@ -974,7 +974,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			return (dw_objective_error);
  		}
 
- 		while ((size =
+ 		while ((currentsize =
  			Grab_RAMConfig_Line(position,
  					    inputbuffer,
  					    MAX_AUDIT_CONFIG_LINE)))
@@ -1062,7 +1062,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  						generalstring,
  						objective_audit_struct.str_general_match);
 
- 					position += size;
+ 					position += currentsize;
  					objectivecounter++;
  					continue;
  				}
@@ -1089,7 +1089,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			}
 
  			// position+=strlen(inputbuffer)+1;
- 			position += size;
+ 			position += currentsize;
  		}
 
  		if (fclose(configfile)) {
@@ -1119,7 +1119,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  	if (!rampointer) {
  		dw_objective_error = WEB_READ_CONFIG_ERROR_CODE;
  	} else {
- 		int size = 0;
+ 		int currentsize = 0;
  		int wroteconfig = 0;
 
  		position = (char *) rampointer;
@@ -1134,7 +1134,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			return (dw_objective_error);
  		}
 
- 		while ((size =
+ 		while ((currentsize =
  			Grab_RAMConfig_Line(position, inputbuffer, MAX_AUDIT_CONFIG_LINE)))
  		{
  			trim(inputbuffer);
@@ -1218,7 +1218,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  						inputbuffer);
  				}
  			}
- 			position += size;
+ 			position += currentsize;
  		}
 
  		if (!wroteconfig) {
@@ -1870,7 +1870,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			dw_watch_delete_error = 1;
  		} else {
  			int watchcounter = 0;
- 			int size = 0;
+ 			int currentsize = 0;
 
  			position = (char *) rampointer;
 
@@ -1883,7 +1883,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  				return (0);
  			}
 
- 			while ((size =
+ 			while ((currentsize =
  				Grab_RAMConfig_Line(position, inputbuffer,
  						    MAX_AUDIT_CONFIG_LINE))) {
  				trim(inputbuffer);
@@ -1891,7 +1891,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					if(i_type == -2){
  						if (watchcounter ==  (i_watch_count - 1)){
  							strcpy(inputbuffer_swap,inputbuffer);
- 							position += size;
+ 							position += currentsize;
  							watchcounter++;
  							continue;
  						}else if (watchcounter ==  i_watch_count){
@@ -1902,7 +1902,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					if(i_type == -1){
  						if (watchcounter ==  i_watch_count){
  							strcpy(inputbuffer_swap,inputbuffer);
- 							position += size;
+ 							position += currentsize;
  							watchcounter++;
  							continue;
  						}else if (watchcounter ==  (i_watch_count + 1)){
@@ -1914,7 +1914,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  						if (watchcounter ==
  							i_watch_count) {
  							// Do not add this line back into the original file.
- 							position += size;
+ 							position += currentsize;
  							watchcounter++;
  							continue;
  						}
@@ -1941,7 +1941,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  				}
 
  				// position+=strlen(inputbuffer)+1;
- 				position += size;
+ 				position += currentsize;
  			}
  			if (fclose(configfile)) {
  				dw_watch_delete_error = 1;
@@ -2025,7 +2025,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  			if (!rampointer) {
  				dw_watch_error = WEB_READ_CONFIG_ERROR_CODE;
  			} else {
- 				int size = 0;
+ 				int currentsize = 0;
  				int wroteconfig = 0;
 
  				position = (char *) rampointer;
@@ -2040,7 +2040,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					return (0);
  				}
 
- 				while ((size =
+ 				while ((currentsize =
  					Grab_RAMConfig_Line(position,
  							    inputbuffer,
  							    MAX_AUDIT_CONFIG_LINE)))
@@ -2092,7 +2092,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  								inputbuffer);
  						}
  					}
- 					position += size;
+ 					position += currentsize;
  				}
 
  				if (wroteconfig < 2) {
@@ -2149,7 +2149,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  				dw_watch_error = WEB_READ_CONFIG_ERROR_CODE;
  			} else {
  				int watchcounter = 0;
- 				int size = 0;
+ 				int currentsize = 0;
 
  				position = (char *) rampointer;
 
@@ -2163,7 +2163,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					return (0);
  				}
 
- 				while ((size =
+ 				while ((currentsize =
  					Grab_RAMConfig_Line(position,
  							    inputbuffer,
  							    MAX_AUDIT_CONFIG_LINE)))
@@ -2192,7 +2192,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  								generalstring,
  								reg_watch.str_general_match);
 
- 							position += size;
+ 							position += currentsize;
  							watchcounter++;
  							continue;
  						}
@@ -2219,7 +2219,7 @@ int Audit_Objective_Config(char *source, char *dest, int size)
  					}
 
  					// position+=strlen(inputbuffer)+1;
- 					position += size;
+ 					position += currentsize;
  				}
 
  				if (fclose(configfile)) {
