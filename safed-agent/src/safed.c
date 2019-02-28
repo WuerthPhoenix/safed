@@ -514,7 +514,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			// redirecting stdin from /dev/null
-                        if(freopen("/dev/null", "r", stdin)) {
+                        if(!freopen("/dev/null", "r", stdin)) {
                             exit (-1);
                         }
 		} else {
