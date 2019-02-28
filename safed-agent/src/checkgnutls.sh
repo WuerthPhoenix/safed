@@ -3,9 +3,11 @@ then
         LIBWOLFTLS="libwolfssl.so.19"
         # >= libwolfssl.so.19.0.0 
         for d in /usr/lib64/ /usr/lib/ /lib /lib64 /usr/local/lib /usr/local/lib64
-        do  
-            find $d |grep -E "$LIBWOLFTLS" > /dev/null
-            if [ $? -eq 0 ];then echo "wolfssl"; exit 0;fi
+        do 
+            if [ -d $d ]; then 
+                find $d |grep -E "$LIBWOLFTLS" > /dev/null
+                if [ $? -eq 0 ];then echo "wolfssl"; exit 0;fi
+            fi
         done
         echo ""    
 elif [ "$1" = "wolfssl" ] 
