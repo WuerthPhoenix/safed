@@ -121,12 +121,12 @@ int restart = 0;
 void initTLSAndUpdateStatus();
 void deinitTLSsession();
 
-void SIGINTandTERMHandler(sig) {
+void SIGINTandTERMHandler(int sig) {
 	// this to exit politely the main process loop
 	continueloop = 0;
 }
 
-void SIGUSR1Handler(sig) {
+void SIGUSR1Handler(int sig) {
 	usr1 = 1;
 }
 
@@ -514,7 +514,9 @@ int main(int argc, char *argv[]) {
 			}
 
 			// redirecting stdin from /dev/null
-			freopen("/dev/null", "r", stdin);
+                        if(freopen("/dev/null", "r", stdin)) {
+                            exit (-1);
+                        }
 		} else {
 			// an error occured!
 			sperror("fork");

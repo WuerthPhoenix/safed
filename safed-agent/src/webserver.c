@@ -522,7 +522,7 @@ int handleConnect() {
 #endif
 			    tempval = recv(http_message_socket,HTTPBufferTemp,sizeof(HTTPBufferTemp),0 );
 			HTTPBufferTemp[tempval]='\0';
-			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer));
+			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer) - 1);
 		} else {
                         slog(LOG_NORMAL, " recv() failed: Incomplete message \n");
 			close(http_message_socket);
