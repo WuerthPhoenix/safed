@@ -1,4 +1,4 @@
-WOLFSSL=$(./src/checkgnutls.sh)
+WOLFSSL=$(./src/checktls.sh)
 if [ -n "$WOLFSSL" ]
 then
     echo "[+] Info: wolfssl is already installed. Next steps: ./configure && make && ./install.sh"
@@ -16,7 +16,9 @@ then
     exit 1
 fi
 
-rm -f /etc/ld.so.cache && /sbin/ldconfig
+if [ -f /sbin/ldconfig ];then
+    rm -f /etc/ld.so.cache && /sbin/ldconfig
+fi
 cd ../..
 echo "[+] Info: wolfssl has been installed. Next steps: ./configure && make && ./install.sh" 
 exit 0

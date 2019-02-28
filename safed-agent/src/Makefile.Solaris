@@ -2,10 +2,10 @@ CC = gcc
 # Include BUILD cflags if they exist (from spec file)
 
 
-GNUTLS = $(shell ./checkgnutls.sh)
-GNUTLS_D = $(shell ./checkgnutls.sh $(GNUTLS) -d)
-GNUTLS_C = $(shell ./checkgnutls.sh $(GNUTLS) -c)
-GNUTLS_L = $(shell ./checkgnutls.sh $(GNUTLS) -l)
+GNUTLS = $(shell ./checktls.sh)
+GNUTLS_D = $(shell ./checktls.sh $(GNUTLS) -d)
+GNUTLS_C = $(shell ./checktls.sh $(GNUTLS) -c)
+GNUTLS_L = $(shell ./checktls.sh $(GNUTLS) -l)
 
 
 CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
