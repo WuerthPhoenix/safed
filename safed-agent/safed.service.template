@@ -1,0 +1,14 @@
+[Unit]
+Description=Safed - Security Auditing ForwardEr Deamon
+After=syslog.target network.target
+
+[Service]
+User=root
+Type=forking
+PIDFile=/var/run/safed.pid
+ExecStartPre=/bin/bash -c '/bin/touch /var/log/safed/$$(date +%%Y%%m%%d).log'
+ExecStart=/usr/bin/safed -d
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
