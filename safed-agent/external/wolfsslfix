@@ -1,8 +1,17 @@
-sed -i "s/static int test_fileAccess()/static int test_fileAccess(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_AES_cbc_encrypt()/static void test_wolfSSL_AES_cbc_encrypt(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_X509_NAME_ENTRY_get_object()/static void test_wolfSSL_X509_NAME_ENTRY_get_object(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_i2c_ASN1_INTEGER()/static void test_wolfSSL_i2c_ASN1_INTEGER(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_X509_print()/static void test_wolfSSL_X509_print(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_RSA_verify()/static void test_wolfSSL_RSA_verify(void)/" tests/api.c && \
-sed -i "s/static void test_stubs_are_stubs()/static void test_stubs_are_stubs(void)/" tests/api.c && \
-sed -i "s/static void test_wolfSSL_CTX_LoadCRL()/static void test_wolfSSL_CTX_LoadCRL(void)/" tests/api.c
+# do no use sed -i because of AIX
+sed "s/static int test_fileAccess()/static int test_fileAccess(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_AES_cbc_encrypt()/static void test_wolfSSL_AES_cbc_encrypt(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_X509_NAME_ENTRY_get_object()/static void test_wolfSSL_X509_NAME_ENTRY_get_object(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_i2c_ASN1_INTEGER()/static void test_wolfSSL_i2c_ASN1_INTEGER(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_X509_print()/static void test_wolfSSL_X509_print(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_RSA_verify()/static void test_wolfSSL_RSA_verify(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_stubs_are_stubs()/static void test_stubs_are_stubs(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c && \
+sed "s/static void test_wolfSSL_CTX_LoadCRL()/static void test_wolfSSL_CTX_LoadCRL(void)/" tests/api.c > tests/api.c.1 && \
+mv tests/api.c.1 tests/api.c 
