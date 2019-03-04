@@ -20,6 +20,63 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
+			Name="64Bit Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="64Bit Release|x64"
 			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -184,7 +241,7 @@
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				TargetMachine="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -199,6 +256,62 @@
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
 				OutputFile=".\Safed___Win32_64Bit_Release/Safed.bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="32Bit Release|x64"
+			ConfigurationType="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -230,24 +343,6 @@
 				RelativePath="MD5.CPP"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -258,6 +353,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -353,24 +484,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -378,24 +491,6 @@
 				RelativePath="NTServApp.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -406,6 +501,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -501,24 +632,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -526,24 +639,6 @@
 				RelativePath="NTService.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -554,6 +649,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -649,24 +780,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -674,24 +787,6 @@
 				RelativePath="NTServMsg.rc"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -702,6 +797,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -792,24 +923,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64bit Debug2|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -830,24 +943,6 @@
 				RelativePath="Safed.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -858,6 +953,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -953,24 +1084,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -990,24 +1103,6 @@
 				RelativePath="support.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -1018,6 +1113,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1113,24 +1244,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1138,24 +1251,6 @@
 				RelativePath="WebPages.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -1166,6 +1261,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1261,24 +1392,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1286,24 +1399,6 @@
 				RelativePath="webserver.cpp"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -1314,6 +1409,42 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1409,24 +1540,6 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1512,22 +1625,6 @@
 				RelativePath="msg00001.bin"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -1537,6 +1634,38 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1617,22 +1746,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64bit Debug2|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -1644,22 +1757,6 @@
 				RelativePath="NTServApp.rc"
 				>
 				<FileConfiguration
-					Name="64Bit IA64 Release|Win32"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="64Bit IA64 Release|x64"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="64Bit Release|Win32"
 					>
 					<Tool
@@ -1669,6 +1766,38 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="64Bit IA64 Release|x64"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
@@ -1749,22 +1878,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64bit Debug2|x64"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|Win32"
-					>
-					<Tool
-						Name="VCResourceCompilerTool"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="32Bit Release|x64"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
