@@ -14,13 +14,10 @@ The existing open source basis was enhanced as follows:
 ## Repository Structure
 
 - safed-agent: the safed agent for Linux, Sun Solaris, IBM AIX, HP-UX platforms
-- safed-agent-legacy: the safed agent for legacy Linux, Sun Solaris, IBM AIX, HP-UX platforms
 - safed-audit-linux: the safed component that allows safed to interoperate with the linux auditd daemon
 - safed-audit-aix: the safed component that allows safed to interoperate with the IBM AIX audit component
-- audit-agent-win: the safed agent for Win2003
-- audit-agent-winx64: the safed agent for Win2003 for 64 processors (changes only the Visual C++ project)
-- audit-agent-win8: the safed agent for Win2008/2012
-- audit-agent-win8x64: the safed agent for Win2008/2012 for 64 bit processors
+- audit-agent-win2003: the safed agent for Win2003 for 32 and 64 bit processors
+- audit-agent-win2008: the safed agent for Win2008/2012 for 32 and 64 bit processors
 - audit-agent-allmsi: msi build scripts 
 - includes: the header files for gnutls and regexp 
 - win/x32: the gnutls and regexp library compiled for windows (32 bit processors)
