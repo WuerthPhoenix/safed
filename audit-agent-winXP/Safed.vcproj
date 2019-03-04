@@ -341,10 +341,10 @@
 				PreprocessorDefinitions="WIN64;NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
-				PrecompiledHeaderFile=".\Safed___Win32_64Bit_Release/Safed.pch"
-				AssemblerListingLocation=".\Safed___Win32_64Bit_Release/"
-				ObjectFile=".\Safed___Win32_64Bit_Release/"
-				ProgramDataBaseFileName=".\Safed___Win32_64Bit_Release/"
+				PrecompiledHeaderFile="$(IntDir)/Safed.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -361,12 +361,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/machine:AMD64"
+				AdditionalOptions="/machine:x64"
 				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
-				OutputFile=".\Safed___Win32_64Bit_Release/Safed.exe"
+				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib\x64&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;;&quot;C:\Documents and Settings\Test\Desktop\x64&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib\x64&quot;;&quot;C:\Documents and Settings\Test\Desktop\x64&quot;"
 				ProgramDatabaseFile=".\Safed___Win32_64Bit_Release/Safed.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
@@ -1178,6 +1178,194 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="32Bit Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
+			UseOfMFC="2"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Safed___Win32_64Bit_Release/Safed.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				ExceptionHandling="2"
+				RuntimeLibrary="0"
+				PrecompiledHeaderFile="$(IntDir)/Safed.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="3081"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/machine:X86"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
+				OutputFile="$(OutDir)\$(ProjectName)32.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib&quot;;&quot;C:\Documents and Settings\Test\Desktop\win32&quot;"
+				ProgramDatabaseFile="$(IntDir)\Safed.pdb"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\Safed___Win32_64Bit_Release/Safed.bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="32Bit Release|x64"
+			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
+			UseOfMFC="2"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Safed___Win32_64Bit_Release/Safed.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows 2003 R2\Include&quot;;&quot;C:\Documents and Settings\Test\Desktop\includes\regexp-2.7&quot;;&quot;C:\Documents and Settings\Test\Desktop\includes\gnutls-3.6&quot;"
+				PreprocessorDefinitions="WIN64;NDEBUG;_CONSOLE"
+				ExceptionHandling="2"
+				RuntimeLibrary="0"
+				PrecompiledHeaderFile=".\Safed___Win32_64Bit_Release/Safed.pch"
+				AssemblerListingLocation=".\Safed___Win32_64Bit_Release/"
+				ObjectFile=".\Safed___Win32_64Bit_Release/"
+				ProgramDataBaseFileName=".\Safed___Win32_64Bit_Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="3081"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/machine:AMD64"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
+				OutputFile="$(OutDir)\$(ProjectName)..exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib\x64&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;;&quot;C:\Documents and Settings\Test\Desktop\x64&quot;"
+				ProgramDatabaseFile=".\Safed___Win32_64Bit_Release/Safed.pdb"
+				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\Safed___Win32_64Bit_Release/Safed.bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -1305,6 +1493,24 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="NTServApp.cpp"
@@ -1417,6 +1623,24 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="NTService.cpp"
@@ -1527,6 +1751,24 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1649,6 +1891,24 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\SafedLog.cpp"
@@ -1769,6 +2029,24 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="WebPages.cpp"
@@ -1881,6 +2159,24 @@
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="webserver.cpp"
@@ -1991,6 +2287,24 @@
 						Name="VCCLCompilerTool"
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions="WIN32;_DEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_MBCS;_CONSOLE;$(NoInherit)"
 					/>
 				</FileConfiguration>
 			</File>
@@ -2161,6 +2475,22 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="64Bit Debug|x64"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|Win32"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="32Bit Release|x64"
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
