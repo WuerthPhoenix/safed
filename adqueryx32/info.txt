@@ -1,2 +1,0 @@
-ho cambiato il main ed ho aggiunto la funzione writeToRegistry
-ho modificato il Debug per introdurre il log file
