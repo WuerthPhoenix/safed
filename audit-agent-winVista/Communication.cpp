@@ -70,7 +70,7 @@ void deinitSockets(){
 		if (th->Socket != INVALID_SOCKET) {
 			closesocket(th->Socket);
 			if(isTLS()){
-				deinitTLSSocket(th->tlssession, TRUE);
+				deinitTLSSocket(th->ssl, TRUE);
 			}
 		}
 		free(th);
@@ -131,7 +131,7 @@ BOOL InitWinsock( char *szError, int size )
 //////////////////////////////////////////////////////////////////////////////
 // TerminateWinsock
 //      call this function with the current socket or INVALID_SOCKET
-void TerminateWinsock( SOCKET hSocket, gnutls_session_t session )
+void TerminateWinsock( SOCKET hSocket, WOLFSSL* ssl )
 {
 	// cancel blocking calls, if any
 	WSACancelBlockingCall();
@@ -140,7 +140,7 @@ void TerminateWinsock( SOCKET hSocket, gnutls_session_t session )
 	if( hSocket != INVALID_SOCKET ) {
 		closesocket(hSocket);
 		if(isTLS()){
-			deinitTLSSocket(session, TRUE);
+			deinitTLSSocket(ssl, TRUE);
 		}
 		hSocket=INVALID_SOCKET;
 	}
@@ -246,9 +246,9 @@ SOCKET ConnectToServer(HostNode *hcn, char *szError, int size)
 				return INVALID_SOCKET;
 			}
 			if(SocketType == SOCKETTYPE_TCP_TLS){
-				if(!TLSFAIL)hcn->tlssession = initTLSSocket(hSocket, inet_ntoa(hcn->server.sin_addr));
-				else hcn->tlssession = NULL;
-				if (!hcn->tlssession){
+				if(!TLSFAIL)hcn->ssl = initTLSSocket(hSocket, inet_ntoa(hcn->server.sin_addr));
+				else hcn->ssl = NULL;
+				if (!hcn->ssl){
 					closesocket(hSocket);
 					ReleaseMutex(hMutexSend);
 					if(TLSFAIL)_snprintf_s(socketStatus,_countof(socketStatus),_TRUNCATE,"The connection %s to %s is down! TLS initialization failed! %s\n",getSocketType(hcn->SocketType), hcn->HostName, thedate);
@@ -298,7 +298,7 @@ void  SendToAll(char *buf, int nSize){
 				LogExtMsg(INFORMATION_LOG,szErrorBuff);
 				LogExtMsg(INFORMATION_LOG,"Socket for %s is toast. Breaking out - will reestablish next time.",currentnode->HostName); 
 				// Close the socket. Restablish it on the next cycle, if we can.
-				CloseSocket(currentnode->Socket, currentnode->tlssession);
+				CloseSafedSocket(currentnode->Socket, currentnode->ssl);
 				currentnode->Socket=INVALID_SOCKET;
 			} 
 		}
@@ -308,13 +308,13 @@ void  SendToAll(char *buf, int nSize){
 	}
 }
 
-int CloseSocket(SOCKET sock, gnutls_session_t session){
+int CloseSafedSocket(SOCKET sock, WOLFSSL* ssl){
 	int ret = 0;
 	DWORD dwWaitSend = WaitForSingleObject(hMutexSend,500);
 	if(dwWaitSend == WAIT_OBJECT_0) {
 		ret = closesocket(sock);
 		if(SocketType == SOCKETTYPE_TCP_TLS){
-			ret = deinitTLSSocket(session, TRUE);
+			ret = deinitTLSSocket(ssl, TRUE);
 		}
 	}else ret = -1;
 	ReleaseMutex(hMutexSend);	
@@ -340,9 +340,9 @@ BOOL  SendToSocket(HostNode *hcn, char *buf, int nSize, char *szError, int eSize
 
 		do {
 			if(SocketType == SOCKETTYPE_TCP_TLS){
-				bytessent = sendTLS(buf,hcn->tlssession);
+				bytessent = sendTLS(buf,hcn->ssl);
 				if(bytessent < 0) {
-					LogExtMsg(ERROR_LOG,"error sending to SSL server. WSA ERROR: %d",getTLSError(bytessent));
+					LogExtMsg(ERROR_LOG,"error sending to SSL server. WSA ERROR: %s",getTLSError(hcn->ssl,bytessent));
 					ret = FALSE;
 					break;
 				}

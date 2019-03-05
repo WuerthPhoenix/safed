@@ -1,6 +1,6 @@
 #include "SafedTLS.h"
 
-int		HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size,SOCKET http_socket, gnutls_session_t session_https,char* fromServer, HANDLE event);
+int		HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size,SOCKET http_socket, WOLFSSL* session_https,char* fromServer, HANDLE event);
 
 int		Status_Page(char *source, char *dest, int size);
 int		SafedLog_Page(char *source, char *dest, int size);
@@ -45,21 +45,21 @@ int		Objective_Result(char *, char *, int);
 
 int		debracket(char *source, char *dest, int length);
 
-int		ShowLocalUsers(SOCKET http_socket, gnutls_session_t session_https);
-int		ShowDomainUsers(SOCKET http_socket, gnutls_session_t session_https);
+int		ShowLocalUsers(SOCKET http_socket, WOLFSSL* session_https);
+int		ShowDomainUsers(SOCKET http_socket, WOLFSSL* session_https);
 
-int		ShowLocalGroupMembers(SOCKET http_socket, gnutls_session_t session_https);
-int		ShowThisLocalGroupMembers(WCHAR *Group,SOCKET http_socket, gnutls_session_t session_https);
+int		ShowLocalGroupMembers(SOCKET http_socket, WOLFSSL* session_https);
+int		ShowThisLocalGroupMembers(WCHAR *Group,SOCKET http_socket, WOLFSSL* session_https);
 
-int		GetCustomLogs(SOCKET http_socket, gnutls_session_t session_https);
-int		GetSysAdmin(SOCKET http_socket, gnutls_session_t session_https);
-int		ShowDomainGroupMembers(SOCKET http_socket, gnutls_session_t session_https);
-int		ShowThisDomainGroupMembersNT(WCHAR *Group,WCHAR *PDC,SOCKET http_socket, gnutls_session_t session_https);
-int		ShowDomainUserGroupsWin2k(SOCKET http_socket, gnutls_session_t session_https, char *PDC_cstr);
+int		GetCustomLogs(SOCKET http_socket, WOLFSSL* session_https);
+int		GetSysAdmin(SOCKET http_socket, WOLFSSL* session_https);
+int		ShowDomainGroupMembers(SOCKET http_socket, WOLFSSL* session_https);
+int		ShowThisDomainGroupMembersNT(WCHAR *Group,WCHAR *PDC,SOCKET http_socket, WOLFSSL* session_https);
+int		ShowDomainUserGroupsWin2k(SOCKET http_socket, WOLFSSL* session_https, char *PDC_cstr);
 
-int		ShowLicense(SOCKET http_socket, gnutls_session_t session_https);
+int		ShowLicense(SOCKET http_socket, WOLFSSL* session_https);
 
-int		GetConfig(SOCKET http_socket, gnutls_session_t session_https, char* fromServer);
+int		GetConfig(SOCKET http_socket, WOLFSSL* session_https, char* fromServer);
 //int		SetConfig(char *source, SOCKET http_socket);
 int		Config(char *source, char *dest, int size);
 int		SetConfig(char *source, char *dest, int size, char* fromServer);
@@ -69,8 +69,8 @@ int		SetCertificate(char *source, char *dest, int size, char* cert);
 
 // HRESULT TestEnumObject( LPWSTR pszADsPath );
 
-int		DumpRegistry(SOCKET http_socket, gnutls_session_t session_https, char *source, char * Output, int OutputSize);
-int		RegDump(HKEY key, char * rootname, char *path, SOCKET http_socket, gnutls_session_t session_https);
+int		DumpRegistry(SOCKET http_socket, WOLFSSL* session_https, char *source, char * Output, int OutputSize);
+int		RegDump(HKEY key, char * rootname, char *path, SOCKET http_socket, WOLFSSL* session_https);
 
 BOOL	ADIsMixedMode(void);
 
@@ -79,8 +79,8 @@ int		base64decode(char *dest, char *src);
 int		base64encode(char *dest, char *src, int len);
 char *	GetNextArgument(char *source,char *destvar,int varlength,char *destval,int vallength);
 
-int		DisplayTextHeader(SOCKET http_socket, gnutls_session_t session_https);
-int		Display404(SOCKET http_socket, gnutls_session_t session_https);
+int		DisplayTextHeader(SOCKET http_socket, WOLFSSL* session_https);
+int		Display404(SOCKET http_socket, WOLFSSL* session_https);
 
 BOOL	GetUserSid(LPTSTR szName,LPTSTR TextualSid,LPDWORD lpdwBufferLen,char *PrimaryDomain=NULL,char *PDC_cstr=NULL);
 

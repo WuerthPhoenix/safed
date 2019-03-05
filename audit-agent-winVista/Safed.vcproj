@@ -21,6 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="64Bit Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -111,12 +112,12 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/GA "
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Include&quot;;&quot;C:\Documents and Settings\Test\Desktop\includes\regexp-2.7&quot;;&quot;C:\Documents and Settings\Test\Desktop\includes\gnutls-3.6&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Include&quot;;&quot;C:\Documents and Settings\Test\Desktop\wolfssl-master\wolfssl-master&quot;;&quot;C:\Documents and Settings\Test\Desktop\includes\regexp-2.7&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="0"
 				TreatWChar_tAsBuiltInType="false"
-				PrecompiledHeaderFile="$(IntDir)/Safed.pch"
+				PrecompiledHeaderFile="$(IntDir)\Safed.pch"
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
 				ProgramDataBaseFileName="$(IntDir)\"
@@ -137,7 +138,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/machine:x64"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib wevtapi.lib Psapi.lib regex2.lib libgnutls-30.lib wbemuuid.lib comsupp.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib wevtapi.lib Psapi.lib regex2.lib wolfssl.lib wbemuuid.lib comsupp.lib"
 				OutputFile="$(OutDir)\$(ProjectName)V64.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -232,7 +233,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/machine:X86"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib wevtapi.lib Psapi.lib regex2.lib libgnutls-30.lib wbemuuid.lib comsupp.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib wevtapi.lib Psapi.lib regex2.lib wolfssl.lib wbemuuid.lib comsupp.lib"
 				OutputFile="$(OutDir)\$(ProjectName)V32.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -269,6 +270,7 @@
 		</Configuration>
 		<Configuration
 			Name="32Bit Release|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool

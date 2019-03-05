@@ -13,8 +13,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|Win32.ActiveCfg = 32Bit Release|Win32
 		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|Win32.Build.0 = 32Bit Release|Win32
-		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|x64.ActiveCfg = 32Bit Release|Win32
-		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|x64.Build.0 = 32Bit Release|Win32
+		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|x64.ActiveCfg = 32Bit Release|x64
+		{E6B0440F-E894-4665-B19E-098957D0C33A}.32Bit Release|x64.Build.0 = 32Bit Release|x64
 		{E6B0440F-E894-4665-B19E-098957D0C33A}.64Bit Release|Win32.ActiveCfg = 64Bit Release|Win32
 		{E6B0440F-E894-4665-B19E-098957D0C33A}.64Bit Release|Win32.Build.0 = 64Bit Release|Win32
 		{E6B0440F-E894-4665-B19E-098957D0C33A}.64Bit Release|x64.ActiveCfg = 64Bit Release|x64

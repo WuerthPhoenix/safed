@@ -362,7 +362,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/machine:x64"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib wolfssl.lib Activeds.lib ADSIid.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -1237,7 +1237,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/machine:X86"
-				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib libgnutls-30.lib Activeds.lib ADSIid.lib"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib netapi32.lib advapi32.lib adsiid.lib activeds.lib setupapi.lib comsuppw.lib psapi.lib regex2.lib wolfssl.lib Activeds.lib ADSIid.lib"
 				OutputFile="$(OutDir)\$(ProjectName)32.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

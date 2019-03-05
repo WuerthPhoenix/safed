@@ -21,7 +21,7 @@
 // Socket for our pseudo-httpd server
 SOCKET http_listen_socket = INVALID_SOCKET;
 SOCKET http_message_socket = INVALID_SOCKET;
-gnutls_session_t session_https = NULL;
+WOLFSSL* session_https = NULL;
 char fromServer[25] = "";
 
 
@@ -151,7 +151,7 @@ int HandleConnect(HANDLE event)
 		if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
 		return(1);
 	}else if (retval < 0){
-		if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"*** Error: %s",gnutls_strerror (retval));
+		if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"*** Error: %s", getTLSError(session_https, retval));
 		else LogExtMsg(ERROR_LOG,"recv() failed: socket error %d",WSAGetLastError());
 		closesocket(http_message_socket);
 		if(WEBSERVER_TLS)deinitTLSSocket(session_https, TRUE);
@@ -180,7 +180,7 @@ int HandleConnect(HANDLE event)
 					deinitTLSSocket(session_https, TRUE);
 					return(1);
 				}else if (tempval < 0){
-					LogExtMsg(ERROR_LOG,"*** Error: %s",gnutls_strerror (tempval));
+					LogExtMsg(ERROR_LOG,"*** Error: %d", getTLSError(session_https, tempval));
 					closesocket(http_message_socket);
 					deinitTLSSocket(session_https, TRUE);
 					return(1);
@@ -298,7 +298,7 @@ int HandleConnect(HANDLE event)
 			}
 
 			if (retval < 0) {
-				if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"sendTLS() failed: %s", getTLSError(retval));
+				if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"sendTLS() failed: %s", getTLSError(session_https, retval));
 				else  LogExtMsg(ERROR_LOG,"send() failed: SOCKET_ERROR");
 			
 				// force close and return
@@ -323,7 +323,7 @@ int HandleConnect(HANDLE event)
 		}
 
 		if (retval < 0) {
-			if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"send() failed: %s", getTLSError(retval));
+			if(WEBSERVER_TLS)LogExtMsg(ERROR_LOG,"send() failed: %s", getTLSError(session_https, retval));
 			else LogExtMsg(ERROR_LOG,"send() failed: SOCKET_ERROR"); 
 		
 			closesocket(http_message_socket);

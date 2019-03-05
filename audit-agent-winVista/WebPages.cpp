@@ -66,7 +66,7 @@ char lastConnectionStatus[80] = "";
 
 // Make sure we return the size, or zero (for strings).
 // Note that for the most part, the socket will be ignored
-int HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size, SOCKET http_socket, gnutls_session_t session_https, char* fromServer, HANDLE event)
+int HandleWebPages(char *HTTPBuffer,char *HTTPOutputBuffer,int size, SOCKET http_socket, WOLFSSL* session_https, char* fromServer, HANDLE event)
 {
 	int returncode=0, refreshflag=0;
 	char *ArgPosition;
@@ -2205,7 +2205,7 @@ int Restart(char *source, char *dest, int size)
     return(0);
 }
 
-int ShowLocalUsers(SOCKET http_socket, gnutls_session_t session_https)
+int ShowLocalUsers(SOCKET http_socket, WOLFSSL* session_https)
 {
 	int retval;
 	char HTTPBuffer[UGBUFFER]="";
@@ -2349,7 +2349,7 @@ int ShowLocalUsers(SOCKET http_socket, gnutls_session_t session_https)
 	return(0);
 }
 
-int ShowDomainUsers(SOCKET http_socket, gnutls_session_t session_https)
+int ShowDomainUsers(SOCKET http_socket, WOLFSSL* session_https)
 {
 	int retval;
 	char HTTPBuffer[UGBUFFER]="";
@@ -2601,7 +2601,7 @@ int ShowDomainUsers(SOCKET http_socket, gnutls_session_t session_https)
 }
 
 
-int ShowLocalGroupMembers(SOCKET http_socket, gnutls_session_t session_https)
+int ShowLocalGroupMembers(SOCKET http_socket, WOLFSSL* session_https)
 { 
 	int retval;
 	char HTTPBuffer[1024]="";
@@ -2667,7 +2667,7 @@ int ShowLocalGroupMembers(SOCKET http_socket, gnutls_session_t session_https)
 	return(0);
 }
 
-int ShowLicense(SOCKET http_socket, gnutls_session_t session_https)
+int ShowLicense(SOCKET http_socket, WOLFSSL* session_https)
 {
 	int retval;
 	char HTTPBuffer[1024]="";
@@ -2689,7 +2689,7 @@ int ShowLicense(SOCKET http_socket, gnutls_session_t session_https)
 	return(0);
 }
 
-int GetCustomLogs(SOCKET http_socket, gnutls_session_t session_https){
+int GetCustomLogs(SOCKET http_socket, WOLFSSL* session_https){
 	//FIX Custom File
 	char msg[SIZE_OF_EVENTLOG + 100]= "No custom event log have been found in SYSTEM\\CurrentControlSet\\Services\\EventLog or SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels!";
 	int first = 1;
@@ -2718,7 +2718,7 @@ int GetCustomLogs(SOCKET http_socket, gnutls_session_t session_https){
 
 	return 0;
 }
-int GetSysAdmin(SOCKET http_socket, gnutls_session_t session_https){
+int GetSysAdmin(SOCKET http_socket, WOLFSSL* session_https){
 	char msg[50]= "No system administrator discovery has been done!";
 	if(systemAdministrators)
 		if(WEBSERVER_TLS) 
@@ -2734,7 +2734,7 @@ int GetSysAdmin(SOCKET http_socket, gnutls_session_t session_https){
 	return 0;
 }
 
-int ShowDomainGroupMembers(SOCKET http_socket, gnutls_session_t session_https)
+int ShowDomainGroupMembers(SOCKET http_socket, WOLFSSL* session_https)
 {
 	int retval;
 	char HTTPBuffer[1024]="";
@@ -3088,7 +3088,7 @@ int ShowDomainGroupMembers(SOCKET http_socket, gnutls_session_t session_https)
 
 
 
-int ShowThisLocalGroupMembers(WCHAR *Group,SOCKET http_socket, gnutls_session_t session_https)
+int ShowThisLocalGroupMembers(WCHAR *Group,SOCKET http_socket, WOLFSSL* session_https)
 {
 	DWORD dwEntriesRead=0,dwTotalEntries=0,dwReturn=0;
 	char szName[255]="";
@@ -3231,7 +3231,7 @@ HRESULT VarToBytes(VARIANT *Variant,LPBYTE *bytes,long *plcb)
 // Lets go about this VERY differently. It appears that getting a users group membership
 // is relatively easy. Lets work backwards from that.
 //
-int ShowDomainUserGroupsWin2k(SOCKET http_socket, gnutls_session_t session_https, char *PDC_cstr)
+int ShowDomainUserGroupsWin2k(SOCKET http_socket, WOLFSSL* session_https, char *PDC_cstr)
 {
 	char HTTPBuffer[UGBUFFER]="";
 	int HTTPBufferLen=0;
@@ -3692,7 +3692,7 @@ BOOL ADIsMixedMode()
 
 
 
-int ShowThisDomainGroupMembersNT(WCHAR *Group,WCHAR *PDC, SOCKET http_socket, gnutls_session_t session_https)
+int ShowThisDomainGroupMembersNT(WCHAR *Group,WCHAR *PDC, SOCKET http_socket, WOLFSSL* session_https)
 {
 	GROUP_USERS_INFO_0* Members,*MSave;
 	DWORD dwEntriesRead=0,dwTotalEntries=0,dwReturn=0;
@@ -4284,7 +4284,7 @@ int debracket(char *source, char *dest, int length)
       return(0);
 }
 
-int Display404(SOCKET http_socket, gnutls_session_t session_https)
+int Display404(SOCKET http_socket, WOLFSSL* session_https)
 {
 	char HTTPBuffer[512];
 	// Overwrite HTTPBuffer with the header data.
@@ -4302,7 +4302,7 @@ int Display404(SOCKET http_socket, gnutls_session_t session_https)
 		return(send(http_socket,HTTPBuffer,(int)strlen(HTTPBuffer),0));
 }
 
-int DisplayTextHeader(SOCKET http_socket, gnutls_session_t session_https)
+int DisplayTextHeader(SOCKET http_socket, WOLFSSL* session_https)
 {
 	char HTTPBuffer[512];
 	LogExtMsg(INFORMATION_LOG,"DisplayTextHeader");
@@ -4398,7 +4398,7 @@ BOOL GetUserSid(
 
 
 
-int DumpRegistry(SOCKET http_socket, gnutls_session_t session_https, char *source, char * Output, int OutputSize) {
+int DumpRegistry(SOCKET http_socket, WOLFSSL* session_https, char *source, char * Output, int OutputSize) {
 
 	// Hmm.. maybe present a list of options here:
 	// HKEY_CLASSES_ROOT, HKEY_CURRENT_CONFIG, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, HKEY_USERS
@@ -4473,7 +4473,7 @@ int DumpRegistry(SOCKET http_socket, gnutls_session_t session_https, char *sourc
 }
 
 // Recursive function
-int RegDump(HKEY key, char * rootname, char *path, SOCKET http_socket, gnutls_session_t session_https)
+int RegDump(HKEY key, char * rootname, char *path, SOCKET http_socket, WOLFSSL* session_https)
 {
 	long result;
 	int retval;
@@ -5640,7 +5640,7 @@ int substituteEvents(char* obj, int reverse){
 	return 1;
 }
 
-int GetConfig(SOCKET http_socket, gnutls_session_t session_https, char* fromServer)
+int GetConfig(SOCKET http_socket, WOLFSSL* session_https, char* fromServer)
 {
 	int retval;
 	char HTTPBuffer[1024 + 50*SIZE_OF_AN_OBJECTIVE]="";

@@ -281,7 +281,7 @@ void RunSafedE(HANDLE event)
 										if(szError) { LogExtMsg(INFORMATION_LOG,szError); } 
 										LogExtMsg(INFORMATION_LOG,"Socket for %s is toast. Breaking out - will reestablish next time.",e_hostcurrentnode->HostName); 
 										// Close the socket. Restablish it on the next cycle, if we can.
-										CloseSocket(e_hostcurrentnode->Socket, e_hostcurrentnode->tlssession);
+										CloseSafedSocket(e_hostcurrentnode->Socket, e_hostcurrentnode->ssl);
 										e_hostcurrentnode->Socket=INVALID_SOCKET;
 									} else {
 										recovery = -1; //backuped message has been sent
@@ -307,7 +307,7 @@ void RunSafedE(HANDLE event)
 											if(szError) LogExtMsg(DEBUG_LOG,szError); 
 											LogExtMsg(INFORMATION_LOG,"Socket for %s is toast. Breaking out - will reestablish next time.",e_hostcurrentnode->HostName); 
 											// Close the socket. Restablish it on the next cycle, if we can.
-											CloseSocket(e_hostcurrentnode->Socket, e_hostcurrentnode->tlssession);
+											CloseSafedSocket(e_hostcurrentnode->Socket, e_hostcurrentnode->ssl);
 											e_hostcurrentnode->Socket=INVALID_SOCKET;
 											if(recovery == 0)recovery = 1;//if backuped message is sent , it will not be sent again
 										} else {

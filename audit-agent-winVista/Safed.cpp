@@ -1750,7 +1750,7 @@ void CSafedService::Run()
 									if(szError) { LogExtMsg(ERROR_LOG,szError); } 
 									LogExtMsg(INFORMATION_LOG,"Socket for %s is toast. Breaking out - will reestablish next time.",hostcurrentnode->HostName);
 									// Close the socket. Restablish it on the next cycle, if we can.
-									CloseSocket(hostcurrentnode->Socket, hostcurrentnode->tlssession);
+									CloseSafedSocket(hostcurrentnode->Socket, hostcurrentnode->ssl);
 									hostcurrentnode->Socket=INVALID_SOCKET;
 								} else {
 									recovery = -1; //backuped message has been sent
@@ -1774,7 +1774,7 @@ void CSafedService::Run()
 										if(szError) { LogExtMsg(ERROR_LOG,szError); } 
 										LogExtMsg(INFORMATION_LOG,"Socket for %s is toast. Breaking out - will reestablish next time.",hostcurrentnode->HostName);
 										// Close the socket. Restablish it on the next cycle, if we can.
-										CloseSocket(hostcurrentnode->Socket, hostcurrentnode->tlssession);
+										CloseSafedSocket(hostcurrentnode->Socket, hostcurrentnode->ssl);
 										hostcurrentnode->Socket=INVALID_SOCKET;
 										if(recovery == 0)recovery = 1;//if backuped message is sent , it will not be sent again
 									} else {
@@ -2048,7 +2048,7 @@ void CSafedService::Run()
 					hostcurrentnode=getHostHead();
 					while(hostcurrentnode) {
 						if(hostcurrentnode->Socket != INVALID_SOCKET) {
-							CloseSocket(hostcurrentnode->Socket, hostcurrentnode->tlssession);
+							CloseSafedSocket(hostcurrentnode->Socket, hostcurrentnode->ssl);
 							hostcurrentnode->Socket=INVALID_SOCKET;
 						}
 						temphostnode=hostcurrentnode->next;
@@ -2138,7 +2138,7 @@ void CSafedService::Run()
 					hostcurrentnode=getHostHead();
 					while(hostcurrentnode) {
 						if(hostcurrentnode->Socket != INVALID_SOCKET) {
-							CloseSocket(hostcurrentnode->Socket, hostcurrentnode->tlssession);
+							CloseSafedSocket(hostcurrentnode->Socket, hostcurrentnode->ssl);
 							hostcurrentnode->Socket=INVALID_SOCKET;
 						}
 						hostcurrentnode=hostcurrentnode->next;
@@ -2196,7 +2196,7 @@ void CSafedService::Run()
 	hostcurrentnode=getHostHead();
 	while(hostcurrentnode) {
 		if(hostcurrentnode->Socket != INVALID_SOCKET) {
-			TerminateWinsock(hostcurrentnode->Socket, hostcurrentnode->tlssession);
+			TerminateWinsock(hostcurrentnode->Socket, hostcurrentnode->ssl);
 		}
 		temphostnode=hostcurrentnode;
 		hostcurrentnode=hostcurrentnode->next;
