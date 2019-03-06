@@ -5856,6 +5856,31 @@ int getEndSection(char* pos, char* tag){
 	return(1);
 }
 
+void replacePOSTStr(char* src){// \r\r -> \r
+	char* dest = (char *) malloc((strlen(src) + 1)*sizeof(char));
+	dest[0]='\0';
+	char* pos;
+	char* tmp = src;
+	pos=strstr(tmp,"\r");
+	while(pos){
+		strncat(dest,tmp, pos - tmp);
+		pos+=1;
+		if(pos && *pos == '\r' ){
+		    pos+=1;	
+		}
+		tmp = pos;
+		pos=strstr(tmp,"\r");
+	}
+
+    if(tmp != src){
+		if(tmp){
+            strcat(dest,tmp);
+		}
+        strcpy(src, dest);
+	} 
+	free(dest);
+}
+
 
 int SetConfig(char *source, char *dest, int size, char* fromServer)
 {
@@ -5866,12 +5891,12 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 	int len = 0 ;
 	char* tmp = buffer;
 	int iscorrect = 0;
-
-	LogExtMsg(INFORMATION_LOG,"Received configuration %s", pos);
-
 	iscorrect = getEndSection(pos, "[End]");
 	if(!iscorrect){
 		LogExtMsg(ERROR_LOG,"Error in received configuration! Values have not been changed.");
+		if(pos){
+		    LogExtMsg(INFORMATION_LOG,"Received configuration %s!", pos);
+		}
 		strncpy_s(dest,size,"<h2><center>SafedAgent Configuration</h2>Error in received configuration! Values have not been changed.",_TRUNCATE);
 		_snprintf_s(setConfigStatus,_countof(setConfigStatus),_TRUNCATE,"");
 		return(0);	
@@ -5879,7 +5904,11 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 
 	Delete_Reg_Keys();
 	if(pos){
-		pos = pos + 4;
+		while(*pos != '['){//[Config]
+		    pos++;
+		}
+		LogExtMsg(INFORMATION_LOG,"Received configuration %s", pos);
+		replacePOSTStr(pos);
 		if(getSection(pos, buffer, sizeof(buffer), "[Config]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
@@ -5930,11 +5959,14 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 					LogExtMsg(ERROR_LOG,"Errors during Configuration Log %s", tag);
 			}
 		}else LogExtMsg(ERROR_LOG,"Errors during Log Configuration");
-
-
+        
+		LogExtMsg(INFORMATION_LOG,"New configuration set!");
+	}else{
+		LogExtMsg(INFORMATION_LOG,"Empty configuration received");
+		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Empty configuration received has been received!",size);
 	}
 
-	LogExtMsg(INFORMATION_LOG,"New configuration set!");
+
 	strncpy_s(dest,size,"<h2><center>SafedAgent Configuration</h2>Values have been changed.",_TRUNCATE);
 	if(fromServer && strlen(fromServer) > 0){
 		_snprintf_s(setConfigStatus,_countof(setConfigStatus),_TRUNCATE,"%s %s\n", LSC_MSG, fromServer);
@@ -5952,12 +5984,19 @@ int SetCertificate(char *source, char *dest, int size, char* cert)
 
 	if(!cert || (strlen(cert) == 0)){
 		LogExtMsg(ERROR_LOG,"Error in received certificate. Certificate has not been set!");
+		if(pos){
+		    LogExtMsg(ERROR_LOG,"Received certificate %s!", pos);
+		}
 		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificate has not been set.",size);
 		return(1);
 	}
 
-	if(pos){
-		pos = pos + 4;
+	if(pos){	
+		while(*pos != '-'){//-----BEGIN CERTIFICATE-----
+		    pos++;
+		}
+		LogExtMsg(INFORMATION_LOG,"New Certificate %s has been received: %s!", cert, pos);
+		replacePOSTStr(pos);
 		file = fopen(cert, "w");
 		if (file == (FILE *)NULL) {
 			LogExtMsg(ERROR_LOG,"Cannot open %s file", cert);
@@ -5970,8 +6009,12 @@ int SetCertificate(char *source, char *dest, int size, char* cert)
 		fclose((FILE *)file);
 		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificates has been set.",size);
 
+		LogExtMsg(INFORMATION_LOG,"New Certificate %s has been set!", cert);
+	}else{
+	    LogExtMsg(INFORMATION_LOG,"Empty Certificate %s has been received!");
+		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Empty Certificate has been received!",size);
 	}
-	LogExtMsg(INFORMATION_LOG,"New Certificate %s has been set!", cert);
+	
 	return(0);
 
 
