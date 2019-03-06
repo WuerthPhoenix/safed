@@ -5820,8 +5820,12 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 	int len = 0 ;
 	char* tmp = buffer;
 	int iscorrect = 0;
+
+	LogExtMsg(INFORMATION_LOG,"Received configuration %s", pos);
+
 	iscorrect = getEndSection(pos, "[End]");
 	if(!iscorrect){
+		LogExtMsg(ERROR_LOG,"Error in received configuration! Values have not been changed.");
 		strncpy_s(dest,size,"<h2><center>SafedAgent Configuration</h2>Error in received configuration! Values have not been changed.",_TRUNCATE);
 		_snprintf_s(setConfigStatus,_countof(setConfigStatus),_TRUNCATE,"");
 		return(0);	
@@ -5834,57 +5838,57 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("Config", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Config %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration Config %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Config Configuration");
+		}else LogExtMsg(ERROR_LOG,"Errors during Config Configuration");
 		if(getSection(pos, buffer, sizeof(buffer), "[SysAdmin]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("SysAdmin", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration SysAdmin %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration SysAdmin %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during SysAdmin Configuration");
+		}else LogExtMsg(ERROR_LOG,"Errors during SysAdmin Configuration");
 		if(getSection(pos, buffer, sizeof(buffer), "[Network]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("Network", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Network %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration Network %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Network Configuration");
+		}else LogExtMsg(ERROR_LOG,"Errors during Network Configuration");
 		if(getSection(pos, buffer, sizeof(buffer), "[Remote]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("Remote", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Remote %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration Remote %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Remote Configuration");
+		}else LogExtMsg(ERROR_LOG,"Errors during Remote Configuration");
 		if(getSection(pos, buffer, sizeof(buffer), "[Objective]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				substituteEvents(value, 1);
 				if(!setRegValue("Objective", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Objective %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration Objective %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Objectives Configuration");
+		}else LogExtMsg(ERROR_LOG,"Missing or Errors during Objectives Configuration.");
 		if(getSection(pos, buffer, sizeof(buffer), "[EObjective]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("EObjective", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Log Objective %s", tag);
+					LogExtMsg(ERROR_LOG,"Missing or Errors during Configuration Log Objective %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Log Objectives Configuration");
+		}else LogExtMsg(ERROR_LOG,"Missing or Errors during Log Objectives Configuration");
 		if(getSection(pos, buffer, sizeof(buffer), "[Log]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
 				if(!setRegValue("Log", tag, value))
-					LogExtMsg(INFORMATION_LOG,"Errors during Configuration Log %s", tag);
+					LogExtMsg(ERROR_LOG,"Errors during Configuration Log %s", tag);
 			}
-		}else LogExtMsg(INFORMATION_LOG,"Errors during Log Configuration");
+		}else LogExtMsg(ERROR_LOG,"Errors during Log Configuration");
 
 
 	}
 
-	
+	LogExtMsg(INFORMATION_LOG,"New configuration set!");
 	strncpy_s(dest,size,"<h2><center>SafedAgent Configuration</h2>Values have been changed.",_TRUNCATE);
 	if(fromServer && strlen(fromServer) > 0){
 		_snprintf_s(setConfigStatus,_countof(setConfigStatus),_TRUNCATE,"%s %s\n", LSC_MSG, fromServer);
@@ -5901,7 +5905,8 @@ int SetCertificate(char *source, char *dest, int size, char* cert)
 	FILE *file = (FILE *)NULL;
 
 	if(!cert || (strlen(cert) == 0)){
-		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificates have not been set.",size);
+		LogExtMsg(ERROR_LOG,"Error in received certificate. Certificate has not been set!");
+		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificate has not been set.",size);
 		return(1);
 	}
 
@@ -5910,16 +5915,17 @@ int SetCertificate(char *source, char *dest, int size, char* cert)
 		file = fopen(cert, "w");
 		if (file == (FILE *)NULL) {
 			LogExtMsg(ERROR_LOG,"Cannot open %s file", cert);
-			strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificates have not been set.",size);
+			strncpy(dest,"<h2><center>SafedAgent Certificate</h2>Certificate has not been set.",size);
 			return(1);
 		}
 
 		fputs(pos, file);
 		fflush(file);
 		fclose((FILE *)file);
-		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificates have been set.",size);
+		strncpy(dest,"<h2><center>SafedAgent Certificates</h2>Certificates has been set.",size);
 
 	}
+	LogExtMsg(INFORMATION_LOG,"New Certificate %s has been set!", cert);
 	return(0);
 
 
