@@ -20,9 +20,9 @@ The existing open source basis was enhanced as follows:
 - audit-agent-win2008: the safed agent for Win2008/2012 for 32 and 64 bit processors
 - audit-agent-allmsi: msi build scripts 
 - includes: the header files for gnutls and regexp 
-- win/x32: the gnutls and regexp library compiled for windows (32 bit processors)
-- win/x64: the gnutls and regexp library compiled for windows (64 bit processors)
-- win/gnutls: the gnutls 3.6 
+- win/x32: the wolfssl and regexp library compiled for windows (32 bit processors)
+- win/x64: the wolfssl and regexp library compiled for windows (64 bit processors)
+- win/wolfssl: the wolfssl 3.15.7 
 - win/regexp: the regexp 2.7
 
 
@@ -41,8 +41,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 
 Notes for Visual C++ projects can be found [here](http://www.neteye-blog.com/wp-content/uploads/2011/09/projectnotes.pdf).
 
-Starting from version 1.9.1 for secure communications GnuTLS >= 3.6.4 is requested, supporting TLS 1.2 (minimum) and TLS 1.3 (https://gnutls.org/)
-The legacy safed agent version 1.9.1 for secure communications uses GnuTLS >= 2.12.21, supporting TLS 1.2 
+Starting from version 1.10.0 for secure communications Wolfssl >= 3.15.7 is requested, supporting TLS 1.2 (minimum) and TLS 1.3 (https://github.com/wolfSSL/wolfssl)
 
 ## License
 
