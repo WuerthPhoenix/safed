@@ -32,7 +32,7 @@ int http_listen_socket;
 // the socket used to handle each client connection
 int http_message_socket;
 #ifdef TLSPROTOCOL
-	gnutls_session_t session_https = NULL;
+	WOLFSSL* session_https = NULL;
 #endif
 char fromServer[25] = "";
 
@@ -450,13 +450,26 @@ int handleConnect() {
 		retval = recv(http_message_socket, HTTPBuffer, sizeof(HTTPBuffer), 0);
 	// NOTE: Should probably do something about requests that are bigger than HTTPBuffer also..
 
-	if ((retval == -1) || (retval == 0)) {
+	if (retval == 0) {
+                slog(LOG_ERROR, " - Peer has closed the TLS connection\n");
 		close(http_message_socket);
 #ifdef TLSPROTOCOL
-		if(remoteControlHttps)deinitTLSSocket(session_https, 1);
+		if(remoteControlHttps){
+                    deinitTLSSocket(session_https, 1);
+                }
 #endif
 		return (1);
-	}
+	}else if(retval < 0){
+                slog(LOG_ERROR, " *** Error: %d\n",retval);
+                close(http_message_socket);
+#ifdef TLSPROTOCOL
+                if(remoteControlHttps){
+                    slog(LOG_ERROR, " *** Error: %s\n",getTLSError(session_https,retval));
+                    deinitTLSSocket(session_https, 1);
+                }
+#endif
+                return (1);
+        }
 
 	HTTPBuffer[retval] = '\0';
 	char* headerend=strstr(HTTPBuffer,"\r\n\r\n");
@@ -500,7 +513,7 @@ int handleConnect() {
 				deinitTLSSocket(session_https, 1);
 				return(1);
 			    }else if (tempval < 0){
-                                slog(LOG_ERROR, " *** Error: %s\n",gnutls_strerror(tempval));
+                                slog(LOG_ERROR, " *** Error: %s\n",getTLSError(session_https,tempval));
 				close(http_message_socket);
 				deinitTLSSocket(session_https, 1);
 				return(1);
@@ -509,7 +522,7 @@ int handleConnect() {
 #endif
 			    tempval = recv(http_message_socket,HTTPBufferTemp,sizeof(HTTPBufferTemp),0 );
 			HTTPBufferTemp[tempval]='\0';
-			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer));
+			strncat(HTTPBuffer,HTTPBufferTemp,sizeof(HTTPBuffer) - 1);
 		} else {
                         slog(LOG_NORMAL, " recv() failed: Incomplete message \n");
 			close(http_message_socket);

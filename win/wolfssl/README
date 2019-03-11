@@ -1,0 +1,36 @@
+CHANGES: 
+wolfssl-3.15.7\wolfssl\wolfcrypt\logging.h
+has been modified
+enum wc_LogLevels {
+    ERROR_LOG = 0,
+    INFO_LOG,
+    ENTER_LOG,
+    LEAVE_LOG,
+    OTHER_LOG
+};
+
+to
+
+enum wc_LogLevels {
+    ERROR_LOG_ = 0,
+    INFO_LOG,
+    ENTER_LOG,
+    LEAVE_LOG,
+    OTHER_LOG
+};
+in order to avoid redefenition of system and safed ERROR_LOG
+
+wolfssl-3.15.7\wolfssl\user_settings.h
+         //#define HAVE_SECURE_RENEGOTIATION
+        #define HAVE_FFDHE_2048
+        #define WOLFSSL_TLS13
+        #define HAVE_HKDF
+        #define WC_RSA_PSS
+        #define NO_OLD_TLS
+in order to have customer TLS configuration
+
+Use wolfssl.sln and wolfssl
+32Bit Release for lib
+32Bit Release DLL for dll
+64Bit Release for lib
+64Bit Release DLL for dll

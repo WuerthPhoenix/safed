@@ -2,10 +2,10 @@ CC = gcc
 # Include BUILD cflags if they exist (from spec file)
 
 
-GNUTLS = $(shell ./checkgnutls.sh)
-GNUTLS_D = $(shell ./checkgnutls.sh $(GNUTLS) -d)
-GNUTLS_C = $(shell ./checkgnutls.sh $(GNUTLS) -c)
-GNUTLS_L = $(shell ./checkgnutls.sh $(GNUTLS) -l)
+GNUTLS = $(shell ./checktls.sh)
+GNUTLS_D = $(shell ./checktls.sh $(GNUTLS) -d)
+GNUTLS_C = $(shell ./checktls.sh $(GNUTLS) -c)
+GNUTLS_L = $(shell ./checktls.sh $(GNUTLS) -l)
 
 
 CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
@@ -14,7 +14,7 @@ CFLAGS = $(GNUTLS_D) -Wall -O2 $(BCFLAGS)
 all: safed
 
 safed: safed.o Configuration.o MemoryCache.o Misc.o webserver.o WebPages.o WebPagesAudit.o webutilities.o MessageFile.o $(GNUTLS_C)
-	$(CC) $(LDFLAGS) -lcrypt -lnsl -lrt $(GNUTLS_L) -o safed $^
+	$(CC) $(LDFLAGS) $^ -lpthread -lcrypt -lnsl -lrt $(GNUTLS_L) -o safed
 	
 
 SafedTLS.o:	SafedTLS.c SafedTLS.h

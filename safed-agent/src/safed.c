@@ -121,12 +121,12 @@ int restart = 0;
 void initTLSAndUpdateStatus();
 void deinitTLSsession();
 
-void SIGINTandTERMHandler(sig) {
+void SIGINTandTERMHandler(int sig) {
 	// this to exit politely the main process loop
 	continueloop = 0;
 }
 
-void SIGUSR1Handler(sig) {
+void SIGUSR1Handler(int sig) {
 	usr1 = 1;
 }
 
@@ -514,7 +514,9 @@ int main(int argc, char *argv[]) {
 			}
 
 			// redirecting stdin from /dev/null
-			freopen("/dev/null", "r", stdin);
+                        if(!freopen("/dev/null", "r", stdin)) {
+                            exit (-1);
+                        }
 		} else {
 			// an error occured!
 			sperror("fork");
@@ -541,7 +543,7 @@ int main(int argc, char *argv[]) {
     timeout.tv_nsec = waitTime;
     
     // init sockets to set SOCKETSTATUSFILE
-	connectToServer();
+    connectToServer();
 
     // create the thread that reads the messages from the cache, and sends them to the syslog server
     pthread_t send_thread_id;
@@ -667,7 +669,7 @@ int fixLastError(HostNode *currentHost) {
 			close(currentHost->socket);
 			#ifdef TLSPROTOCOL
 			if(strcmp(TLS, currentHost->protocolName) == 0){
-				if(!TLSFAIL)deinitTLSSocket(currentHost->tlssession,1);
+				if(!TLSFAIL)deinitTLSSocket(currentHost->ssl,1);
 			}
 			#endif
 
@@ -696,11 +698,11 @@ int fixLastError(HostNode *currentHost) {
 			#ifdef TLSPROTOCOL
 			if(strcmp(TLS, currentHost->protocolName) == 0){
 				if(TLSFAIL){
-					currentHost->tlssession = NULL;
+					currentHost->ssl = NULL;
 				}else{
-					currentHost->tlssession = initTLSSocket(currentHost->socket, inet_ntoa(currentHost->socketAddress.sin_addr));
+					currentHost->ssl = initTLSSocket(currentHost->socket, inet_ntoa(currentHost->socketAddress.sin_addr));
 				}
-				if (!currentHost->tlssession){
+				if (!currentHost->ssl){
 					if(!TLSFAIL)sperror("connect");
 					else sperror("TLS initialization failed");
 					close(currentHost->socket);
@@ -800,11 +802,11 @@ int connectToServer(){
 		#ifdef TLSPROTOCOL
 		if(strcmp(TLS, host.protocolName) == 0){
 			if(TLSFAIL){
-				host.tlssession = NULL;
+				host.ssl = NULL;
 			}else{
-				host.tlssession = initTLSSocket(host.socket, inet_ntoa(host.socketAddress.sin_addr));
+				host.ssl = initTLSSocket(host.socket, inet_ntoa(host.socketAddress.sin_addr));
 			}
-			if (!host.tlssession){
+			if (!host.ssl){
 				if(!TLSFAIL)sperror("connect");
 				else sperror("TLS initialization failed");
 				close(host.socket);
@@ -854,9 +856,9 @@ int sendMessage(char *message) {
 #ifdef TLSPROTOCOL
 	if(strcmp(TLS, host.protocolName) == 0){
 		slog(LOG_NORMAL, "sending to SSL server. ....\n");
-		bytesSent = sendTLS(message,host.tlssession);
+		bytesSent = sendTLS(message,host.ssl);
 		if(bytesSent < 0) {
-			slog(LOG_NORMAL, "error sending to SSL server. WSA ERROR: %d",getTLSError(bytesSent));
+			slog(LOG_NORMAL, "error sending to SSL server: %s",getTLSError(host.ssl,bytesSent));
 			bytesSent = -1;
 		}
 	}else{
@@ -874,15 +876,16 @@ int sendMessage(char *message) {
 		slog(LOG_ERROR, "...error! Sent to destination only %d bytes instead of %d!", bytesSent, bytesToSend);
 	}
 
-	// this is the real error situation
-	if (bytesSent == -1) {
+	// this is the real error situation . 0 means that the socket has been closed
+	// One message coud be lost because only the next tcp send call will fail
+	if (bytesSent <= 0) {
 		sperror("sendto");
 		close(host.socket);
 		host.socket = 0;
 		host.last_error = time(&host.last_error);
 #ifdef TLSPROTOCOL
 		if(strcmp(TLS, host.protocolName) == 0){
-			deinitTLSSocket(host.tlssession,1);
+			deinitTLSSocket(host.ssl,1);
 		}
 #endif
 		unlink(SOCKETSTATUSFILE);
@@ -1292,7 +1295,7 @@ void deinitTLSsession() {
 	// closure of the TLS session to the syslog server
 	#ifdef TLSPROTOCOL
 			if(strcmp(TLS, host.protocolName) == 0){
-				if(!TLSFAIL)deinitTLSSocket(host.tlssession,1);
+				if(!TLSFAIL)deinitTLSSocket(host.ssl,1);
 			}
 	#endif
 

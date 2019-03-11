@@ -1,30 +1,24 @@
-GNUTLS=$(./src/checkgnutls.sh)
-if [ -n "$GNUTLS" ]
+WOLFSSL=$(./src/checktls.sh)
+if [ -n "$WOLFSSL" ]
 then
-    echo "[+] Info: gnutls is already installed. Next steps: ./configure && make && ./install.sh"
+    echo "[+] Info: wolfssl is already installed. Next steps: ./configure && make && ./install.sh"
     exit 0
 fi
 
 cd ..
 git submodule update --init
-cd safed-agent/external/nettle
-autoheader && autoconf && ./configure --prefix=/usr CC=c99 && make && make install
+cd safed-agent/external/wolfssl
+./autogen.sh && ./configure --prefix=/usr --enable-tls13 --disable-oldtls && ../wolfsslfix && make && make install
 if [ "$?" -ne 0 ]
 then
-    echo "[-] Error: failed to build and install nettle. Exit ..."
-    cd ../../..
-    exit 1
-fi
-cd ../gnutls/
-./bootstrap && ./configure  --prefix=/usr  --without-p11-kit --with-included-libtasn1 && make && make install
-if [ "$?" -ne 0 ]
-then
-    echo "[-] Error: failed to build and install gnutls. Exit ..."
+    echo "[-] Error: failed to build and install wolfssl. Exit ..."
     cd ../../..
     exit 1
 fi
 
-rm -f /etc/ld.so.cache && /sbin/ldconfig
+if [ -f /sbin/ldconfig ];then
+    rm -f /etc/ld.so.cache && /sbin/ldconfig
+fi
 cd ../..
-echo "[+] Info: nettle and gnutls have been installed. Next steps: ./configure && make && ./install.sh" 
+echo "[+] Info: wolfssl has been installed. Next steps: ./configure && make && ./install.sh" 
 exit 0

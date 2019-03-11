@@ -1,6 +1,3 @@
-[submodule "safed-agent/external/gnutls"]
-	path = safed-agent/external/gnutls
-	url = https://gitlab.com/gnutls/gnutls.git
-[submodule "safed-agent/external/nettle"]
-	path = safed-agent/external/nettle
-	url = https://git.lysator.liu.se/nettle/nettle.git
+[submodule "safed-agent/external/wolfssl"]
+	path = safed-agent/external/wolfssl
+	url = https://github.com/wolfSSL/wolfssl.git

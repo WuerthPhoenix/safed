@@ -84,6 +84,9 @@ CONF_FILE=safed.conf
 PID_FILE=/var/run/safed.pid
 LOG_DIR=/var/log/safed
 
+# systemd
+SYSTEMD_DIR=/etc/systemd/system/
+SERVICE=safed.service
 
 ########################################################################################
 # if I am running on SUSE Linux, then the rcX.d parent directory is /etc/init.d
@@ -122,7 +125,7 @@ fi
 
 # verifica che ${INITDDIR}/${SERVICE_SCRIPT} esista
 
-if [ -f ${INITDDIR}/${SERVICE_SCRIPT} ]; then
+if [ -f ${INITDDIR}/${SERVICE_SCRIPT} -o -f ${SYSTEMD_DIR}/${SERVICE} ]; then
 	echo "WARNING: It looks as though ${AGENT_NAME} is already installed."
 	echo
 	echo "Please uninstall ${AGENT_NAME} first before proceeding: /etc/safed/safed_uninstall.sh"
@@ -238,79 +241,88 @@ if [ $INSTALL_TYPE -eq 1 ] || [ $INSTALL_TYPE -eq 2 ]; then
      exit 1
    fi
 
-
-   ######################################
-   #  Creating the start|stop scripts   #
-   ######################################
-   
-   # this is only for IBM AIX
-   uname|grep AIX >/dev/null
-   if [ $? -eq 0 ]; then
-        echo "... configuring the System Resource Controller for IBM-AIX"
-        /usr/bin/mkssys -s safed -p /usr/bin/safed -u 0 -S -f 9 -n 15
-        RETVAL=$?
-        if [ $RETVAL -gt 0 ]
-        then
-                echo "Unable to create the SRC entry for safed. Terminating script"
-                exit 1
-        fi
-   fi
-   
-   # this is for all the platforms
-   echo "... installing the service start|stop script"
-   cp ./safed_start_lsb.sh  ${INITDDIR}/${SERVICE_SCRIPT}
-   RETVAL=$?
-   if [ $RETVAL -gt 0 ]
-      then
-      echo "Unable to copy the startup script: ${INITDDIR}/${SERVICE_SCRIPT}. Terminating script"
-      exit 1
-   fi
-   
-
-   ############################################################################
-   #   Configuring the automatic start|stop of the service at boot/shutdown   #
-   ############################################################################
-   echo "... configuring the service at the right runlevels"
-   uname | grep Linux > /dev/null
-   RETVAL=$?
-   if [ $RETVAL -eq 0 ]; then
-           echo "... on a Linux system the service isstarted on runlevels 2, 3, 4, 5"
-           #/usr/lib/lsb/install_initd ${INITDDIR}/${SERVICE_SCRIPT}
-           insserv ${SERVICE_SCRIPT}
+   #systemd service
+   if [ -d ${SYSTEMD_DIR} ];then
+       cp ./safed.service.template ${SYSTEMD_DIR}/${SERVICE}
+       RETVAL=$?
+       if [ $RETVAL -gt 0 ]
+          then
+          echo "Unable to copy the service to: ${SYSTEMD_DIR}/${SERVICE}. Terminating script"
+          exit 1
+       fi
+       systemctl enable ${SERVICE}
    else
-           uname | grep SunOS > /dev/null
-           RETVAL=$?
-           if [ $RETVAL -eq 0 ]; then
-                   echo "... on a Solaris system the service is started on runlevel 2"
-	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc0.d/K33${SERVICE_SCRIPT}
-	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc1.d/K33${SERVICE_SCRIPT}
-	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc2.d/S99${SERVICE_SCRIPT}
-           else
-                   uname | grep AIX > /dev/null
-                   RETVAL=$?
-                   if [ $RETVAL -eq 0 ]; then
-                          echo ".... on an IBM-AIX system the service is started on runlevel 2"
-                          /usr/sbin/mkitab "safed:2:once:/usr/bin/startsrc -a '-l' -s safed > /dev/console 2>&1"
-                   else
-                          echo "... on a HP-UX system the service is started on runlevels 2, 3, 4"
-                          ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc0.d/K333${SERVICE_SCRIPT}
-                          ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc1.d/K333${SERVICE_SCRIPT}
-                          ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc2.d/S999${SERVICE_SCRIPT}
-                          ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc3.d/S999${SERVICE_SCRIPT}
-                          ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc4.d/S999${SERVICE_SCRIPT}
-                   fi
-           fi
-   fi
-
-   RETVAL=$?
-   if [ $RETVAL -gt 0 ]
-   then
-     echo "Unable to create ${RCPARENTDIR}/rc*.d files. Terminating script"
-     exit 1
-   fi
-
+       ######################################
+       #  Creating the start|stop scripts   #
+       ######################################
+       
+       # this is only for IBM AIX
+       uname|grep AIX >/dev/null
+       if [ $? -eq 0 ]; then
+            echo "... configuring the System Resource Controller for IBM-AIX"
+            /usr/bin/mkssys -s safed -p /usr/bin/safed -u 0 -S -f 9 -n 15
+            RETVAL=$?
+            if [ $RETVAL -gt 0 ]
+            then
+                    echo "Unable to create the SRC entry for safed. Terminating script"
+                    exit 1
+            fi
+       fi
+       
+       # this is for all the platforms
+       echo "... installing the service start|stop script"
+       cp ./safed_start_lsb.sh  ${INITDDIR}/${SERVICE_SCRIPT}
+       RETVAL=$?
+       if [ $RETVAL -gt 0 ]
+          then
+          echo "Unable to copy the startup script: ${INITDDIR}/${SERVICE_SCRIPT}. Terminating script"
+          exit 1
+       fi
+       
+    
+       ############################################################################
+       #   Configuring the automatic start|stop of the service at boot/shutdown   #
+       ############################################################################
+       echo "... configuring the service at the right runlevels"
+       uname | grep Linux > /dev/null
+       RETVAL=$?
+       if [ $RETVAL -eq 0 ]; then
+               echo "... on a Linux system the service isstarted on runlevels 2, 3, 4, 5"
+               #/usr/lib/lsb/install_initd ${INITDDIR}/${SERVICE_SCRIPT}
+               insserv ${SERVICE_SCRIPT}
+       else
+               uname | grep SunOS > /dev/null
+               RETVAL=$?
+               if [ $RETVAL -eq 0 ]; then
+                       echo "... on a Solaris system the service is started on runlevel 2"
+    	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc0.d/K33${SERVICE_SCRIPT}
+    	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc1.d/K33${SERVICE_SCRIPT}
+    	           ln ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc2.d/S99${SERVICE_SCRIPT}
+               else
+                       uname | grep AIX > /dev/null
+                       RETVAL=$?
+                       if [ $RETVAL -eq 0 ]; then
+                              echo ".... on an IBM-AIX system the service is started on runlevel 2"
+                              /usr/sbin/mkitab "safed:2:once:/usr/bin/startsrc -a '-l' -s safed > /dev/console 2>&1"
+                       else
+                              echo "... on a HP-UX system the service is started on runlevels 2, 3, 4"
+                              ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc0.d/K333${SERVICE_SCRIPT}
+                              ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc1.d/K333${SERVICE_SCRIPT}
+                              ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc2.d/S999${SERVICE_SCRIPT}
+                              ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc3.d/S999${SERVICE_SCRIPT}
+                              ln -s ${INITDDIR}/${SERVICE_SCRIPT} ${RCPARENTDIR}/rc4.d/S999${SERVICE_SCRIPT}
+                       fi
+               fi
+       fi
+    
+       RETVAL=$?
+       if [ $RETVAL -gt 0 ]
+       then
+         echo "Unable to create ${RCPARENTDIR}/rc*.d files. Terminating script"
+         exit 1
+       fi
+    fi
 fi
-
 	
 ########################################################################
 #  This will copy the basic files to ${CONFDIR}
@@ -337,11 +349,16 @@ fi
 echo
 echo "... installation successful. Starting the service ..."
 echo 
-uname | grep AIX > /dev/null
-if [ $? -eq 0 ]; then
-	/usr/bin/startsrc -a '-l' -s safed
+
+if [ -d ${SYSTEMD_DIR} ];then
+       systemctl start ${SERVICE}
 else
-	${INITDDIR}/${SERVICE_SCRIPT} start
+    uname | grep AIX > /dev/null
+    if [ $? -eq 0 ]; then
+    	/usr/bin/startsrc -a '-l' -s safed
+    else
+    	${INITDDIR}/${SERVICE_SCRIPT} start
+    fi
 fi
 
 sleep 2

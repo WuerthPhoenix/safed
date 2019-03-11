@@ -1,8 +1,8 @@
 first compile the four versions of safed 
-audit-agent-win -> Safed.exe rename it to Safed32.exe
-audit-agent-win8 -> Safed.exe rename it to SafedV32.exe
-audit-agent-winx64 -> Safed.exe rename it to Safed64.exe
-audit-agent-win8x64 -> Safed.exe rename it to SafedV64.exe
+audit-agent-winXP -> 32Bit Release Win32 Safed32.exe
+audit-agent-winVista -> 32Bit Release Win32 SafedV32.exe
+audit-agent-winXP -> 64Bit Release x64 Safed64.exe
+audit-agent-winVista -> 64Bit Release x64SafedV64.exe
 copy in this dir all executable Safed32.exe,SafedV32.exe,Safed64.exe,SafedV64.exe and run
-MakeSafedMSI.bat -dversion=1.9.1
-SafedMSIVersion.bat 1_9_1
+MakeSafedMSI.bat -dversion=1.10.0
+SafedMSIVersion.bat 1_10_0

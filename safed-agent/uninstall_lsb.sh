@@ -39,6 +39,10 @@ RCPARENTDIR=/etc
 # for Linux and Solaris, this it the directory containing the service start/stop scripts
 INITDDIR=/etc/init.d
 
+# systemd
+SYSTEMD_DIR=/etc/systemd/system/
+SERVICE=safed.service
+
 KSEQ=33
 SSEQ=99
 
@@ -66,39 +70,46 @@ fi
 
 ####################################################################
 
-# stopping the service
-uname | grep AIX > /dev/null
-if [ $? -eq 0 ]; then
-	echo "stopping the service on IBM-AIX"
-	/usr/bin/stopsrc -s safed
+#systemd service
+if [ -f ${SYSTEMD_DIR}/${SERVICE} ];then
+    systemctl stop ${SERVICE}
+    systemctl disable ${SERVICE}
+    rm -f ${SYSTEMD_DIR}/${SERVICE}
 else
-	echo "stopping the service" 
-	${INITDDIR}/safed stop
+    # stopping the service
+    uname | grep AIX > /dev/null
+    if [ $? -eq 0 ]; then
+    	echo "stopping the service on IBM-AIX"
+    	/usr/bin/stopsrc -s safed
+    else
+    	echo "stopping the service" 
+    	${INITDDIR}/safed stop
+    fi
+    
+    echo "Removing safed binary..."
+    if [ -f /usr/bin/safed ]
+    then
+    	rm -f /usr/bin/safed 2>/dev/null
+            echo "Done."
+    fi
+    
+    echo "I will leave the configuration file (/etc/safed/safed.conf) - please remove it manually if you intend to permanently remove the agent ..."
+    
+    # Remove the runlevel scripts
+    echo "... removing the runlevel scripts"
+    uname | grep AIX > /dev/null
+    if [ $? -eq 0 ]; then
+    	/usr/sbin/rmitab safed
+    	/usr/bin/rmssys -s safed
+    else
+    	#/usr/lib/lsb/remove_initd ${INITDDIR}/safed
+    	insserv -r safed
+    	# TODO: qui va gestito l'exit status ed eventualmente la procedura di disinstallazione
+    fi
+    
+    echo "... removing the start|stop script"
+    rm ${INITDDIR}/safed 2>/dev/null
 fi
-
-echo "Removing safed binary..."
-if [ -f /usr/bin/safed ]
-then
-	rm -f /usr/bin/safed 2>/dev/null
-        echo "Done."
-fi
-
-echo "I will leave the configuration file (/etc/safed/safed.conf) - please remove it manually if you intend to permanently remove the agent ..."
-
-# Remove the runlevel scripts
-echo "... removing the runlevel scripts"
-uname | grep AIX > /dev/null
-if [ $? -eq 0 ]; then
-	/usr/sbin/rmitab safed
-	/usr/bin/rmssys -s safed
-else
-	#/usr/lib/lsb/remove_initd ${INITDDIR}/safed
-	insserv -r safed
-	# TODO: qui va gestito l'exit status ed eventualmente la procedura di disinstallazione
-fi
-
-echo "... removing the start|stop script"
-rm ${INITDDIR}/safed 2>/dev/null
 
 # remove the pid file
 rm -f /var/run/safed.pid 2>/dev/null
