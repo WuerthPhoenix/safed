@@ -16,3 +16,4 @@
 1.9.0 - update gnutls to 3.6.4 supporting TLS 1.3
 1.9.1 - update gnutls to 3.6.5
 1.10.0 - move tls implementation to wolfssl 3.15.7
+1.10.1 - retrieved events from eventlog (vista +) starts from bookmark should be not older than defined cache days

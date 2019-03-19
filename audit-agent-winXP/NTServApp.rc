@@ -59,8 +59,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,10,0,0
- PRODUCTVERSION 1,10,0,0
+ FILEVERSION 1,10,1,0
+ PRODUCTVERSION 1,10,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -79,13 +79,13 @@ BEGIN
             VALUE "Comments", "Audit Service"
             VALUE "CompanyName", "Wuerth Phoenix"
             VALUE "FileDescription", "Safed Service"
-            VALUE "FileVersion", "1, 10, 0, 0"
+            VALUE "FileVersion", "1, 10, 1, 0"
             VALUE "InternalName", "Safed"
             VALUE "LegalCopyright", "Copyright © 1999-2010"
             VALUE "LegalTrademarks", "NetEye Safed 2010"
             VALUE "OriginalFilename", "Safed.exe"
             VALUE "ProductName", "Safed Service"
-            VALUE "ProductVersion", "1, 10, 0, 0"
+            VALUE "ProductVersion", "1, 10, 1, 0"
         END
     END
     BLOCK "VarFileInfo"

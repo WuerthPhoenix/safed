@@ -394,9 +394,19 @@ void CollectionThread(HANDLE event)
 	//-------------- thread --------------
 	EVT_HANDLE *m_hEventLog;   // Handle to the event subscriber.
 	m_hEventLog = new EVT_HANDLE[dwNumEventLogs + dwNumCustomEventLogs];
-	wchar_t *szQuery = L"*";   // XPATH Query to specify which events to subscribe to.
+	//wchar_t *szQuery = L"*";   // XPATH Query to specify which events to subscribe to.
+	//wchar_t *szQuery = L"*[System[TimeCreated[timediff(@SystemTime) <= 86400000]]]";   // XPATH Query to specify which events to subscribe to.
+	//set max days retension starting from bookmark - max dwNumberFiles days old
+	GetNumberFiles(&dwNumberFiles);
+	DWORD miliseconds = dwNumberFiles*24*3600*1000; //in miliseconds
+	if(miliseconds <= 0){
+	    miliseconds = 60*1000;//1 min
+	}
+	wchar_t szQuery[100];
+	swprintf( szQuery, 100, L"*[System[TimeCreated[timediff(@SystemTime) <= %d]]]", miliseconds); // XPATH Query to specify which events to subscribe to.
 	static BOOL LeaveRetention=0;
 	GetLeaveRetention(&LeaveRetention);
+    
 
 	for (unsigned int i=0;i<dwNumEventLogs + dwNumCustomEventLogs;i++) {
 		if (CheckLogExists(EventLogSourceName[i],LeaveRetention)) {
@@ -416,6 +426,7 @@ void CollectionThread(HANDLE event)
 					Flags = EvtSubscribeStartAfterBookmark;
 				}
 			}
+ 
 			// Register the subscription.
 			m_hEventLog[i] = EvtSubscribe( 
 				NULL,					 //Session
@@ -614,7 +625,7 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
     //printf("Keywords: 0x%I64x\n", pValues[EvtSystemKeywords].UInt64Val);
 	//------------------------------
 
-	/*SYSTEMTIME st;
+	SYSTEMTIME st;
 	FILETIME ft;
 	FileTimeToLocalFileTime((FILETIME *)&pValues[EvtSystemTimeCreated].FileTimeVal,&ft);
 	FileTimeToSystemTime(&ft,&st);
@@ -626,14 +637,12 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 	strncat_s(SubmitTime,_countof(SubmitTime),subtime,_TRUNCATE);
 	GetDateFormat(LOCALE_SYSTEM_DEFAULT,0,&st,"yyyy",subtime,_countof(subtime));
 	strncat_s(SubmitTime,_countof(SubmitTime),subtime,_TRUNCATE);
-*/
 
-	struct tm ptmTime;
-	time_t ttime;
-	ttime=time(NULL);
-	localtime_s(&ptmTime,&ttime);
-	strftime(SubmitTime, _countof(SubmitTime),"%a %b %d %H:%M:%S %Y", &ptmTime);
-
+	//struct tm ptmTime;
+	//time_t ttime;
+	//ttime=time(NULL);
+	//localtime_s(&ptmTime,&ttime);
+	//strftime(SubmitTime, _countof(SubmitTime),"%a %b %d %H:%M:%S %Y", &ptmTime);
 
 
 	EVT_HANDLE hPubConfig = EvtOpenPublisherMetadata( NULL, pValues[EvtSystemProviderName].StringVal, NULL, NULL, 0);
@@ -841,6 +850,7 @@ DWORD WINAPI EventSubCallBack(EVT_SUBSCRIBE_NOTIFY_ACTION Action, PVOID Context,
 				}
 			}
 		}
+
 		////EventLogSourceName				= XML Channel
 		start = strstr(tempevent,"<Channel");
 		if (start) {
@@ -3620,7 +3630,7 @@ void GetChecksum(BOOL *ActivateChecksum)
 	*ActivateChecksum = (BOOL)Check;
 }
 
-void	GetLeaveRetention		(BOOL * LeaveRetention)
+void GetLeaveRetention(BOOL * LeaveRetention)
 {
 	DWORD leaveret=0;
 	leaveret=MyGetProfileDWORD("Config","LeaveRetention",0);
