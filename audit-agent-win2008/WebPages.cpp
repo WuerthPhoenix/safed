@@ -5907,8 +5907,9 @@ int SetConfig(char *source, char *dest, int size, char* fromServer)
 		while(*pos != '['){//[Config]
 		    pos++;
 		}
-		LogExtMsg(INFORMATION_LOG,"Received configuration %s", pos);
+		LogExtMsg(INFORMATION_LOG,"Received configuration \n%s[End]", pos);
 		replacePOSTStr(pos);
+		LogExtMsg(INFORMATION_LOG,"Configuration to be saved \n%s[End]", pos);
 		if(getSection(pos, buffer, sizeof(buffer), "[Config]")){
 			tmp = buffer;
 			while(getNextKey(&tmp,tag, sizeof(tag), value, sizeof(value))){
@@ -5997,6 +5998,7 @@ int SetCertificate(char *source, char *dest, int size, char* cert)
 		}
 		LogExtMsg(INFORMATION_LOG,"New Certificate %s has been received: %s!", cert, pos);
 		replacePOSTStr(pos);
+		LogExtMsg(INFORMATION_LOG,"Certificate %s to be saved: %s!", cert, pos);
 		file = fopen(cert, "w");
 		if (file == (FILE *)NULL) {
 			LogExtMsg(ERROR_LOG,"Cannot open %s file", cert);
