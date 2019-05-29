@@ -39,7 +39,7 @@ News and updates can be found on this [blog](http://www.neteye-blog.com/?s=Safed
 
 ## Building From Source
 
-Notes for Visual C++ projects can be found [here](https://github.com/WuerthPhoenix/safed/blob/master/doc/projectnotes.pdf).
+Notes for Visual C++ projects can be found [here](https://github.com/WuerthPhoenix/safed/blob/master/doc/projectnotesVC.pdf).
 
 Starting from version 1.10.0 for secure communications Wolfssl >= 3.15.7 is requested, supporting TLS 1.2 (minimum) and TLS 1.3 (https://github.com/wolfSSL/wolfssl)
 
