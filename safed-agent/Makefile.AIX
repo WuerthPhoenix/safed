@@ -1,0 +1,24 @@
+SUBDIRS = src
+TESTDIRS = test
+
+all:
+	@for i in $(SUBDIRS); do \
+	echo "gmake all in $$i..."; \
+	(cd $$i; gmake all); done
+	cp src/safed .
+
+clean:
+	rm -f safed
+	@for i in $(SUBDIRS); do \
+	echo "gmake clean in $$i..."; \
+	(cd $$i; gmake clean); done
+
+compiletest:
+	@for i in $(TESTDIRS); do \
+	echo "gmake all in $$i..."; \
+	(cd $$i; gmake all); done
+
+testall:
+	@for i in $(TESTDIRS); do \
+	echo "gmake test in $$i..."; \
+	(cd $$i; gmake test); done
