@@ -16,6 +16,24 @@ then
     exit 1
 fi
 
+#WORKAROUND:  make install do dot instal .so for AIX
+uname|grep AIX >/dev/null
+if [ $? -eq 0 ]; then
+    if [ ! -f /usr/lib/libwolfssl.so ] 
+    then
+        if [ -f src/.libs/libwolfssl.so.19 ]
+        then
+            cp src/.libs/libwolfssl.so.19 /usr/lib/
+            ln -s /usr/lib/libwolfssl.so.19 /usr/lib/libwolfssl.so
+        else
+            echo "[-] Error: No libwolfssl.so.19 found. Exit ..."
+            cd ../../..
+            exit 1
+        fi
+    fi
+fi
+
+
 if [ -f /sbin/ldconfig ];then
     rm -f /etc/ld.so.cache && /sbin/ldconfig
 fi

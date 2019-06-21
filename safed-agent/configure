@@ -23,6 +23,7 @@ uname | grep AIX > /dev/null
 
 if  [ $? -lt 1 ]
 then
+        cp Makefile.AIX Makefile
         cp src/Makefile.AIX src/Makefile
 	exit
 else
