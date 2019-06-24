@@ -4,7 +4,7 @@ For secure communications WolfSSL >= 3.15.7 is requested (supporting TLS 1.2 (mi
 C compiler gcc requred
 
 ---------------
-The build and installation of wolfssl requires autoconf > 2.69 , automake > 1.13, git, gcc, libtool and build-essential (gnu make: gmake for AIX)
+The build and installation of wolfssl requires autoconf > 2.69 , automake > 1.13, git, gcc, libtool, m4  and build-essential (gnu make:; gmake for AIX)
 Download build and install wolfssl:
 ./bootstrap
 
