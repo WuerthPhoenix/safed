@@ -1,3 +1,4 @@
+wix-2.0.5805.0-binaries.zip is required. Copy binaries to C:\Program Files\wix. Set the Environment PATH to include it.
 first compile the four versions of safed 
 audit-agent-win2003 -> 32Bit Release Win32 Safed32.exe and 64Bit Release x64 Safed64.exe
 audit-agent-win2008 -> 32Bit Release Win32 SafedV32.exe and 64Bit Release x64 Safed64.exe
